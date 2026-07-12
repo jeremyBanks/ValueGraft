@@ -1,0 +1,2013 @@
+{
+  "comparison_basis": "matched repeat 1; exact fixed-fixture description",
+  "comparison_status": "PASS",
+  "created_at_utc": "2026-07-12T12:00:14.553821+00:00",
+  "exact_equalities": {
+    "all_compared_estimands_equal": true,
+    "all_five_cell_generation_payloads_equal": true,
+    "all_placebo_payloads_equal": true,
+    "estimands_by_regime": {
+      "bf16": {
+        "E1_focal_margin_damage": true,
+        "E1_nonfocal_margin_damage": true,
+        "N_R2_D_full_KV_focal": true,
+        "N_R2_D_full_KV_nonfocal": true,
+        "N_R2_D_value_focal": true,
+        "N_R2_D_value_nonfocal": true,
+        "N_minus_P_value_shift_focal": true,
+        "N_minus_P_value_shift_nonfocal": true,
+        "P_R2_D_value_focal": true,
+        "P_R2_D_value_nonfocal": true
+      },
+      "nf4": {
+        "E1_focal_margin_damage": true,
+        "E1_nonfocal_margin_damage": true,
+        "N_R2_D_full_KV_focal": true,
+        "N_R2_D_full_KV_nonfocal": true,
+        "N_R2_D_value_focal": true,
+        "N_R2_D_value_nonfocal": true,
+        "N_minus_P_value_shift_focal": true,
+        "N_minus_P_value_shift_nonfocal": true,
+        "P_R2_D_value_focal": true,
+        "P_R2_D_value_nonfocal": true
+      }
+    },
+    "generations_by_regime": {
+      "bf16": {
+        "focal": {
+          "cellwise": {
+            "CC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FF": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "WW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            }
+          },
+          "change_vector_equal": true,
+          "content_id_tuple_equal": true,
+          "decoded_content_tuple_equal": true,
+          "five_cell_payload_equal": true,
+          "generation_hash_tuple_equal": true,
+          "stop_reason_tuple_equal": true
+        },
+        "nonfocal": {
+          "cellwise": {
+            "CC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FF": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "WW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            }
+          },
+          "change_vector_equal": true,
+          "content_id_tuple_equal": true,
+          "decoded_content_tuple_equal": true,
+          "five_cell_payload_equal": true,
+          "generation_hash_tuple_equal": true,
+          "stop_reason_tuple_equal": true
+        }
+      },
+      "nf4": {
+        "focal": {
+          "cellwise": {
+            "CC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FF": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "WW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            }
+          },
+          "change_vector_equal": true,
+          "content_id_tuple_equal": true,
+          "decoded_content_tuple_equal": true,
+          "five_cell_payload_equal": true,
+          "generation_hash_tuple_equal": true,
+          "stop_reason_tuple_equal": true
+        },
+        "nonfocal": {
+          "cellwise": {
+            "CC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FC": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FF": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "FW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            },
+            "WW": {
+              "canonical_sha256_equal": true,
+              "cap_hit_equal": true,
+              "content_ids_equal": true,
+              "decoded_content_equal": true,
+              "stop_reason_equal": true
+            }
+          },
+          "change_vector_equal": true,
+          "content_id_tuple_equal": true,
+          "decoded_content_tuple_equal": true,
+          "five_cell_payload_equal": true,
+          "generation_hash_tuple_equal": true,
+          "stop_reason_tuple_equal": true
+        }
+      }
+    },
+    "placebos_by_regime": {
+      "bf16": {
+        "canonical_diagnostics_sha256_equal": true,
+        "failed_layer_index_equal": true,
+        "failed_row_index_equal": true,
+        "full_payload_equal": true,
+        "movement_from_fresh_equal": true,
+        "scores_present_equal": true,
+        "source_result_hashes_equal": true,
+        "status_equal": true
+      },
+      "nf4": {
+        "canonical_diagnostics_sha256_equal": true,
+        "failed_layer_index_equal": true,
+        "failed_row_index_equal": true,
+        "full_payload_equal": true,
+        "movement_from_fresh_equal": true,
+        "scores_present_equal": true,
+        "source_result_hashes_equal": true,
+        "status_equal": true
+      }
+    },
+    "runtime": {
+      "regimes": {
+        "bf16": {
+          "host_fields": {
+            "compute_capability": true,
+            "driver_version": false,
+            "gpu_name": true,
+            "gpu_uuid": false,
+            "memory_total_mib": true,
+            "platform": false,
+            "torch_cuda_version": true
+          },
+          "runtime_fields": {
+            "architecture": true,
+            "attention_backend": true,
+            "dependency_versions": true,
+            "eos_ids": true,
+            "fingerprint_sha256": false,
+            "geometry": true,
+            "kv_dtype": true,
+            "model_id": true,
+            "repository_commit": false,
+            "requested_revision": true,
+            "resolved_snapshot": true,
+            "weight_runtime": true
+          }
+        },
+        "nf4": {
+          "host_fields": {
+            "compute_capability": true,
+            "driver_version": false,
+            "gpu_name": true,
+            "gpu_uuid": false,
+            "memory_total_mib": true,
+            "platform": false,
+            "torch_cuda_version": true
+          },
+          "runtime_fields": {
+            "architecture": true,
+            "attention_backend": true,
+            "dependency_versions": true,
+            "eos_ids": true,
+            "fingerprint_sha256": false,
+            "geometry": true,
+            "kv_dtype": true,
+            "model_id": true,
+            "repository_commit": false,
+            "requested_revision": true,
+            "resolved_snapshot": true,
+            "weight_runtime": true
+          }
+        }
+      },
+      "same_driver_version_across_protocols": false,
+      "same_gpu_uuid_across_protocols": false
+    },
+    "within_protocol_deltas": {
+      "E1_focal_margin_damage": true,
+      "E1_nonfocal_margin_damage": true,
+      "N_R2_D_full_KV_focal": true,
+      "N_R2_D_full_KV_nonfocal": true,
+      "N_R2_D_value_focal": true,
+      "N_R2_D_value_nonfocal": true,
+      "N_minus_P_value_shift_focal": true,
+      "N_minus_P_value_shift_nonfocal": true,
+      "P_R2_D_value_focal": true,
+      "P_R2_D_value_nonfocal": true
+    }
+  },
+  "frozen_A8_expectations": {
+    "all_expectations_explicitly_addressed": true,
+    "evaluations": [
+      {
+        "evaluation": "OBSERVED",
+        "evidence": {
+          "gpu_uuid_differs": true,
+          "p01_gpu_uuid": "GPU-470c3e18-9f87-0a04-f3bd-e974d59e1903",
+          "p02_gpu_uuid": "GPU-8a42830e-71ab-fb23-351d-125ccbd5bdb2",
+          "p02_hard_eligibility": "PASS"
+        },
+        "id": "A8-new-admitted-host"
+      },
+      {
+        "evaluation": "SIGN_EVALUATED_MAGNITUDE_NOT_THRESHOLD_CLASSIFIED",
+        "evidence": {
+          "all_p02_values_positive": true,
+          "large_magnitude_classification": "NOT_EVALUATED_NO_PREDECLARED_THRESHOLD",
+          "regimes": {
+            "bf16": {
+              "p01": 23.65581703186035,
+              "p02": 23.65581703186035,
+              "p02_minus_p01": 0.0,
+              "p02_positive": true
+            },
+            "nf4": {
+              "p01": 22.100759506225586,
+              "p02": 22.100759506225586,
+              "p02_minus_p01": 0.0,
+              "p02_positive": true
+            }
+          }
+        },
+        "id": "A8-gross-focal-margin-damage"
+      },
+      {
+        "evaluation": "OBSERVED_MISSING_CONTROL",
+        "evidence": {
+          "bf16": {
+            "p01": {
+              "canonical_diagnostics_sha256": "b00f95e6cc70763ee28d5730f8e3c9aa399adab72d018341afd66fd7748298ad",
+              "failed_layer_index": 1,
+              "failed_row_index": 77,
+              "movement_from_fresh": null,
+              "scores_present": false,
+              "source_result_hashes": {
+                "correct_source_rows_sha256": "8511d20996c905e358427ba8272eadc2e464419101de9c979c39f782cbb0c08f",
+                "fresh_source_rows_sha256": "1c4e6e6d14a07d025d63cb176e7005e505e247698ca579453a01e06c5aac621f",
+                "wrong_source_rows_sha256": "febd6eb33e26f1c0df606475ddffd4488d9ac567e079d34dd350175b83a802e2"
+              },
+              "status": "PLACEBO_UNAVAILABLE"
+            },
+            "p02": {
+              "canonical_diagnostics_sha256": "b00f95e6cc70763ee28d5730f8e3c9aa399adab72d018341afd66fd7748298ad",
+              "failed_layer_index": 1,
+              "failed_row_index": 77,
+              "movement_from_fresh": null,
+              "scores_present": false,
+              "source_result_hashes": {
+                "correct_source_rows_sha256": "8511d20996c905e358427ba8272eadc2e464419101de9c979c39f782cbb0c08f",
+                "fresh_source_rows_sha256": "1c4e6e6d14a07d025d63cb176e7005e505e247698ca579453a01e06c5aac621f",
+                "wrong_source_rows_sha256": "febd6eb33e26f1c0df606475ddffd4488d9ac567e079d34dd350175b83a802e2"
+              },
+              "status": "PLACEBO_UNAVAILABLE"
+            },
+            "status_equal": true
+          },
+          "nf4": {
+            "p01": {
+              "canonical_diagnostics_sha256": "e656cc3f25df22b9ed90874682ee5f611c0ff228682d952cf67674a49df4e4fc",
+              "failed_layer_index": 1,
+              "failed_row_index": 76,
+              "movement_from_fresh": null,
+              "scores_present": false,
+              "source_result_hashes": {
+                "correct_source_rows_sha256": "31564b7cc14288991ce96c2fd665b585b196998a6b81c8a4b2a49ea87ee5cdac",
+                "fresh_source_rows_sha256": "f29c66452411a01a65555e7991a2ae378d42b54d564e3b5d5234d292084d15f4",
+                "wrong_source_rows_sha256": "bb84cc1b27ae72ea5631e2c2bf861850db5724474abd8995761990f5a7406888"
+              },
+              "status": "PLACEBO_UNAVAILABLE"
+            },
+            "p02": {
+              "canonical_diagnostics_sha256": "e656cc3f25df22b9ed90874682ee5f611c0ff228682d952cf67674a49df4e4fc",
+              "failed_layer_index": 1,
+              "failed_row_index": 76,
+              "movement_from_fresh": null,
+              "scores_present": false,
+              "source_result_hashes": {
+                "correct_source_rows_sha256": "31564b7cc14288991ce96c2fd665b585b196998a6b81c8a4b2a49ea87ee5cdac",
+                "fresh_source_rows_sha256": "f29c66452411a01a65555e7991a2ae378d42b54d564e3b5d5234d292084d15f4",
+                "wrong_source_rows_sha256": "bb84cc1b27ae72ea5631e2c2bf861850db5724474abd8995761990f5a7406888"
+              },
+              "status": "PLACEBO_UNAVAILABLE"
+            },
+            "status_equal": true
+          }
+        },
+        "id": "A8-placebo-remains-unavailable"
+      },
+      {
+        "evaluation": "EXACT_STRING_CHECK",
+        "evidence": {
+          "bf16": {
+            "all_graft_cells_fail_exact_target": true,
+            "decoded_content": [
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "exact_target": "partner beta",
+            "graft_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ]
+          },
+          "nf4": {
+            "all_graft_cells_fail_exact_target": true,
+            "decoded_content": [
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "exact_target": "partner beta",
+            "graft_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ]
+          }
+        },
+        "id": "A8-graft-cells-fail-exact-target"
+      },
+      {
+        "evaluation": "EXACT_PAYLOAD_CHECK",
+        "evidence": {
+          "bf16": {
+            "focal": {
+              "cellwise": {
+                "CC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FF": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "WW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                }
+              },
+              "change_vector_equal": true,
+              "content_id_tuple_equal": true,
+              "decoded_content_tuple_equal": true,
+              "five_cell_payload_equal": true,
+              "generation_hash_tuple_equal": true,
+              "stop_reason_tuple_equal": true
+            },
+            "nonfocal": {
+              "cellwise": {
+                "CC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FF": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "WW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                }
+              },
+              "change_vector_equal": true,
+              "content_id_tuple_equal": true,
+              "decoded_content_tuple_equal": true,
+              "five_cell_payload_equal": true,
+              "generation_hash_tuple_equal": true,
+              "stop_reason_tuple_equal": true
+            }
+          },
+          "nf4": {
+            "focal": {
+              "cellwise": {
+                "CC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FF": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "WW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                }
+              },
+              "change_vector_equal": true,
+              "content_id_tuple_equal": true,
+              "decoded_content_tuple_equal": true,
+              "five_cell_payload_equal": true,
+              "generation_hash_tuple_equal": true,
+              "stop_reason_tuple_equal": true
+            },
+            "nonfocal": {
+              "cellwise": {
+                "CC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FC": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FF": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "FW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                },
+                "WW": {
+                  "canonical_sha256_equal": true,
+                  "cap_hit_equal": true,
+                  "content_ids_equal": true,
+                  "decoded_content_equal": true,
+                  "stop_reason_equal": true
+                }
+              },
+              "change_vector_equal": true,
+              "content_id_tuple_equal": true,
+              "decoded_content_tuple_equal": true,
+              "five_cell_payload_equal": true,
+              "generation_hash_tuple_equal": true,
+              "stop_reason_tuple_equal": true
+            }
+          }
+        },
+        "id": "A8-exact-five-cell-literal-tuples"
+      },
+      {
+        "evaluation": "EXACT_PAYLOAD_CHECK",
+        "evidence": {
+          "exactly_equal": true,
+          "p01_nf4_focal_FF": {
+            "canonical_sha256": "7e51952cd2f973a591fb192d219a3a9ebcfab7723c56ac72302c64f4b17e2c3d",
+            "content_ids": [
+              61116,
+              220,
+              19,
+              13,
+              23,
+              572,
+              537,
+              4091,
+              1212,
+              279,
+              12433,
+              23042,
+              6589,
+              5912,
+              13
+            ],
+            "decoded_content": "Atlas 4.8 was not selected under the recorded mandatory selection rule.",
+            "stop_reasons": "model_eos"
+          },
+          "p02_nf4_focal_FF": {
+            "canonical_sha256": "7e51952cd2f973a591fb192d219a3a9ebcfab7723c56ac72302c64f4b17e2c3d",
+            "content_ids": [
+              61116,
+              220,
+              19,
+              13,
+              23,
+              572,
+              537,
+              4091,
+              1212,
+              279,
+              12433,
+              23042,
+              6589,
+              5912,
+              13
+            ],
+            "decoded_content": "Atlas 4.8 was not selected under the recorded mandatory selection rule.",
+            "stop_reasons": "model_eos"
+          }
+        },
+        "id": "A8-nf4-fresh-anomaly"
+      },
+      {
+        "evaluation": "OBSERVED",
+        "evidence": {
+          "cross_protocol_five_cell_payload_equal": true,
+          "p02_repeat_generation_stable": true,
+          "p02_repeat_status": "PASS"
+        },
+        "id": "A8-bf16-literal-and-repeat-stability"
+      },
+      {
+        "evaluation": "SIGN_AND_EXACT_VALUE_CHECK_ONLY",
+        "evidence": {
+          "p02_nf4_negative_bf16_positive": true,
+          "quantization_dependence_claim_authorized": false,
+          "regimes": {
+            "bf16": {
+              "exactly_equal": true,
+              "p01": 0.23293495178222656,
+              "p02": 0.23293495178222656
+            },
+            "nf4": {
+              "exactly_equal": true,
+              "p01": -0.34577369689941406,
+              "p02": -0.34577369689941406
+            }
+          }
+        },
+        "id": "A8-D-full-KV-sign-split"
+      },
+      {
+        "evaluation": "DESCRIPTIVE_EXACT_COMPARISON_ONLY",
+        "evidence": {
+          "confidence_intervals_added": false,
+          "estimand_equalities": {
+            "bf16": {
+              "E1_focal_margin_damage": true,
+              "E1_nonfocal_margin_damage": true,
+              "N_R2_D_full_KV_focal": true,
+              "N_R2_D_full_KV_nonfocal": true,
+              "N_R2_D_value_focal": true,
+              "N_R2_D_value_nonfocal": true,
+              "N_minus_P_value_shift_focal": true,
+              "N_minus_P_value_shift_nonfocal": true,
+              "P_R2_D_value_focal": true,
+              "P_R2_D_value_nonfocal": true
+            },
+            "nf4": {
+              "E1_focal_margin_damage": true,
+              "E1_nonfocal_margin_damage": true,
+              "N_R2_D_full_KV_focal": true,
+              "N_R2_D_full_KV_nonfocal": true,
+              "N_R2_D_value_focal": true,
+              "N_R2_D_value_nonfocal": true,
+              "N_minus_P_value_shift_focal": true,
+              "N_minus_P_value_shift_nonfocal": true,
+              "P_R2_D_value_focal": true,
+              "P_R2_D_value_nonfocal": true
+            }
+          },
+          "p_values_added": false,
+          "ratios_added": false,
+          "thresholds_added": false
+        },
+        "id": "A8-E3-scalar-reading"
+      },
+      {
+        "evaluation": "OBSERVED_MATCHED_COMPLETE",
+        "evidence": {
+          "bf16": {
+            "differing_field_count": 0,
+            "differing_json_pointers": [],
+            "generation_hashes_and_text_stable": true,
+            "note": "Repeat executions are a stability check, not independent cases.",
+            "repeat1_sha256": "2755318886974454f2d8c0174c85365f87ef7d0a447efa951da59db37082a08f",
+            "repeat2_sha256": "2755318886974454f2d8c0174c85365f87ef7d0a447efa951da59db37082a08f",
+            "scalar_repeat2_minus_repeat1": {
+              "E1_focal_margin_damage": 0.0,
+              "E1_focal_minus_nonfocal": 0.0,
+              "E1_nonfocal_margin_damage": 0.0,
+              "E3_N_R2_D_full_KV_focal": 0.0,
+              "E3_N_R2_D_full_KV_nonfocal": 0.0,
+              "E3_N_R2_D_value_focal": 0.0,
+              "E3_N_R2_D_value_nonfocal": 0.0,
+              "secondary_N_minus_P_shift_focal": 0.0,
+              "secondary_N_minus_P_shift_nonfocal": 0.0,
+              "secondary_P_R2_D_value_focal": 0.0,
+              "secondary_P_R2_D_value_nonfocal": 0.0
+            },
+            "status": "PASS"
+          },
+          "nf4": {
+            "differing_field_count": 0,
+            "differing_json_pointers": [],
+            "generation_hashes_and_text_stable": true,
+            "note": "Repeat executions are a stability check, not independent cases.",
+            "repeat1_sha256": "c5757029f5b9ff486a1cdc6519094b08c1dbb1e31ab87b4fb01bba8ea3246b30",
+            "repeat2_sha256": "c5757029f5b9ff486a1cdc6519094b08c1dbb1e31ab87b4fb01bba8ea3246b30",
+            "scalar_repeat2_minus_repeat1": {
+              "E1_focal_margin_damage": 0.0,
+              "E1_focal_minus_nonfocal": 0.0,
+              "E1_nonfocal_margin_damage": 0.0,
+              "E3_N_R2_D_full_KV_focal": 0.0,
+              "E3_N_R2_D_full_KV_nonfocal": 0.0,
+              "E3_N_R2_D_value_focal": 0.0,
+              "E3_N_R2_D_value_nonfocal": 0.0,
+              "secondary_N_minus_P_shift_focal": 0.0,
+              "secondary_N_minus_P_shift_nonfocal": 0.0,
+              "secondary_P_R2_D_value_focal": 0.0,
+              "secondary_P_R2_D_value_nonfocal": 0.0
+            },
+            "status": "PASS"
+          }
+        },
+        "id": "A8-repeat2-governs-stability"
+      },
+      {
+        "evaluation": "OBSERVED",
+        "evidence": {
+          "component_reuse_does_not_inherit_v12_eligibility": true,
+          "efficacy_claim_authorized": false,
+          "formal_v12_decision_eligible": false,
+          "population_claim_authorized": false,
+          "quantization_dependence_claim_authorized": false,
+          "semantic_evidence_eligible": false,
+          "v12_reentry_authorized": false
+        },
+        "id": "A8-formal-and-claim-boundaries-remain-closed"
+      },
+      {
+        "evaluation": "CONDITION_NOT_TRIGGERED",
+        "evidence": {
+          "matched_repeat1_present": true,
+          "p02_hard_eligibility": "PASS",
+          "repeat2_rider_status": "MATCHED_COMPLETE"
+        },
+        "id": "A8-technical-failure-conditional"
+      },
+      {
+        "evaluation": "ANALYZER_OUTPUT_GRID_CHECKED_BROADER_OPERATIONS_NOT_EVALUABLE",
+        "evidence": {
+          "no_result_driven_dollar_or_minute_extension": "NOT_EVALUABLE_FROM_P01_P02_ANALYZER_OUTPUTS",
+          "no_same_day_P03": "NOT_EVALUABLE_FROM_P01_P02_ANALYZER_OUTPUTS",
+          "p02_case_ids": [
+            "e01"
+          ],
+          "p02_regimes": [
+            "nf4",
+            "bf16"
+          ],
+          "p02_repeats": [
+            1,
+            2
+          ],
+          "repeat2_rider_status": "MATCHED_COMPLETE"
+        },
+        "id": "A8-no-value-driven-grid-extension"
+      }
+    ],
+    "expectation_count": 13,
+    "source": "notes/20260712A8-sol-p02-conditional-replication-expectations-and-launch-decision.md"
+  },
+  "inference_boundary": {
+    "confidence_intervals_computed": false,
+    "efficacy_claim_authorized": false,
+    "equivalence_test_computed": false,
+    "formal_v12_decision_eligible": false,
+    "note": "Exact one-fixture, cross-host conditional-replication comparison; no causal, semantic, efficacy, quantization, or population inference.",
+    "p_values_computed": false,
+    "population_claim_authorized": false,
+    "quantization_dependence_claim_authorized": false,
+    "ratios_computed": false,
+    "semantic_transfer_claim_authorized": false,
+    "thresholds_added": false,
+    "v12_reentry_authorized": false
+  },
+  "p01": {
+    "boundary": {
+      "bf16_repeat2": {
+        "error_type": "KeyboardInterrupt",
+        "phase_a_present": false,
+        "status": "ERROR",
+        "treatment_present": false
+      },
+      "complete_outcome_keys": [
+        [
+          "bf16",
+          "e01",
+          1
+        ],
+        [
+          "nf4",
+          "e01",
+          1
+        ],
+        [
+          "nf4",
+          "e01",
+          2
+        ]
+      ],
+      "component_reuse_does_not_inherit_v12_eligibility": true,
+      "fixed_fixture_exploratory_only": true,
+      "formal_v12_decision_eligible": false,
+      "runner_terminal_status": "ERROR",
+      "semantic_evidence_eligible": false,
+      "status": "POST_RUN_PARTIAL_DESCRIPTIVE",
+      "terminal_partial_run": true,
+      "v12_reentry_authorized": false
+    },
+    "input_artifact": {
+      "path": "/Users/jeb/experimentation/results/precision_probe_p01_analysis/precision-probe-p01-postrun-partial-descriptive_Qwen3-30B-A3B-Instruct-2507_20260712T100530891850Z.json",
+      "sha256": "c370d1cc2dbe2a9ee5db64a19ce8837f9879f3b8fc008210756d2985d41aac7e",
+      "size_bytes": 675347
+    },
+    "repeat1": {
+      "bf16": {
+        "estimands": {
+          "E1_focal_margin_damage": 23.65581703186035,
+          "E1_nonfocal_margin_damage": 15.45745587348938,
+          "N_R2_D_full_KV_focal": 0.23293495178222656,
+          "N_R2_D_full_KV_nonfocal": -0.11328530311584473,
+          "N_R2_D_value_focal": 0.03940010070800781,
+          "N_R2_D_value_nonfocal": 0.041535139083862305,
+          "N_minus_P_value_shift_focal": 0.027296066284179688,
+          "N_minus_P_value_shift_nonfocal": -0.11368775367736816,
+          "P_R2_D_value_focal": 0.012104034423828125,
+          "P_R2_D_value_nonfocal": 0.15522289276123047
+        },
+        "generations": {
+          "focal": {
+            "canonical_sha256": [
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ]
+            ],
+            "decoded_content": [
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          },
+          "nonfocal": {
+            "canonical_sha256": [
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ]
+            ],
+            "decoded_content": [
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          }
+        },
+        "placebo": {
+          "canonical_diagnostics_sha256": "b00f95e6cc70763ee28d5730f8e3c9aa399adab72d018341afd66fd7748298ad",
+          "failed_layer_index": 1,
+          "failed_row_index": 77,
+          "movement_from_fresh": null,
+          "scores_present": false,
+          "source_result_hashes": {
+            "correct_source_rows_sha256": "8511d20996c905e358427ba8272eadc2e464419101de9c979c39f782cbb0c08f",
+            "fresh_source_rows_sha256": "1c4e6e6d14a07d025d63cb176e7005e505e247698ca579453a01e06c5aac621f",
+            "wrong_source_rows_sha256": "febd6eb33e26f1c0df606475ddffd4488d9ac567e079d34dd350175b83a802e2"
+          },
+          "status": "PLACEBO_UNAVAILABLE"
+        }
+      },
+      "nf4": {
+        "estimands": {
+          "E1_focal_margin_damage": 22.100759506225586,
+          "E1_nonfocal_margin_damage": 14.532580137252808,
+          "N_R2_D_full_KV_focal": -0.34577369689941406,
+          "N_R2_D_full_KV_nonfocal": -0.07787084579467773,
+          "N_R2_D_value_focal": 0.10310935974121094,
+          "N_R2_D_value_nonfocal": 0.16139435768127441,
+          "N_minus_P_value_shift_focal": 0.07027053833007812,
+          "N_minus_P_value_shift_nonfocal": 0.15698671340942383,
+          "P_R2_D_value_focal": 0.03283882141113281,
+          "P_R2_D_value_nonfocal": 0.004407644271850586
+        },
+        "generations": {
+          "focal": {
+            "canonical_sha256": [
+              "7e51952cd2f973a591fb192d219a3a9ebcfab7723c56ac72302c64f4b17e2c3d",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                61116,
+                220,
+                19,
+                13,
+                23,
+                572,
+                537,
+                4091,
+                1212,
+                279,
+                12433,
+                23042,
+                6589,
+                5912,
+                13
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ]
+            ],
+            "decoded_content": [
+              "Atlas 4.8 was not selected under the recorded mandatory selection rule.",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          },
+          "nonfocal": {
+            "canonical_sha256": [
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ]
+            ],
+            "decoded_content": [
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          }
+        },
+        "placebo": {
+          "canonical_diagnostics_sha256": "e656cc3f25df22b9ed90874682ee5f611c0ff228682d952cf67674a49df4e4fc",
+          "failed_layer_index": 1,
+          "failed_row_index": 76,
+          "movement_from_fresh": null,
+          "scores_present": false,
+          "source_result_hashes": {
+            "correct_source_rows_sha256": "31564b7cc14288991ce96c2fd665b585b196998a6b81c8a4b2a49ea87ee5cdac",
+            "fresh_source_rows_sha256": "f29c66452411a01a65555e7991a2ae378d42b54d564e3b5d5234d292084d15f4",
+            "wrong_source_rows_sha256": "bb84cc1b27ae72ea5631e2c2bf861850db5724474abd8995761990f5a7406888"
+          },
+          "status": "PLACEBO_UNAVAILABLE"
+        }
+      }
+    },
+    "repeat_stability": {
+      "bf16": {
+        "repeat2_status": "ERROR",
+        "status": "NOT_AVAILABLE_DOCUMENTED_TERMINAL_PARTIAL"
+      },
+      "nf4": {
+        "differing_field_count": 0,
+        "differing_json_pointers": [],
+        "note": "Execution repeats are a determinism check, not independent cases.",
+        "repeat1_canonical_sha256": "cb12664c0c9ab46c9f8a96b63039823b634a5bead92917513d7b48660088b31f",
+        "repeat2_canonical_sha256": "cb12664c0c9ab46c9f8a96b63039823b634a5bead92917513d7b48660088b31f",
+        "stable": true,
+        "status": "PASS"
+      }
+    },
+    "runtime_facts": {
+      "matched_runtime_status": "PASS",
+      "matched_runtime_view_sha256": "5932a3b726b80a396a0a67b2262fe6980d7a080e9c4f427d477b4bac44aff726",
+      "regimes": {
+        "bf16": {
+          "host": {
+            "compute_capability": [
+              8,
+              0
+            ],
+            "driver_version": "580.159.04",
+            "gpu_name": "NVIDIA A100 80GB PCIe",
+            "gpu_uuid": "GPU-470c3e18-9f87-0a04-f3bd-e974d59e1903",
+            "memory_total_mib": 81920,
+            "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+            "torch_cuda_version": "13.0"
+          },
+          "runtime": {
+            "architecture": "Qwen3MoeForCausalLM",
+            "attention_backend": "eager",
+            "dependency_versions": {
+              "accelerate": "1.14.0",
+              "bitsandbytes": "0.49.2",
+              "huggingface-hub": "0.36.2",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2",
+              "torch": "2.12.1",
+              "transformers": "4.57.6"
+            },
+            "eos_ids": [
+              151643,
+              151645
+            ],
+            "fingerprint_sha256": "4a6929f593b1c09b5bc2092193332567c98136cd19045ce1491a6814f181f725",
+            "geometry": {
+              "attention_heads": 32,
+              "experts_per_layer": 128,
+              "head_dim": 128,
+              "hidden_size": 2048,
+              "kv_heads": 4,
+              "layers": 48,
+              "moe_intermediate_size": 768,
+              "rope_theta": 10000000.0,
+              "vocab_size": 151936
+            },
+            "kv_dtype": "torch.bfloat16",
+            "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+            "repository_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+            "requested_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "resolved_snapshot": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "weight_runtime": "bf16"
+          }
+        },
+        "nf4": {
+          "host": {
+            "compute_capability": [
+              8,
+              0
+            ],
+            "driver_version": "580.159.04",
+            "gpu_name": "NVIDIA A100 80GB PCIe",
+            "gpu_uuid": "GPU-470c3e18-9f87-0a04-f3bd-e974d59e1903",
+            "memory_total_mib": 81920,
+            "platform": "Linux-6.8.0-124-generic-x86_64-with-glibc2.35",
+            "torch_cuda_version": "13.0"
+          },
+          "runtime": {
+            "architecture": "Qwen3MoeForCausalLM",
+            "attention_backend": "eager",
+            "dependency_versions": {
+              "accelerate": "1.14.0",
+              "bitsandbytes": "0.49.2",
+              "huggingface-hub": "0.36.2",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2",
+              "torch": "2.12.1",
+              "transformers": "4.57.6"
+            },
+            "eos_ids": [
+              151643,
+              151645
+            ],
+            "fingerprint_sha256": "6d9a6cb8ae38b4cbed171baba915fd99f8f2c89d63fce6fa5d7f52350aea33e6",
+            "geometry": {
+              "attention_heads": 32,
+              "experts_per_layer": 128,
+              "head_dim": 128,
+              "hidden_size": 2048,
+              "kv_heads": 4,
+              "layers": 48,
+              "moe_intermediate_size": 768,
+              "rope_theta": 10000000.0,
+              "vocab_size": 151936
+            },
+            "kv_dtype": "torch.bfloat16",
+            "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+            "repository_commit": "f67d631e8a31177118c62eb0da8b8acfc059de41",
+            "requested_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "resolved_snapshot": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "weight_runtime": "bitsandbytes-nf4-double-quant-bf16-compute"
+          }
+        }
+      }
+    }
+  },
+  "p02": {
+    "boundary": {
+      "component_reuse_does_not_inherit_v12_eligibility": true,
+      "fixed_fixture_exploratory_only": true,
+      "formal_v12_decision_eligible": false,
+      "hard_eligibility": "PASS",
+      "matched_runtime_status": "PASS",
+      "outer_pod_receipt_status": "PASS",
+      "primary_dataset": "matched repeat 1 only",
+      "repeat2_rider_status": "MATCHED_COMPLETE",
+      "runner_terminal_status": "COMPLETE",
+      "semantic_evidence_eligible": false,
+      "v12_reentry_authorized": false
+    },
+    "input_artifact": {
+      "path": "/Users/jeb/experimentation/results/precision_probe_p02_analysis/precision-probe-p02-independent-analysis_Qwen3-30B-A3B-Instruct-2507_20260712T114104839688Z.json",
+      "sha256": "7b4b77e178f0b50d532459512dd028a044877627d4490197510eba135d5ab551",
+      "size_bytes": 294767
+    },
+    "repeat1": {
+      "bf16": {
+        "estimands": {
+          "E1_focal_margin_damage": 23.65581703186035,
+          "E1_nonfocal_margin_damage": 15.45745587348938,
+          "N_R2_D_full_KV_focal": 0.23293495178222656,
+          "N_R2_D_full_KV_nonfocal": -0.11328530311584473,
+          "N_R2_D_value_focal": 0.03940010070800781,
+          "N_R2_D_value_nonfocal": 0.041535139083862305,
+          "N_minus_P_value_shift_focal": 0.027296066284179688,
+          "N_minus_P_value_shift_nonfocal": -0.11368775367736816,
+          "P_R2_D_value_focal": 0.012104034423828125,
+          "P_R2_D_value_nonfocal": 0.15522289276123047
+        },
+        "generations": {
+          "focal": {
+            "canonical_sha256": [
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ]
+            ],
+            "decoded_content": [
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          },
+          "nonfocal": {
+            "canonical_sha256": [
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ]
+            ],
+            "decoded_content": [
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          }
+        },
+        "placebo": {
+          "canonical_diagnostics_sha256": "b00f95e6cc70763ee28d5730f8e3c9aa399adab72d018341afd66fd7748298ad",
+          "failed_layer_index": 1,
+          "failed_row_index": 77,
+          "movement_from_fresh": null,
+          "scores_present": false,
+          "source_result_hashes": {
+            "correct_source_rows_sha256": "8511d20996c905e358427ba8272eadc2e464419101de9c979c39f782cbb0c08f",
+            "fresh_source_rows_sha256": "1c4e6e6d14a07d025d63cb176e7005e505e247698ca579453a01e06c5aac621f",
+            "wrong_source_rows_sha256": "febd6eb33e26f1c0df606475ddffd4488d9ac567e079d34dd350175b83a802e2"
+          },
+          "status": "PLACEBO_UNAVAILABLE"
+        }
+      },
+      "nf4": {
+        "estimands": {
+          "E1_focal_margin_damage": 22.100759506225586,
+          "E1_nonfocal_margin_damage": 14.532580137252808,
+          "N_R2_D_full_KV_focal": -0.34577369689941406,
+          "N_R2_D_full_KV_nonfocal": -0.07787084579467773,
+          "N_R2_D_value_focal": 0.10310935974121094,
+          "N_R2_D_value_nonfocal": 0.16139435768127441,
+          "N_minus_P_value_shift_focal": 0.07027053833007812,
+          "N_minus_P_value_shift_nonfocal": 0.15698671340942383,
+          "P_R2_D_value_focal": 0.03283882141113281,
+          "P_R2_D_value_nonfocal": 0.004407644271850586
+        },
+        "generations": {
+          "focal": {
+            "canonical_sha256": [
+              "7e51952cd2f973a591fb192d219a3a9ebcfab7723c56ac72302c64f4b17e2c3d",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02",
+              "a8098a5480e15d63744644fc9b2ff7ec417e1eb35b8c67b0aa3a15741c9a9f02"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              true,
+              true,
+              true,
+              true
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                61116,
+                220,
+                19,
+                13,
+                23,
+                572,
+                537,
+                4091,
+                1212,
+                279,
+                12433,
+                23042,
+                6589,
+                5912,
+                13
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ],
+              [
+                43466,
+                220,
+                18
+              ]
+            ],
+            "decoded_content": [
+              "Atlas 4.8 was not selected under the recorded mandatory selection rule.",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3",
+              "Ring 3"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          },
+          "nonfocal": {
+            "canonical_sha256": [
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81",
+              "0f6589e4ee7d2f7d2bc6a2216c565d768638ef99eefec6801c717cc19f842f81"
+            ],
+            "cap_hit": [
+              false,
+              false,
+              false,
+              false,
+              false
+            ],
+            "cell_order": [
+              "FF",
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "change_vector": [
+              false,
+              false,
+              false,
+              false
+            ],
+            "change_vector_cell_order": [
+              "FC",
+              "FW",
+              "CC",
+              "WW"
+            ],
+            "content_ids": [
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ],
+              [
+                18,
+                15,
+                2849
+              ]
+            ],
+            "decoded_content": [
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days",
+              "30 days"
+            ],
+            "stop_reasons": [
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos",
+              "model_eos"
+            ]
+          }
+        },
+        "placebo": {
+          "canonical_diagnostics_sha256": "e656cc3f25df22b9ed90874682ee5f611c0ff228682d952cf67674a49df4e4fc",
+          "failed_layer_index": 1,
+          "failed_row_index": 76,
+          "movement_from_fresh": null,
+          "scores_present": false,
+          "source_result_hashes": {
+            "correct_source_rows_sha256": "31564b7cc14288991ce96c2fd665b585b196998a6b81c8a4b2a49ea87ee5cdac",
+            "fresh_source_rows_sha256": "f29c66452411a01a65555e7991a2ae378d42b54d564e3b5d5234d292084d15f4",
+            "wrong_source_rows_sha256": "bb84cc1b27ae72ea5631e2c2bf861850db5724474abd8995761990f5a7406888"
+          },
+          "status": "PLACEBO_UNAVAILABLE"
+        }
+      }
+    },
+    "repeat_stability": {
+      "bf16": {
+        "differing_field_count": 0,
+        "differing_json_pointers": [],
+        "generation_hashes_and_text_stable": true,
+        "note": "Repeat executions are a stability check, not independent cases.",
+        "repeat1_sha256": "2755318886974454f2d8c0174c85365f87ef7d0a447efa951da59db37082a08f",
+        "repeat2_sha256": "2755318886974454f2d8c0174c85365f87ef7d0a447efa951da59db37082a08f",
+        "scalar_repeat2_minus_repeat1": {
+          "E1_focal_margin_damage": 0.0,
+          "E1_focal_minus_nonfocal": 0.0,
+          "E1_nonfocal_margin_damage": 0.0,
+          "E3_N_R2_D_full_KV_focal": 0.0,
+          "E3_N_R2_D_full_KV_nonfocal": 0.0,
+          "E3_N_R2_D_value_focal": 0.0,
+          "E3_N_R2_D_value_nonfocal": 0.0,
+          "secondary_N_minus_P_shift_focal": 0.0,
+          "secondary_N_minus_P_shift_nonfocal": 0.0,
+          "secondary_P_R2_D_value_focal": 0.0,
+          "secondary_P_R2_D_value_nonfocal": 0.0
+        },
+        "status": "PASS"
+      },
+      "nf4": {
+        "differing_field_count": 0,
+        "differing_json_pointers": [],
+        "generation_hashes_and_text_stable": true,
+        "note": "Repeat executions are a stability check, not independent cases.",
+        "repeat1_sha256": "c5757029f5b9ff486a1cdc6519094b08c1dbb1e31ab87b4fb01bba8ea3246b30",
+        "repeat2_sha256": "c5757029f5b9ff486a1cdc6519094b08c1dbb1e31ab87b4fb01bba8ea3246b30",
+        "scalar_repeat2_minus_repeat1": {
+          "E1_focal_margin_damage": 0.0,
+          "E1_focal_minus_nonfocal": 0.0,
+          "E1_nonfocal_margin_damage": 0.0,
+          "E3_N_R2_D_full_KV_focal": 0.0,
+          "E3_N_R2_D_full_KV_nonfocal": 0.0,
+          "E3_N_R2_D_value_focal": 0.0,
+          "E3_N_R2_D_value_nonfocal": 0.0,
+          "secondary_N_minus_P_shift_focal": 0.0,
+          "secondary_N_minus_P_shift_nonfocal": 0.0,
+          "secondary_P_R2_D_value_focal": 0.0,
+          "secondary_P_R2_D_value_nonfocal": 0.0
+        },
+        "status": "PASS"
+      }
+    },
+    "runtime_facts": {
+      "matched_runtime_status": "PASS",
+      "matched_runtime_view_sha256": "9ec7f4ef09c9a650e6e4d64db4d0a21c9d6517b77a0ae2b602e8eae7747a233d",
+      "regimes": {
+        "bf16": {
+          "host": {
+            "compute_capability": [
+              8,
+              0
+            ],
+            "driver_version": "580.159.03",
+            "gpu_name": "NVIDIA A100 80GB PCIe",
+            "gpu_uuid": "GPU-8a42830e-71ab-fb23-351d-125ccbd5bdb2",
+            "memory_total_mib": 81920,
+            "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+            "torch_cuda_version": "13.0"
+          },
+          "runtime": {
+            "architecture": "Qwen3MoeForCausalLM",
+            "attention_backend": "eager",
+            "dependency_versions": {
+              "accelerate": "1.14.0",
+              "bitsandbytes": "0.49.2",
+              "huggingface-hub": "0.36.2",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2",
+              "torch": "2.12.1",
+              "transformers": "4.57.6"
+            },
+            "eos_ids": [
+              151643,
+              151645
+            ],
+            "fingerprint_sha256": "9a5b029ec6633bfe1d4eb4eebe62f57d2afb975d2033a550430732c3a737e020",
+            "geometry": {
+              "attention_heads": 32,
+              "experts_per_layer": 128,
+              "head_dim": 128,
+              "hidden_size": 2048,
+              "kv_heads": 4,
+              "layers": 48,
+              "moe_intermediate_size": 768,
+              "rope_theta": 10000000.0,
+              "vocab_size": 151936
+            },
+            "kv_dtype": "torch.bfloat16",
+            "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+            "repository_commit": "a40b1dffe8d7bf5e310d308e22d26fef126a73b7",
+            "requested_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "resolved_snapshot": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "weight_runtime": "bf16"
+          }
+        },
+        "nf4": {
+          "host": {
+            "compute_capability": [
+              8,
+              0
+            ],
+            "driver_version": "580.159.03",
+            "gpu_name": "NVIDIA A100 80GB PCIe",
+            "gpu_uuid": "GPU-8a42830e-71ab-fb23-351d-125ccbd5bdb2",
+            "memory_total_mib": 81920,
+            "platform": "Linux-6.8.0-111-generic-x86_64-with-glibc2.35",
+            "torch_cuda_version": "13.0"
+          },
+          "runtime": {
+            "architecture": "Qwen3MoeForCausalLM",
+            "attention_backend": "eager",
+            "dependency_versions": {
+              "accelerate": "1.14.0",
+              "bitsandbytes": "0.49.2",
+              "huggingface-hub": "0.36.2",
+              "safetensors": "0.8.0",
+              "tokenizers": "0.22.2",
+              "torch": "2.12.1",
+              "transformers": "4.57.6"
+            },
+            "eos_ids": [
+              151643,
+              151645
+            ],
+            "fingerprint_sha256": "8a5738723600b07bb2e3761e423cd7094407fe840f6e68ff7baaa068d87f8980",
+            "geometry": {
+              "attention_heads": 32,
+              "experts_per_layer": 128,
+              "head_dim": 128,
+              "hidden_size": 2048,
+              "kv_heads": 4,
+              "layers": 48,
+              "moe_intermediate_size": 768,
+              "rope_theta": 10000000.0,
+              "vocab_size": 151936
+            },
+            "kv_dtype": "torch.bfloat16",
+            "model_id": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+            "repository_commit": "a40b1dffe8d7bf5e310d308e22d26fef126a73b7",
+            "requested_revision": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "resolved_snapshot": "0d7cf23991f47feeb3a57ecb4c9cee8ea4a17bfe",
+            "weight_runtime": "bitsandbytes-nf4-double-quant-bf16-compute"
+          }
+        }
+      }
+    }
+  },
+  "p02_minus_p01": {
+    "by_regime": {
+      "bf16": {
+        "E1_focal_margin_damage": 0.0,
+        "E1_nonfocal_margin_damage": 0.0,
+        "N_R2_D_full_KV_focal": 0.0,
+        "N_R2_D_full_KV_nonfocal": 0.0,
+        "N_R2_D_value_focal": 0.0,
+        "N_R2_D_value_nonfocal": 0.0,
+        "N_minus_P_value_shift_focal": 0.0,
+        "N_minus_P_value_shift_nonfocal": 0.0,
+        "P_R2_D_value_focal": 0.0,
+        "P_R2_D_value_nonfocal": 0.0
+      },
+      "nf4": {
+        "E1_focal_margin_damage": 0.0,
+        "E1_nonfocal_margin_damage": 0.0,
+        "N_R2_D_full_KV_focal": 0.0,
+        "N_R2_D_full_KV_nonfocal": 0.0,
+        "N_R2_D_value_focal": 0.0,
+        "N_R2_D_value_nonfocal": 0.0,
+        "N_minus_P_value_shift_focal": 0.0,
+        "N_minus_P_value_shift_nonfocal": 0.0,
+        "P_R2_D_value_focal": 0.0,
+        "P_R2_D_value_nonfocal": 0.0
+      }
+    },
+    "within_protocol_delta_difference": {
+      "E1_focal_margin_damage": 0.0,
+      "E1_nonfocal_margin_damage": 0.0,
+      "N_R2_D_full_KV_focal": 0.0,
+      "N_R2_D_full_KV_nonfocal": 0.0,
+      "N_R2_D_value_focal": 0.0,
+      "N_R2_D_value_nonfocal": 0.0,
+      "N_minus_P_value_shift_focal": 0.0,
+      "N_minus_P_value_shift_nonfocal": 0.0,
+      "P_R2_D_value_focal": 0.0,
+      "P_R2_D_value_nonfocal": 0.0
+    }
+  },
+  "schema": "precision_probe_p01_p02_exact_comparison_v1",
+  "within_protocol_deltas": {
+    "p01_nf4_minus_bf16": {
+      "E1_focal_margin_damage": -1.5550575256347656,
+      "E1_nonfocal_margin_damage": -0.9248757362365723,
+      "N_R2_D_full_KV_focal": -0.5787086486816406,
+      "N_R2_D_full_KV_nonfocal": 0.03541445732116699,
+      "N_R2_D_value_focal": 0.06370925903320312,
+      "N_R2_D_value_nonfocal": 0.11985921859741211,
+      "N_minus_P_value_shift_focal": 0.04297447204589844,
+      "N_minus_P_value_shift_nonfocal": 0.270674467086792,
+      "P_R2_D_value_focal": 0.020734786987304688,
+      "P_R2_D_value_nonfocal": -0.15081524848937988
+    },
+    "p02_nf4_minus_bf16": {
+      "E1_focal_margin_damage": -1.5550575256347656,
+      "E1_nonfocal_margin_damage": -0.9248757362365723,
+      "N_R2_D_full_KV_focal": -0.5787086486816406,
+      "N_R2_D_full_KV_nonfocal": 0.03541445732116699,
+      "N_R2_D_value_focal": 0.06370925903320312,
+      "N_R2_D_value_nonfocal": 0.11985921859741211,
+      "N_minus_P_value_shift_focal": 0.04297447204589844,
+      "N_minus_P_value_shift_nonfocal": 0.270674467086792,
+      "P_R2_D_value_focal": 0.020734786987304688,
+      "P_R2_D_value_nonfocal": -0.15081524848937988
+    }
+  }
+}
