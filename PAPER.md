@@ -393,7 +393,7 @@ We consider this the paper's most durable contribution. Each entry is a failure 
 | # | Incident | Consequence | Guardrail |
 |---|---|---|---|
 | 8 | **Container identity is not host identity.** The same Secure A100 type and image surfaced NVIDIA drivers 580.159.03 and 550.90.12; pinned CUDA initialized on only one. | Irreproducible runtime; wasted provisioning. It explains no scientific result above. | Admission-gate the actual GPU, driver, and memory before bootstrap. |
-| 10 | **Confirmation implementation ran ahead of an observed exact-model signal.** The v11 pipeline and draft-corpus work were built before such a signal; the planned paid twelve-case execution was then paused before running. E01 did not meet the later re-entry standard either. | Sunk implementation and authoring effort created pressure toward unjustified execution. | Preregister and design early, but sequence large implementation and paid collection behind an observed, gated signal; write the re-entry standard before you want it. |
+| 10 | **The project optimized efficient stopping while the owner's terminal objective was maximum confidence.** The v11 pipeline and draft corpus were built before an exact-model signal, but the later gates then treated the available GPU budget mainly as a ceiling and stopped after one semantic fixture. Most of that budget remained unused, and the nominal twelve-case plan was itself only an underpowered floor. | Considerable implementation and review effort still produced no powered upper bound or equivalence result. Process rigor and repeated goal summaries made the drift sound principled instead of exposing the gap between target N/spend and observed N/spend. | Before execution, bind the terminal estimand, minimum independent N, interval or stopping target, and spend policy in one dashboard. At every gate, report target minus achieved values explicitly; distinguish “this apparatus should stop” from “the owner's inferential objective has been achieved.” |
 
 The unifying lesson is not that rigor failed. Hashes were checked, partitions held, releases were sealed — and several of these failures happened anyway, because rigorous checks of *execution* can still validate the wrong *estimand* when the literal fixture, dtype, control, or stopping rule does not test the generalization being claimed. The check you need is the one aimed at the assumption you did not know you were making.
 
@@ -414,6 +414,10 @@ The unifying lesson is not that rigor failed. Hashes were checked, partitions he
 
 - Whether generation-time state on this model carries recoverable history-specific semantic content at all (the redesign stopped before answering).
 - Whether any training-free transplant family can recover a practically meaningful fraction of compaction damage.
+- A statistically powered upper or equivalence bound on recovery magnitude. The
+  v12/e01/P01/P02 material contains one independent semantic fixture and carries
+  no interval; repeated executions of that fixture measure computational
+  repeatability, not sampling uncertainty.
 - Any effect — positive, negative, or null — on real agent task outcomes.
 - Any cross-architecture generalization.
 - Whether weight quantization or KV-cache dtype changes the effect. The precision screen's exactly reproducible regime differences on one fixture do not answer this: NF4 versus bfloat16 bundles weight representation with kernel implementation, and KV-cache storage was bfloat16 in both (§8.4).
@@ -452,7 +456,7 @@ A.7 records the cutoffs and arithmetic; Appendix B points to the full ledgers.
 
 ## 11. Why no final paired live-agent evaluation ran, and what one would require
 
-No valid paired live-agent evaluation of a treatment that cleared the mechanistic ladder was run, and none is authorized. A randomized paired trial of one frozen bundled intervention could still answer a black-box efficacy question — whether that exact system changes task outcomes — without proving its mechanism. It could not attribute any movement to recovered semantic cache content. This project chose mechanism clearance as its launch policy. Given the unstable schedule-sensitive candidate, missing matched control, absence of a task source that had simultaneously cleared capability and compaction-damage gates, and the closed data-collection budget, another agent trial had poor expected information value. That is a project decision, not a causal law.
+No valid paired live-agent evaluation of a treatment that cleared the mechanistic ladder was run, and none is authorized. A randomized paired trial of one frozen bundled intervention could still answer a black-box efficacy question — whether that exact system changes task outcomes — without proving its mechanism. It could not attribute any movement to recovered semantic cache content. This project chose mechanism clearance as its launch policy. Given the unstable schedule-sensitive candidate, missing matched control, and absence of a task source that had simultaneously cleared capability and compaction-damage gates, another agent trial under this apparatus had poor expected information value. The project stopped while most of the available Pod budget remained unused. That is a project decision—not a powered null, an achieved upper bound, or a causal law.
 
 Earlier exploratory agent episodes explain the caution:
 
