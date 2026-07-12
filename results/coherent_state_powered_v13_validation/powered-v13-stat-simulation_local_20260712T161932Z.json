@@ -1,0 +1,171 @@
+{
+  "alpha_ledger": {
+    "events": [
+      {
+        "alpha": 0.0025,
+        "cell": "full_kv",
+        "n_total": 24
+      },
+      {
+        "alpha": 0.0025,
+        "cell": "value_only",
+        "n_total": 24
+      },
+      {
+        "alpha": 0.005,
+        "cell": "full_kv",
+        "n_total": 32
+      },
+      {
+        "alpha": 0.005,
+        "cell": "value_only",
+        "n_total": 32
+      },
+      {
+        "alpha": 0.0175,
+        "cell": "full_kv",
+        "n_total": 48
+      },
+      {
+        "alpha": 0.0175,
+        "cell": "value_only",
+        "n_total": 48
+      }
+    ],
+    "family_alpha": 0.05,
+    "spent": 0.05
+  },
+  "design_id": "coherent-state-powered-successor-v13",
+  "interpretation": {
+    "normal_gate": "simultaneous_noncoverage_rate <= 0.05 + Monte Carlo tolerance",
+    "stress": "diagnostic; t undercoverage is reported and never relabeled distribution-free"
+  },
+  "normal_null": {
+    "0.0": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.21663545639266538,
+      "selected_counts": {
+        "24": 5320,
+        "32": 39965,
+        "48": 154715
+      },
+      "selected_rates": {
+        "24": 0.0266,
+        "32": 0.199825,
+        "48": 0.773575
+      },
+      "simultaneous_noncoverage_rate": 0.01977
+    },
+    "0.5": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.2119161944192539,
+      "selected_counts": {
+        "24": 11395,
+        "32": 49229,
+        "48": 139376
+      },
+      "selected_rates": {
+        "24": 0.056975,
+        "32": 0.246145,
+        "48": 0.69688
+      },
+      "simultaneous_noncoverage_rate": 0.009495
+    },
+    "0.9": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.2050076757704244,
+      "selected_counts": {
+        "24": 22221,
+        "32": 58140,
+        "48": 119639
+      },
+      "selected_rates": {
+        "24": 0.111105,
+        "32": 0.2907,
+        "48": 0.598195
+      },
+      "simultaneous_noncoverage_rate": 0.00239
+    }
+  },
+  "normal_positive": {
+    "false_bound_rate": 0.00159,
+    "mean_selected_primary_ucb": 0.46187104044563326,
+    "selected_counts": {
+      "24": 5,
+      "32": 42,
+      "48": 199953
+    },
+    "selected_rates": {
+      "24": 2.5e-05,
+      "32": 0.00021,
+      "48": 0.999765
+    },
+    "simultaneous_noncoverage_rate": 0.030165
+  },
+  "normal_trials": 200000,
+  "schema": "coherent_state_powered_v13_statistical_simulation_v1",
+  "seed": 20260712,
+  "stress_null": {
+    "rare_responder": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.22083900305228318,
+      "selected_counts": {
+        "24": 4208,
+        "32": 245,
+        "48": 45547
+      },
+      "selected_rates": {
+        "24": 0.08416,
+        "32": 0.0049,
+        "48": 0.91094
+      },
+      "simultaneous_noncoverage_rate": 0.19418
+    },
+    "single_outlier": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.2307128898119349,
+      "selected_counts": {
+        "24": 5743,
+        "32": 8885,
+        "48": 35372
+      },
+      "selected_rates": {
+        "24": 0.11486,
+        "32": 0.1777,
+        "48": 0.70744
+      },
+      "simultaneous_noncoverage_rate": 0.0422
+    },
+    "skew_lognormal": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.24302619062398378,
+      "selected_counts": {
+        "24": 6361,
+        "32": 10731,
+        "48": 32908
+      },
+      "selected_rates": {
+        "24": 0.12722,
+        "32": 0.21462,
+        "48": 0.65816
+      },
+      "simultaneous_noncoverage_rate": 0.10284
+    },
+    "t3": {
+      "false_bound_rate": 0.0,
+      "mean_selected_primary_ucb": 0.22184570014865934,
+      "selected_counts": {
+        "24": 3072,
+        "32": 13072,
+        "48": 33856
+      },
+      "selected_rates": {
+        "24": 0.06144,
+        "32": 0.26144,
+        "48": 0.67712
+      },
+      "simultaneous_noncoverage_rate": 0.01344
+    }
+  },
+  "stress_trials": 50000
+}
