@@ -140,9 +140,22 @@ def command_watchdog_probe(args: argparse.Namespace) -> None:
             lifecycle_status=status, remote_state=None))
     provider = RunPodProvider(state_path=args.pod_state)
     endpoint = _endpoint(provider, args.pod_state)
+    state_path = REMOTE_ARTIFACTS + "/partials/job-state.json"
+    pid_path = REMOTE_ARTIFACTS.rsplit("/", 1)[0] + "/job.pid"
+    remote_probe = (
+        "set -euo pipefail; "
+        f"state=$(cat {shlex.quote(state_path)}); "
+        "case \"$state\" in "
+        "*'\"state\":\"RUNNING\"'*) "
+        f"pid=$(cat {shlex.quote(pid_path)} 2>/dev/null || true); "
+        "if case \"$pid\" in ''|*[!0-9]*) false;; *) true;; esac "
+        "&& kill -0 \"$pid\" 2>/dev/null; then printf '%s\\n' \"$state\"; "
+        "else printf '{\"state\":\"DEAD\"}\\n'; fi ;; "
+        "*) printf '%s\\n' \"$state\" ;; esac"
+    )
     command = [
         *_ssh_transport(args.ssh_key, endpoint), "-n", f"root@{endpoint[0]}",
-        f"cat {shlex.quote(REMOTE_ARTIFACTS + '/partials/job-state.json')}",
+        remote_probe,
     ]
     try:
         observed = subprocess.run(

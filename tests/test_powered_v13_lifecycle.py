@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import argparse
 from copy import deepcopy
 from decimal import Decimal
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -993,6 +995,45 @@ def test_cli_probe_exits_and_harvest_manifest_are_machine_clean(tmp_path):
     assert completed.returncode == 0, completed.stderr
     assert json.loads(completed.stdout)["file_count"] == 4
     assert output.is_file()
+
+
+def test_live_watchdog_probe_turns_stale_running_state_into_dead(
+        tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("stage_t_lifecycle_cli", CLI)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    lifecycle = tmp_path / "lifecycle.json"
+    pod_state = tmp_path / "pod-state.json"
+    key = tmp_path / "ssh-key"
+    lifecycle.write_text('{"status":"JOB_STARTED"}\n')
+    pod_state.write_text('{"id":"pod_stage_t_1"}\n')
+    key.write_text("key\n")
+
+    class Provider:
+        pass
+
+    monkeypatch.setattr(cli, "RunPodProvider", lambda **_kwargs: Provider())
+    monkeypatch.setattr(
+        cli, "_endpoint", lambda _provider, _state: ("203.0.113.8", 2222))
+
+    real_run = subprocess.run
+
+    def run(command, **_kwargs):
+        assert "kill -0" in command[-1]
+        assert "/workspace/powered-v13-stage-t/job.pid" in command[-1]
+        syntax = real_run(
+            ["bash", "-n", "-c", command[-1]], text=True,
+            capture_output=True, check=False)
+        assert syntax.returncode == 0, syntax.stderr
+        return subprocess.CompletedProcess(
+            command, 0, '{"state":"DEAD"}\n', "")
+
+    monkeypatch.setattr(cli.subprocess, "run", run)
+    with pytest.raises(SystemExit) as stopped:
+        cli.command_watchdog_probe(argparse.Namespace(
+            lifecycle_state=lifecycle, pod_state=pod_state, ssh_key=key))
+    assert stopped.value.code == 21
 
 
 def test_concrete_supervisor_invokes_emergency_after_unexpected_watcher_death(
