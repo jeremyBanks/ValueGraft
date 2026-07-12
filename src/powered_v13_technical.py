@@ -19,10 +19,12 @@ from powered_v13_schema import DESIGN_ID, N_SCHEDULE, R2
 from powered_v13_tokens import (
     build_fresh_destination_plan,
     build_role_native_plan,
+    complete_source_messages,
 )
 
 
 TECHNICAL_INPUT_SCHEMA = "coherent-state-powered-successor-v13-technical-input-v1"
+TECHNICAL_PROBE_SCHEMA = "coherent-state-powered-successor-v13-technical-probe-v1"
 TECHNICAL_CASE_IDS = ("technical_e01", "technical_long")
 E01_RELATIVE_PATH = "data/coherent_canary_v12/revision2/session_d/e01.json"
 E01_SHA256 = "6a2ad7ae0bf094fa5727e76fb710aaeba7bc72082bd93082a5e9a42e09126090"
@@ -40,6 +42,32 @@ TECHNICAL_LONG_FILLER_REPEATS = 325
 TECHNICAL_LONG_ASSISTANT = "Noted."
 TECHNICAL_LONG_SOURCE_TOKEN_BOUNDS = (4500, 4600)
 MAX_TECHNICAL_SOURCE_TOKENS = 7000
+
+# Exact historical, outcome-seen e01 focal contract transcribed from the sole
+# hash-allowlisted E01_RELATIVE_PATH bytes.  No production probe bank or v12
+# protocol module is reachable from Stage T.
+E01_PROBE = (
+    "Under the recorded mandatory selection rule, which ring was selected "
+    "for Atlas 4.8? Answer with only the ring name."
+)
+E01_TARGET_C = "partner beta"
+E01_TARGET_W = "staff ring"
+E01_PROBE_SHA256 = "16f995d86894f155a0682ee1a148d33f0d2c17ceac2571b26313f38fe3cbcb9c"
+E01_TARGET_C_SHA256 = "087a876aa49a653060fc19d92823f59cd3870cbfe253d9dd88c8f67d271d0b56"
+E01_TARGET_W_SHA256 = "b10d04f68db4f0d047c634a577dd2f37375ae75b1dca201c664315bb95faed59"
+
+# The long-geometry fact is in TECHNICAL_CARRIER, which remains visible and
+# byte-identical in C, W, and the fresh compact destination.  The long filler
+# is deliberately not used: it lies in the evicted middle and is absent in F.
+TECHNICAL_LONG_PROBE = (
+    "What does the handoff preserve for the next assistant? Answer with only "
+    "one word."
+)
+TECHNICAL_LONG_TARGET = "continuity"
+TECHNICAL_LONG_COUNTERTARGET = "criteria"
+TECHNICAL_LONG_PROBE_SHA256 = "2d3b063bdb5b8acf57da54a6b6893e82c29aa33a7dd74287732d798962c361ee"
+TECHNICAL_LONG_TARGET_SHA256 = "0adc36057cef79f8a7b8a862bb9fab8cbdc13828498c636c4d92d761fd621a0f"
+TECHNICAL_LONG_COUNTERTARGET_SHA256 = "262d517bffd06484e2341b4a379c7f4fa4be9284a9a82631c03420953d60bd67"
 
 
 class V13TechnicalError(RuntimeError):
@@ -70,6 +98,61 @@ def sha256_bytes(value: bytes) -> str:
 
 def sha256_json(value: Any) -> str:
     return sha256_bytes(canonical_json_bytes(value))
+
+
+def _literal_sha256(value: str, expected: str, label: str) -> str:
+    observed = sha256_bytes(value.encode("utf-8"))
+    _require(observed == expected, f"{label} literal hash differs")
+    return observed
+
+
+def _technical_probe_contract(case_id: str) -> dict[str, Any]:
+    _require(case_id in TECHNICAL_CASE_IDS, "unknown technical case ID")
+    if case_id == "technical_e01":
+        probe = E01_PROBE
+        correct = E01_TARGET_C
+        counter = E01_TARGET_W
+        probe_sha = _literal_sha256(
+            probe, E01_PROBE_SHA256, "technical e01 probe")
+        correct_sha = _literal_sha256(
+            correct, E01_TARGET_C_SHA256, "technical e01 correct target")
+        counter_sha = _literal_sha256(
+            counter, E01_TARGET_W_SHA256,
+            "technical e01 counterfactual target")
+        provenance = "outcome_seen_hash_allowlisted_e01_focal"
+        visible_origin = "historical_e01"
+    else:
+        probe = TECHNICAL_LONG_PROBE
+        correct = TECHNICAL_LONG_TARGET
+        counter = TECHNICAL_LONG_COUNTERTARGET
+        probe_sha = _literal_sha256(
+            probe, TECHNICAL_LONG_PROBE_SHA256, "technical long probe")
+        correct_sha = _literal_sha256(
+            correct, TECHNICAL_LONG_TARGET_SHA256,
+            "technical long correct target")
+        counter_sha = _literal_sha256(
+            counter, TECHNICAL_LONG_COUNTERTARGET_SHA256,
+            "technical long countertarget")
+        _require(correct in TECHNICAL_CARRIER and counter in TECHNICAL_CARRIER,
+                 "technical long targets are not both carrier-visible")
+        provenance = "neutral_byte_visible_carrier_fact"
+        visible_origin = "technical_carrier_all_histories"
+    core = {
+        "schema": TECHNICAL_PROBE_SCHEMA,
+        "design_id": DESIGN_ID,
+        "case_id": case_id,
+        "probe": probe,
+        "probe_sha256": probe_sha,
+        "correct_target": correct,
+        "correct_target_sha256": correct_sha,
+        "counterfactual_target": counter,
+        "counterfactual_target_sha256": counter_sha,
+        "provenance": provenance,
+        "visible_origin": visible_origin,
+        "semantic_n": 0,
+        "inferential_use": "FORBIDDEN",
+    }
+    return {**core, "technical_probe_sha256": sha256_json(core)}
 
 
 def _reject_duplicate_pairs(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -141,6 +224,12 @@ def load_fixed_e01(repo: Path) -> dict[str, Any]:
     _require(correct[middle:] == wrong[middle:],
              "technical e01 retained tails differ")
     _require(correct != wrong, "technical e01 C/W histories are identical")
+    focal = value.get("focal")
+    _require(isinstance(focal, Mapping)
+             and focal.get("probe") == E01_PROBE
+             and focal.get("correct_target") == E01_TARGET_C
+             and focal.get("counterfactual_target") == E01_TARGET_W,
+             "technical e01 focal probe contract differs")
     return {
         "source_path": E01_RELATIVE_PATH,
         "source_sha256": E01_SHA256,
@@ -171,6 +260,7 @@ def _case_material(e01: Mapping[str, Any], case_id: str) -> dict[str, Any]:
         wrong, wrong_middle = _long_history(wrong, middle)
         _require(correct_middle == wrong_middle, "technical long middles differ")
         middle = correct_middle
+    probe_contract = _technical_probe_contract(case_id)
     stable_id = sha256_json([
         DESIGN_ID,
         case_id,
@@ -178,6 +268,7 @@ def _case_material(e01: Mapping[str, Any], case_id: str) -> dict[str, Any]:
         sha256_bytes(TECHNICAL_CARRIER.encode("utf-8")),
         TECHNICAL_LONG_FILLER_UNIT if case_id == "technical_long" else None,
         TECHNICAL_LONG_FILLER_REPEATS if case_id == "technical_long" else None,
+        probe_contract["technical_probe_sha256"],
     ])
     return {
         "schema": TECHNICAL_INPUT_SCHEMA,
@@ -192,6 +283,7 @@ def _case_material(e01: Mapping[str, Any], case_id: str) -> dict[str, Any]:
         "correct": correct,
         "wrong": wrong,
         "middle_end_msg": middle,
+        "technical_probe": probe_contract,
     }
 
 
@@ -253,6 +345,23 @@ def build_technical_case(tokenizer, repo: Path, case_id: str) -> dict[str, Any]:
     )
     _require(fresh_correct == fresh_wrong,
              f"{case_id} C/W fresh destinations differ")
+    completed_correct = complete_source_messages(
+        material["correct"], middle_end_msg=middle,
+        carrier_content=carrier)
+    completed_wrong = complete_source_messages(
+        material["wrong"], middle_end_msg=middle,
+        carrier_content=carrier)
+    compact_correct = deepcopy(completed_correct[:1]) + deepcopy(
+        completed_correct[middle:])
+    compact_wrong = deepcopy(completed_wrong[:1]) + deepcopy(
+        completed_wrong[middle:])
+    _require(compact_correct == compact_wrong,
+             f"{case_id} C/W compact visible messages differ")
+    context_messages = {
+        "C": completed_correct,
+        "W": completed_wrong,
+        "F": compact_correct,
+    }
     evidence = {
         "C": _plan_evidence(correct_plan, destination=False),
         "W": _plan_evidence(wrong_plan, destination=False),
@@ -276,25 +385,40 @@ def build_technical_case(tokenizer, repo: Path, case_id: str) -> dict[str, Any]:
              f"{case_id} R2 width is outside bundle bound")
     core = {
         **{key: value for key, value in material.items()
-           if key not in {"correct", "wrong"}},
+           if key not in {"correct", "wrong", "technical_probe"}},
         "history_sha256": {
             "C": sha256_json(material["correct"]),
             "W": sha256_json(material["wrong"]),
+        },
+        "context_messages_sha256": {
+            history: sha256_json(messages)
+            for history, messages in context_messages.items()
         },
         "plans": evidence,
         "selected_ids_and_positions_identical": True,
         "production_pool_imported": False,
         "production_entropy_requested": False,
-        "probe_or_score_present": False,
+        "production_probe_reachable": False,
+        "score_values_present": False,
+        "technical_probe_sha256": material["technical_probe"][
+            "technical_probe_sha256"],
     }
+    technical_input_sha256 = sha256_json(core)
     result = {
         **core,
-        "technical_input_sha256": sha256_json(core),
+        "technical_input_sha256": technical_input_sha256,
+        "technical_probe": material["technical_probe"],
+        "technical_case_sha256": sha256_json({
+            "technical_input_sha256": technical_input_sha256,
+            "technical_probe_sha256": material["technical_probe"][
+                "technical_probe_sha256"],
+        }),
         "plan_objects": {
             "C": correct_plan,
             "W": wrong_plan,
             "F": fresh_correct,
         },
+        "context_messages": context_messages,
     }
     return result
 
@@ -306,6 +430,7 @@ __all__ = [
     "TECHNICAL_CASE_IDS",
     "TECHNICAL_CARRIER",
     "TECHNICAL_INPUT_SCHEMA",
+    "TECHNICAL_PROBE_SCHEMA",
     "TECHNICAL_LONG_SOURCE_TOKEN_BOUNDS",
     "V13TechnicalError",
     "build_technical_case",
