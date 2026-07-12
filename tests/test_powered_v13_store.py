@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
+import errno
 import inspect
 import multiprocessing
 import os
@@ -124,6 +125,7 @@ def _terminal_evidence(
         "TERMINAL_PHASE_A_ACCEPTED": "phase_a_terminal_evidence",
         "TERMINAL_PHASE_A_REJECTED": "phase_a_rejection_evidence",
         "TERMINAL_TREATMENT": "treatment_terminal_evidence",
+        "TERMINAL_TECHNICAL": "technical_terminal_evidence",
     }[terminal_kind]
     evidence_document = {
         "schema": store.TERMINAL_EVIDENCE_SCHEMA,
@@ -188,7 +190,7 @@ def _append_phase_terminal(root: Path, identity, *, accepted: bool):
         evidence, receipt = _terminal_evidence(
             root, identity, terminal_kind=kind,
             evidence_chain_sha256=chain_hash, outcome="PHASE_A_ACCEPTED",
-            accepted_attempt_index=0, rejection_codes=[],
+            accepted_attempt_index=1, rejection_codes=[],
             completed_arm_ids=[], tag="phase-terminal")
         payload = {
             "status": "PHASE_A_ACCEPTED",
@@ -233,6 +235,23 @@ def _append_treatment_terminal(root: Path, identity):
         }, artifacts=[evidence, receipt])
 
 
+def _append_technical_terminal(root: Path, identity):
+    chain_hash = _chain_hash(root, identity)
+    evidence, receipt = _terminal_evidence(
+        root, identity, terminal_kind="TERMINAL_TECHNICAL",
+        evidence_chain_sha256=chain_hash, outcome="TECHNICAL_COMPLETE",
+        accepted_attempt_index=None, rejection_codes=[],
+        completed_arm_ids=list(PRIMARY_ARMS), tag="technical-terminal")
+    return _append(
+        root, identity, "TERMINAL_TECHNICAL", arms=PRIMARY_ARMS,
+        payload={
+            "status": "TECHNICAL_COMPLETE",
+            "evidence_chain_sha256": chain_hash,
+            "terminal_evidence_sha256": evidence["sha256"],
+            "validation_receipt_sha256": receipt["sha256"],
+        }, artifacts=[evidence, receipt])
+
+
 def _finalize(root: Path, identity):
     return store._finalize_case(
         root, identity=identity, pid=PID, process_start_token=START,
@@ -262,7 +281,7 @@ def _linux_begin_then_exit(root_text: str) -> None:
 def _complete_phase_a(root: Path, identity=None):
     identity = identity or _identity("phase_a")
     _begin(root, identity)
-    payload, artifacts = _attempt_evidence(root, 0, "ACCEPTED", "attempt-0")
+    payload, artifacts = _attempt_evidence(root, 1, "ACCEPTED", "attempt-1")
     _append(root, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     payload, artifacts = _plans_evidence(root)
     _append(root, identity, "PLANS_PHASE_A", payload=payload, artifacts=artifacts)
@@ -275,7 +294,7 @@ def _complete_phase_a(root: Path, identity=None):
 def _complete_rejected_phase_a(root: Path, identity=None):
     identity = identity or _identity("phase_a")
     _begin(root, identity)
-    for index in range(3):
+    for index in range(1, 4):
         payload, artifacts = _attempt_evidence(
             root, index, "REJECTED", f"attempt-{index}")
         _append(root, identity, "RENDER_ATTEMPT",
@@ -294,6 +313,20 @@ def _complete_treatment(root: Path):
         _append(root, identity, f"ARM_{arm}", arms=PRIMARY_ARMS[:index],
                 payload=payload, artifacts=artifacts)
     _append_treatment_terminal(root, identity)
+    return identity, _finalize(root, identity)
+
+
+def _complete_technical(root: Path):
+    identity = _identity("technical")
+    _begin(root, identity)
+    payload, artifacts = _foundation_evidence(root, "technical-foundation")
+    _append(root, identity, "FOUNDATION_LOAD", payload=payload,
+            artifacts=artifacts)
+    for index, arm in enumerate(PRIMARY_ARMS, start=1):
+        payload, artifacts = _arm_evidence(root, arm, f"technical-{arm}")
+        _append(root, identity, f"ARM_{arm}", arms=PRIMARY_ARMS[:index],
+                payload=payload, artifacts=artifacts)
+    _append_technical_terminal(root, identity)
     return identity, _finalize(root, identity)
 
 
@@ -321,6 +354,8 @@ def test_begin_persists_exact_lock_and_started_before_case_work(tmp_path: Path):
     identity = _identity()
     lock = _begin(tmp_path, identity)
     assert lock["process_start_token"] == START
+    assert len(lock["attempt_id"]) == 32
+    int(lock["attempt_id"], 16)
     records = list((tmp_path / lock["case_dir"] / "records").iterdir())
     assert [path.name for path in records] == ["000_STARTED.json"]
     assert records[0].read_bytes().endswith(b"\n")
@@ -344,9 +379,9 @@ def test_second_active_case_and_wrong_process_cannot_append(tmp_path: Path):
             tmp_path, identity=identity, pid=9999,
             process_start_token=START, record_kind="RENDER_ATTEMPT",
             bounds=_bounds(), created_utc=T0,
-            payload=_attempt_evidence(tmp_path, 0, "ACCEPTED", "wrong")[0],
+            payload=_attempt_evidence(tmp_path, 1, "ACCEPTED", "wrong")[0],
             artifact_bindings=_attempt_evidence(
-                tmp_path, 0, "ACCEPTED", "wrong2")[1],
+                tmp_path, 1, "ACCEPTED", "wrong2")[1],
             _test_process_start_token_reader=_token_reader)
 
 
@@ -362,15 +397,15 @@ def test_phase_a_explicit_three_rejections_terminalize_without_foundation(
 def test_phase_a_acceptance_stops_attempts_and_is_required_for_plans(tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "REJECTED", "r0")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "REJECTED", "r1")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     plans_payload, plans_artifacts = _plans_evidence(tmp_path, "too-early")
     with pytest.raises(store.V13StoreError, match="invalid Phase-A"):
         _append(tmp_path, identity, "PLANS_PHASE_A",
                 payload=plans_payload, artifacts=plans_artifacts)
-    payload, artifacts = _attempt_evidence(tmp_path, 1, "ACCEPTED", "a1")
+    payload, artifacts = _attempt_evidence(tmp_path, 2, "ACCEPTED", "a2")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
-    payload, artifacts = _attempt_evidence(tmp_path, 2, "REJECTED", "late")
+    payload, artifacts = _attempt_evidence(tmp_path, 3, "REJECTED", "late")
     with pytest.raises(store.V13StoreError, match="invalid Phase-A"):
         _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     _append(tmp_path, identity, "PLANS_PHASE_A",
@@ -381,15 +416,15 @@ def test_phase_a_attempt_indices_are_exact_and_fourth_attempt_is_forbidden(
         tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 1, "REJECTED", "wrong-index")
+    payload, artifacts = _attempt_evidence(tmp_path, 2, "REJECTED", "wrong-index")
     with pytest.raises(store.V13StoreError, match="invalid Phase-A"):
         _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
-    for index in range(3):
+    for index in range(1, 4):
         payload, artifacts = _attempt_evidence(
             tmp_path, index, "REJECTED", f"r-{index}")
         _append(tmp_path, identity, "RENDER_ATTEMPT",
                 payload=payload, artifacts=artifacts)
-    payload, artifacts = _attempt_evidence(tmp_path, 2, "REJECTED", "fourth")
+    payload, artifacts = _attempt_evidence(tmp_path, 3, "REJECTED", "fourth")
     with pytest.raises(store.V13StoreError, match="invalid Phase-A"):
         _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
 
@@ -423,7 +458,7 @@ def test_treatment_requires_exact_six_arm_order_and_bound_prefix(tmp_path: Path)
 def test_bound_artifact_must_exist_match_payload_and_literal_bytes(tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, bindings = _attempt_evidence(tmp_path, 0, "ACCEPTED", "bytes")
+    payload, bindings = _attempt_evidence(tmp_path, 1, "ACCEPTED", "bytes")
     changed = deepcopy(bindings)
     changed[0]["sha256"] = "f" * 64
     with pytest.raises(store.V13StoreError, match="hash differs|bytes differ"):
@@ -451,7 +486,7 @@ def test_bound_artifact_rejects_symlink_and_escape(tmp_path: Path):
     }
     review = _binding(tmp_path, "render_review", "link-review")
     payload = {
-        "attempt_index": 0, "outcome": "ACCEPTED",
+        "attempt_index": 1, "outcome": "ACCEPTED",
         "attempt_sha256": attempt["sha256"],
         "review_sha256": review["sha256"], "rejection_code": None,
     }
@@ -478,10 +513,21 @@ def test_complete_treatment_is_terminal_only_after_all_six_arms(tmp_path: Path):
         tmp_path, expected_identity=identity)["reusable"] is True
 
 
+def test_technical_mode_has_distinct_non_treatment_terminal(tmp_path: Path):
+    identity, index = _complete_technical(tmp_path)
+    assert index["terminal_record"]["name"].endswith(
+        "_TERMINAL_TECHNICAL.json")
+    assert "TREATMENT" not in index["terminal_record"]["name"]
+    reuse = store.terminal_reuse_binding(
+        tmp_path, expected_identity=identity)
+    assert reuse["terminal_record_name"].endswith(
+        "_TERMINAL_TECHNICAL.json")
+
+
 def test_terminal_evidence_chain_hash_is_recomputed(tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "ACCEPTED", "a")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "ACCEPTED", "a")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     payload, artifacts = _plans_evidence(tmp_path)
     _append(tmp_path, identity, "PLANS_PHASE_A", payload=payload, artifacts=artifacts)
@@ -490,7 +536,7 @@ def test_terminal_evidence_chain_hash_is_recomputed(tmp_path: Path):
     evidence, receipt = _terminal_evidence(
         tmp_path, identity, terminal_kind="TERMINAL_PHASE_A_ACCEPTED",
         evidence_chain_sha256="0" * 64, outcome="PHASE_A_ACCEPTED",
-        accepted_attempt_index=0, rejection_codes=[], completed_arm_ids=[],
+        accepted_attempt_index=1, rejection_codes=[], completed_arm_ids=[],
         tag="bad-terminal")
     with pytest.raises(store.V13StoreError, match="evidence-chain"):
         _append(tmp_path, identity, "TERMINAL_PHASE_A_ACCEPTED", payload={
@@ -503,7 +549,7 @@ def test_terminal_evidence_chain_hash_is_recomputed(tmp_path: Path):
 def test_opaque_terminal_evidence_cannot_produce_terminal_validated(tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "ACCEPTED", "a")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "ACCEPTED", "a")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     payload, artifacts = _plans_evidence(tmp_path)
     _append(tmp_path, identity, "PLANS_PHASE_A", payload=payload, artifacts=artifacts)
@@ -537,7 +583,7 @@ def test_opaque_terminal_evidence_cannot_produce_terminal_validated(tmp_path: Pa
 def test_partial_case_never_has_reuse_binding(tmp_path: Path):
     identity = _identity("phase_a")
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "REJECTED", "partial")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "REJECTED", "partial")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     with pytest.raises(store.V13StoreError, match="cannot read session index"):
         store.terminal_reuse_binding(tmp_path, expected_identity=identity)
@@ -595,7 +641,7 @@ def test_alive_process_cannot_be_quarantined_and_probe_gets_start_token(
 def test_dead_partial_is_preserved_bound_and_never_reusable(tmp_path: Path):
     identity = _identity()
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "REJECTED", "partial")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "REJECTED", "partial")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     record = store._quarantine_abandoned_case(
         tmp_path, _test_process_probe=lambda pid, token: False,
@@ -606,6 +652,14 @@ def test_dead_partial_is_preserved_bound_and_never_reusable(tmp_path: Path):
     assert len(quarantine) == 1
     assert (quarantine[0] / "records" / "001_RENDER_ATTEMPT.json").exists()
     assert (quarantine[0] / store.ARCHIVED_LOCK_NAME).exists()
+    archived = quarantine[0] / store.ARCHIVED_ARTIFACT_DIRECTORY
+    assert archived.is_dir()
+    assert any(path.is_file() for path in archived.rglob("*"))
+    archived_attempt = archived / artifacts[0]["path"]
+    assert store.file_sha256(archived_attempt) == artifacts[0]["sha256"]
+    (tmp_path / artifacts[0]["path"]).write_bytes(b"mutated external source")
+    assert store.file_sha256(archived_attempt) == artifacts[0]["sha256"]
+    assert store._read_valid_quarantine(quarantine[0]) == record
     assert (quarantine[0] / store.QUARANTINE_RECORD_NAME).exists()
     with pytest.raises(store.V13StoreError):
         store.terminal_reuse_binding(tmp_path, expected_identity=identity)
@@ -629,8 +683,34 @@ def test_quarantine_retry_uses_stable_transaction_not_new_timestamp(tmp_path: Pa
     assert unambiguous == first
 
 
+def test_same_second_same_identity_retries_get_distinct_quarantine_transactions(
+        tmp_path: Path):
+    identity = _identity()
+    first_lock = _begin(tmp_path, identity)
+    payload, artifacts = _attempt_evidence(
+        tmp_path, 1, "REJECTED", "first-partial")
+    _append(tmp_path, identity, "RENDER_ATTEMPT",
+            payload=payload, artifacts=artifacts)
+    first = store._quarantine_abandoned_case(
+        tmp_path, _test_process_probe=lambda pid, token: False,
+        observed_utc=T0, reason="same-second first")
+
+    second_lock = _begin(tmp_path, identity)
+    assert second_lock["attempt_id"] != first_lock["attempt_id"]
+    payload, artifacts = _attempt_evidence(
+        tmp_path, 1, "REJECTED", "second-partial")
+    _append(tmp_path, identity, "RENDER_ATTEMPT",
+            payload=payload, artifacts=artifacts)
+    second = store._quarantine_abandoned_case(
+        tmp_path, _test_process_probe=lambda pid, token: False,
+        observed_utc=T0, reason="same-second second")
+    assert first["transaction_sha256"] != second["transaction_sha256"]
+    assert len(list((tmp_path / "quarantine").iterdir())) == 2
+
+
 @pytest.mark.parametrize("fault_boundary", [
     "after_lock_archive_link", "after_lock_archive",
+    "after_partial_artifact_archive",
     "after_quarantine_marker", "after_quarantine_rename_before_fsync",
     "after_quarantine_rename", "after_quarantine_lock_unlink",
     "after_quarantine_lock_clear",
@@ -640,7 +720,7 @@ def test_quarantine_is_idempotent_after_every_durable_boundary(
     root = tmp_path / fault_boundary
     identity = _identity(case_id=store.sha256_bytes(fault_boundary.encode()))
     _begin(root, identity)
-    payload, artifacts = _attempt_evidence(root, 0, "REJECTED", "partial")
+    payload, artifacts = _attempt_evidence(root, 1, "REJECTED", "partial")
     _append(root, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     fired = False
 
@@ -672,6 +752,7 @@ def test_quarantine_is_idempotent_after_every_durable_boundary(
 
 @pytest.mark.parametrize("fault_boundary", [
     "after_lock_archive_link", "after_lock_archive",
+    "after_partial_artifact_archive",
     "after_quarantine_marker", "after_quarantine_rename_before_fsync",
     "after_quarantine_rename", "after_quarantine_lock_unlink",
     "after_quarantine_lock_clear",
@@ -682,7 +763,7 @@ def test_sigkill_at_each_quarantine_boundary_recovers_exactly_once(
     identity = _identity(case_id=store.sha256_bytes(
         f"sigkill:{fault_boundary}".encode()))
     _begin(root, identity)
-    payload, artifacts = _attempt_evidence(root, 0, "REJECTED", "partial")
+    payload, artifacts = _attempt_evidence(root, 1, "REJECTED", "partial")
     _append(root, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     context = multiprocessing.get_context("fork")
     process = context.Process(
@@ -707,7 +788,7 @@ def test_sigkill_at_each_quarantine_boundary_recovers_exactly_once(
 def test_concurrent_quarantine_recovery_has_one_identical_receipt(tmp_path: Path):
     identity = _identity()
     _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "REJECTED", "partial")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "REJECTED", "partial")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
 
     def recover():
@@ -744,7 +825,7 @@ def test_crash_after_terminal_directory_promotion_finishes_index_not_quarantine(
         tmp_path: Path):
     identity = _identity("phase_a")
     lock = _begin(tmp_path, identity)
-    payload, artifacts = _attempt_evidence(tmp_path, 0, "ACCEPTED", "a")
+    payload, artifacts = _attempt_evidence(tmp_path, 1, "ACCEPTED", "a")
     _append(tmp_path, identity, "RENDER_ATTEMPT", payload=payload, artifacts=artifacts)
     payload, artifacts = _plans_evidence(tmp_path)
     _append(tmp_path, identity, "PLANS_PHASE_A", payload=payload, artifacts=artifacts)
@@ -793,6 +874,24 @@ def test_linux_proc_parser_uses_boot_id_and_final_comm_parenthesis(tmp_path: Pat
     assert store._linux_process_start_token(
         123, proc_root=proc, boot_id_path=boot_path
     ) == f"linux-procfs-v1:{BOOT_ID}:987654"
+
+
+def test_linux_proc_esrch_is_exact_dead_process_proof(
+        tmp_path: Path, monkeypatch):
+    boot_path = tmp_path / "boot_id"
+    boot_path.write_text(BOOT_ID + "\n", encoding="ascii")
+    proc = tmp_path / "proc"
+    original = Path.read_bytes
+
+    def esrch(path: Path):
+        if path.name == "stat":
+            raise ProcessLookupError(errno.ESRCH, "synthetic ESRCH")
+        return original(path)
+
+    monkeypatch.setattr(Path, "read_bytes", esrch)
+    with pytest.raises(ProcessLookupError):
+        store._linux_process_start_token(
+            123, proc_root=proc, boot_id_path=boot_path)
 
 
 @pytest.mark.skipif(sys.platform != "linux", reason="production procfs gate is Linux-only")

@@ -11,6 +11,7 @@ from __future__ import annotations
 from copy import deepcopy
 from contextlib import contextmanager
 from datetime import datetime, timezone
+import errno
 import fcntl
 from functools import wraps
 import hashlib
@@ -25,7 +26,7 @@ from typing import Any, Callable, Mapping, Sequence
 from powered_v13_schema import DESIGN_ID, N_SCHEDULE, P_SCHEDULE, PRIMARY_ARMS
 
 
-LOCK_SCHEMA = "coherent-state-powered-successor-v13-active-lock-v2"
+LOCK_SCHEMA = "coherent-state-powered-successor-v13-active-lock-v3"
 RECORD_SCHEMA = "coherent-state-powered-successor-v13-case-record-v1"
 INDEX_SCHEMA = "coherent-state-powered-successor-v13-session-index-v1"
 QUARANTINE_SCHEMA = "coherent-state-powered-successor-v13-quarantine-v2"
@@ -45,6 +46,7 @@ MAX_JSON_BYTES = 32 * 1024 * 1024
 MAX_BOUND_ARTIFACT_BYTES = 256 * 1024 * 1024
 ACTIVE_LOCK_NAME = "active-case.json"
 ARCHIVED_LOCK_NAME = "ACTIVE_LOCK.json"
+ARCHIVED_ARTIFACT_DIRECTORY = "BOUND_ARTIFACTS"
 QUARANTINE_RECORD_NAME = "QUARANTINE.json"
 METADATA_LOCK_NAME = ".powered-v13-store.lock"
 _SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -56,6 +58,7 @@ _LINUX_START_TOKEN = re.compile(
     r"linux-procfs-v1:"
     r"([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})"
     r":([1-9][0-9]*)")
+_ATTEMPT_ID = re.compile(r"[0-9a-f]{32}")
 
 
 PHASE_A_ACCEPTED_SEQUENCE = (
@@ -66,6 +69,10 @@ PHASE_A_REJECTED_TERMINAL = "TERMINAL_PHASE_A_REJECTED"
 TREATMENT_SEQUENCE = (
     "STARTED", "FOUNDATION_LOAD", "ARM_FF", "ARM_CC", "ARM_WW",
     "ARM_FC", "ARM_FW", "ARM_VP", "TERMINAL_TREATMENT",
+)
+TECHNICAL_SEQUENCE = (
+    "STARTED", "FOUNDATION_LOAD", "ARM_FF", "ARM_CC", "ARM_WW",
+    "ARM_FC", "ARM_FW", "ARM_VP", "TERMINAL_TECHNICAL",
 )
 
 
@@ -201,9 +208,9 @@ def _linux_process_start_token(
              "Linux boot identity is malformed")
     try:
         stat_raw = (proc_root / str(pid) / "stat").read_bytes().strip()
-    except FileNotFoundError as exc:
-        raise ProcessLookupError(pid) from exc
     except OSError as exc:
+        if exc.errno in {errno.ENOENT, errno.ESRCH}:
+            raise ProcessLookupError(pid) from exc
         raise V13StoreError(f"cannot read Linux process identity: {exc}") from exc
     prefix = f"{pid} (".encode("ascii")
     close = stat_raw.rfind(b")")
@@ -504,7 +511,7 @@ def _validate_record_evidence(
             "attempt_index", "outcome", "attempt_sha256", "review_sha256",
             "rejection_code",
         }, "RENDER_ATTEMPT")
-        _plain_int(payload["attempt_index"], "attempt_index", 0, 2)
+        _plain_int(payload["attempt_index"], "attempt_index", 1, 3)
         _require(payload["outcome"] in ("ACCEPTED", "REJECTED"),
                  "render attempt outcome differs")
         if payload["outcome"] == "ACCEPTED":
@@ -579,16 +586,22 @@ def _validate_record_evidence(
                 "independent_terminal_validation_receipt",
         }, payload)
         return payload
-    if record_kind == "TERMINAL_TREATMENT":
+    if record_kind in ("TERMINAL_TREATMENT", "TERMINAL_TECHNICAL"):
         payload = _payload_fields(payload_value, {
             "status", "evidence_chain_sha256", "terminal_evidence_sha256",
             "validation_receipt_sha256",
         }, record_kind)
-        _require(payload["status"] == "TREATMENT_COMPLETE",
-                 "treatment terminal status differs")
+        expected_status = (
+            "TREATMENT_COMPLETE" if record_kind == "TERMINAL_TREATMENT"
+            else "TECHNICAL_COMPLETE")
+        _require(payload["status"] == expected_status,
+                 f"{record_kind} status differs")
         _sha(payload["evidence_chain_sha256"], "evidence_chain_sha256")
         _require_binding_hashes(binding_value, {
-            "terminal_evidence_sha256": "treatment_terminal_evidence",
+            "terminal_evidence_sha256": (
+                "treatment_terminal_evidence"
+                if record_kind == "TERMINAL_TREATMENT"
+                else "technical_terminal_evidence"),
             "validation_receipt_sha256":
                 "independent_terminal_validation_receipt",
         }, payload)
@@ -617,7 +630,7 @@ def _validate_terminal_external_evidence(
     kind = record["record_kind"]
     _require(kind in {
         "TERMINAL_PHASE_A_ACCEPTED", PHASE_A_REJECTED_TERMINAL,
-        "TERMINAL_TREATMENT",
+        "TERMINAL_TREATMENT", "TERMINAL_TECHNICAL",
     }, "external terminal validation called for a nonterminal record")
     bindings = _bindings_by_kind(
         record["artifact_bindings"], artifact_root=artifact_root)
@@ -647,7 +660,10 @@ def _validate_terminal_external_evidence(
                  "rejected terminal lacks three rejection codes")
         completed_arms = []
     else:
-        evidence_kind = "treatment_terminal_evidence"
+        evidence_kind = (
+            "treatment_terminal_evidence"
+            if kind == "TERMINAL_TREATMENT"
+            else "technical_terminal_evidence")
         evidence_field = "terminal_evidence_sha256"
         accepted_attempt_index = None
         rejection_codes = []
@@ -717,7 +733,7 @@ def _allowed_next(
         allowed = (
             new_kind == "RENDER_ATTEMPT" and last in ("STARTED", "RENDER_ATTEMPT")
             and len(attempts) < 3 and not accepted
-            and new_payload["attempt_index"] == len(attempts)
+            and new_payload["attempt_index"] == len(attempts) + 1
         ) or (new_kind == "PLANS_PHASE_A" and last == "RENDER_ATTEMPT"
               and len(accepted) == 1
               and attempts[-1]["payload"]["outcome"] == "ACCEPTED") \
@@ -729,7 +745,8 @@ def _allowed_next(
                 and last == "RENDER_ATTEMPT")
         _require(allowed, f"invalid Phase-A transition {last} -> {new_kind}")
         return
-    expected = list(TREATMENT_SEQUENCE)
+    expected = list(
+        TREATMENT_SEQUENCE if mode == "treatment" else TECHNICAL_SEQUENCE)
     _require(prior_kinds == expected[:len(prior_kinds)],
              "treatment/technical chain differs from frozen sequence")
     _require(len(prior_kinds) < len(expected)
@@ -744,7 +761,7 @@ def _required_completed_arms(mode: str, record_kind: str) -> list[str]:
         arm = record_kind.removeprefix("ARM_")
         _require(arm in PRIMARY_ARMS, "record arm differs from frozen arms")
         return list(PRIMARY_ARMS[:PRIMARY_ARMS.index(arm) + 1])
-    if record_kind == "TERMINAL_TREATMENT":
+    if record_kind in ("TERMINAL_TREATMENT", "TERMINAL_TECHNICAL"):
         return list(PRIMARY_ARMS)
     return []
 
@@ -836,7 +853,7 @@ def _validate_chain(
             }, "case record parent binding differs")
         if record["record_kind"] in {
             "TERMINAL_PHASE_A_ACCEPTED", PHASE_A_REJECTED_TERMINAL,
-            "TERMINAL_TREATMENT",
+            "TERMINAL_TREATMENT", "TERMINAL_TECHNICAL",
         }:
             _require(record["payload"]["evidence_chain_sha256"] ==
                      _evidence_chain_sha256(chain),
@@ -859,7 +876,10 @@ def _validate_chain(
                 "phase_a", [record for _path, record in chain[:index]],
                 kinds[index], chain[index][1]["payload"])
     else:
-        _require(kinds == list(TREATMENT_SEQUENCE[:len(kinds)]),
+        expected_sequence = (
+            TREATMENT_SEQUENCE if expected_identity["mode"] == "treatment"
+            else TECHNICAL_SEQUENCE)
+        _require(kinds == list(expected_sequence[:len(kinds)]),
                  "treatment/technical chain shape differs")
     return chain
 
@@ -867,7 +887,7 @@ def _validate_chain(
 def validate_lock(value: Mapping[str, Any]) -> dict[str, Any]:
     fields = {
         "schema", "design_id", "identity", "identity_sha256", "case_dir",
-        "pid", "process_start_token", "created_utc",
+        "pid", "process_start_token", "attempt_id", "created_utc",
     }
     _require(isinstance(value, Mapping) and set(value) == fields,
              "active lock field set differs")
@@ -885,6 +905,9 @@ def validate_lock(value: Mapping[str, Any]) -> dict[str, Any]:
              and _LINUX_START_TOKEN.fullmatch(
                  value["process_start_token"]) is not None,
              "active lock process-start token is not exact Linux procfs identity")
+    _require(isinstance(value.get("attempt_id"), str)
+             and _ATTEMPT_ID.fullmatch(value["attempt_id"]) is not None,
+             "active lock attempt ID differs")
     _utc(value.get("created_utc"), "active lock created_utc")
     return deepcopy(dict(value))
 
@@ -942,6 +965,7 @@ def _begin_case(
         "case_dir": f"active/{digest}",
         "pid": pid,
         "process_start_token": process_start_token,
+        "attempt_id": os.urandom(16).hex(),
         "created_utc": created_utc,
     })
     write_json_exclusive(_lock_path(root), lock)
@@ -1098,7 +1122,7 @@ def _append_case_record(
         record_kind, record["payload"])
     if record_kind in {
         "TERMINAL_PHASE_A_ACCEPTED", PHASE_A_REJECTED_TERMINAL,
-        "TERMINAL_TREATMENT",
+        "TERMINAL_TREATMENT", "TERMINAL_TECHNICAL",
     }:
         _require(record["payload"]["evidence_chain_sha256"] ==
                  _evidence_chain_sha256(chain),
@@ -1136,7 +1160,9 @@ def append_case_record(
 def _terminal_kinds(mode: str) -> tuple[str, ...]:
     if mode == "phase_a":
         return ("TERMINAL_PHASE_A_ACCEPTED", PHASE_A_REJECTED_TERMINAL)
-    return ("TERMINAL_TREATMENT",)
+    if mode == "treatment":
+        return ("TERMINAL_TREATMENT",)
+    return ("TERMINAL_TECHNICAL",)
 
 
 def _build_index(identity: Mapping[str, Any], terminal_dir: Path,
@@ -1322,6 +1348,104 @@ def _partial_manifest(case_dir: Path) -> list[dict[str, Any]]:
     return rows
 
 
+def _copy_bound_artifact_exclusive(
+    source: Path,
+    destination: Path,
+    *,
+    expected_size: int,
+    expected_sha256: str,
+) -> None:
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    descriptor, temporary_name = tempfile.mkstemp(
+        dir=destination.parent,
+        prefix=f".{destination.name}.",
+        suffix=".tmp",
+    )
+    temporary = Path(temporary_name)
+    digest = hashlib.sha256()
+    size = 0
+    try:
+        with source.open("rb") as reader, os.fdopen(descriptor, "wb") as writer:
+            descriptor = -1
+            while True:
+                block = reader.read(1024 * 1024)
+                if not block:
+                    break
+                size += len(block)
+                _require(size <= expected_size,
+                         "bound partial artifact grew while archiving")
+                digest.update(block)
+                writer.write(block)
+            writer.flush()
+            os.fsync(writer.fileno())
+        _require(size == expected_size and digest.hexdigest() == expected_sha256,
+                 "bound partial artifact changed while archiving")
+        try:
+            os.link(temporary, destination)
+        except FileExistsError as exc:
+            raise V13StoreError(
+                f"archived partial artifact appeared during copy: {destination}"
+            ) from exc
+        _fsync_directory(destination.parent)
+    finally:
+        if descriptor >= 0:
+            os.close(descriptor)
+        try:
+            temporary.unlink()
+        except FileNotFoundError:
+            pass
+
+
+def _archive_partial_bound_artifacts(
+    root: Path,
+    case_dir: Path,
+    identity: Mapping[str, Any],
+) -> None:
+    """Copy every verified external partial artifact into quarantine scope."""
+
+    records_dir = case_dir / "records"
+    if not records_dir.exists():
+        return
+    chain = _validate_chain(case_dir, identity, artifact_root=root)
+    root_resolved = root.resolve(strict=True)
+    case_resolved = case_dir.resolve(strict=True)
+    bindings = [
+        binding
+        for _path, record in chain
+        for binding in record["artifact_bindings"]
+    ]
+    _require(len(bindings) <= 64,
+             "partial case exceeds archived artifact-count bound")
+    archive_root = case_dir / ARCHIVED_ARTIFACT_DIRECTORY
+    for binding in bindings:
+        source = (root / binding["path"]).resolve(strict=True)
+        source.relative_to(root_resolved)
+        try:
+            source.relative_to(case_resolved)
+            continue
+        except ValueError:
+            pass
+        destination = archive_root / binding["path"]
+        if destination.exists():
+            _require(not destination.is_symlink() and destination.is_file()
+                     and destination.stat().st_size == binding["size_bytes"]
+                     and file_sha256(destination) == binding["sha256"],
+                     "archived partial artifact differs on retry")
+            continue
+        _copy_bound_artifact_exclusive(
+            source,
+            destination,
+            expected_size=binding["size_bytes"],
+            expected_sha256=binding["sha256"],
+        )
+        _require(destination.stat().st_size == binding["size_bytes"]
+                 and file_sha256(destination) == binding["sha256"],
+                 "archived partial artifact bytes differ")
+        _fsync_directory(destination.parent)
+    if archive_root.exists():
+        _fsync_directory(archive_root)
+
+
 def _validate_quarantine_record(
     value: Mapping[str, Any], *, quarantine_dir: Path,
 ) -> dict[str, Any]:
@@ -1503,6 +1627,8 @@ def _quarantine_abandoned_case(
             marker_document, _raw = _read_json(marker, "quarantine marker")
             record = dict(marker_document)
         else:
+            _archive_partial_bound_artifacts(root, active_dir, frozen)
+            _invoke_fault(_test_fault_hook, "after_partial_artifact_archive")
             manifest = _partial_manifest(active_dir)
             record = {
                 "schema": QUARANTINE_SCHEMA,
@@ -1562,6 +1688,7 @@ def quarantine_abandoned_case(
 
 __all__ = [
     "ACTIVE_LOCK_NAME",
+    "ARCHIVED_ARTIFACT_DIRECTORY",
     "ARCHIVED_LOCK_NAME",
     "INDEX_SCHEMA",
     "LOCK_SCHEMA",
