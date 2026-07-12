@@ -81,3 +81,30 @@ decisions that govern current work.
 - Root is the small live working surface. Completed plans, audits, ledgers, and
   superseded Markdown move intact to `notes/` and are referenced by descriptive
   slug; archive numbering may change.
+
+## 2026-07-12 — v13 draft corrected before freeze
+
+- The first sequential Welch--Satterthwaite v13 design is retired before any
+  unseen treatment. It was only approximate under heteroscedastic normals and
+  its zero-variance branch undercovered rare responders. A committed simulation
+  observed the failure; Fable's contrary affirmation is not accepted.
+- The corrected primary is fixed N=48, balanced six-per-eight-strata, with no
+  interim treatment peeking. Joint family alpha is `.02 + .02 + .01`: two
+  distribution-free Hoeffding UCBs for recovery clipped to `[-0.5,0.5]` and a
+  separate large-responder-prevalence bound for raw recovery above 0.5.
+  Raw-nat means/t/bootstrap are mandatory model-based companions, never the
+  finite-sample headline.
+- Both carrier renders originate independently under C, making them genuine
+  same-origin render replicates. The same IDs are forced under C/W/F.
+- Static design freeze may authorize only a capped paid treatment-blind Phase A.
+  Primary treatment requires a later acyclic parent-rooted release. No paid work
+  is authorized while the root protocol status is DRAFT.
+- Phase A/pilots are capped at `$12`, treatment is projected/capped at `$30`,
+  the independent host audit at `$4.50`, and at least `$8` remains for failure,
+  cleanup, and artifact recovery. After two candidates per stratum, observed
+  yield and cost must project the full run within live balance.
+- VP is a bounded whole-bf16 partial V-row permutation and qualifies only the
+  value-only cell. Full-KV has a wrong-history matched semantic control but is
+  never called nonsemantic-placebo-complete.
+- Authoritative correction note slug:
+  `powered-v13-adversarial-review-disposition`.

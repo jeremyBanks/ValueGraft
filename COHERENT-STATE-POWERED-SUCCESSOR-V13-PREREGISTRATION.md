@@ -3,18 +3,18 @@
 **Design ID:** `coherent-state-powered-successor-v13`  
 **Date:** 2026-07-12  
 **Decision owner:** primary Codex agent acting under the owner's powered-successor handoff  
-**Status:** **DRAFT — NO PAID OR PRIMARY TREATMENT OUTCOME AUTHORIZED**
+**Status:** **DRAFT — NO PAID WORK OR PRIMARY TREATMENT AUTHORIZED**
 
 This is a new protocol. It does not amend or inherit authorization from v10,
 v12, P01, or P02. Historical artifacts are evidence about failure modes and
-costs only. This document becomes `FROZEN` only after its literal statistical,
-fixture, control, release, and analysis artifacts pass the reviews and tests in
-Section 18.
+costs only. Authorization has three acyclic stages: draft; static freeze that
+authorizes a capped paid treatment-blind Phase A; and a separate treatment
+release. Section 18 defines the transitions.
 
 ## 1. Purpose and claim boundary
 
 The motivating question is whether K/V cache state written while a model
-produces a compact handoff under a full conversation carries useful
+encodes a compact handoff under a full conversation carries useful
 history-specific information that a fresh encoding of the identical visible
 handoff lacks, and whether transplanting that state recovers information lost
 by compaction.
@@ -23,11 +23,15 @@ The primary claim is deliberately narrower:
 
 > For target-damaged fixtures drawn from the literal engineered recipe in this
 > protocol, under the pinned Qwen subject, role-native q=1 replay schedule, and
-> maximal carrier-boundary locus, what is the one-sided 95% upper confidence
-> bound on mean correct-target log-probability recovery from (a) correct-history
-> full-KV and (b) correct-history value-only transplantation?
+> maximal carrier-boundary locus, what finite-sample upper bound can be placed
+> on correct-target log-probability recovery from (a) correct-history full-KV
+> and (b) correct-history value-only transplantation?
 
-The primary result is the maximum simultaneous UCB across those two cells. It
+The joint primary result has two parts: simultaneous distribution-free UCBs on
+the mean recovery clipped to `[-0.5, 0.5]` nat/token in the two named cells,
+and a bound on the prevalence of fixtures whose best raw recovery exceeds
+`0.5` nat/token. Raw-nat means and model-based intervals are mandatory
+companions but are not mislabeled finite-sample guarantees. This two-part result
 does not establish that write-time information is absent elsewhere. In
 particular it does not cover downstream retained-tail rows, a maximal-state
 restart, other layers/alphas, another serving schedule, another checkpoint,
@@ -87,8 +91,9 @@ Each candidate contains:
 - one declared changed input before the compaction boundary;
 - a focal target under C and countertarget under W, each 1--4 production-
   tokenizer tokens;
-- one independent nonfocal fact/decision whose evidence and target are
-  byte-identical;
+- one independent nonfocal fact/decision whose evidence, target, and declared
+  countertarget are byte-identical; its evidence must remain visible in the
+  system or retained tail after compaction;
 - at least two genuine distractors;
 - a byte-identical coherent retained tail beginning with a user turn and ending
   with an assistant turn;
@@ -96,11 +101,14 @@ Each candidate contains:
 - no subject-model output, treatment result, old case text, or outcome in the
   authoring prompt.
 
-The literal template definitions, parameter pools, generator version, and
-candidate seed rule live under `data/coherent_state_powered_v13/` and are bound
-by the release manifest. Candidate seeds derive from
-`SHA256(design_id | stratum | candidate_index)`. Duplicate literal histories
-are rejected. Candidate order cannot change after a gate result.
+Each stratum has a finite enumerated parameter pool of at least 4,096 tuples.
+Before any candidate text or gate is inspected, one 128-bit OS-random seed per
+stratum is committed. NumPy PCG64 applies that seed to a without-replacement
+permutation of the pool. That literal permutation, generator version, parameter
+pools, and template definitions live under `data/coherent_state_powered_v13/`
+and are bound by the static manifest. Candidate IDs are their immutable
+permutation ranks. A literal-history collision aborts the recipe rather than
+resampling. Order never changes after static freeze.
 
 ### 3.2 Independent unit and selection
 
@@ -108,23 +116,18 @@ One paired base conversation fixture is one independent unit. Two carrier
 renders, arms, targets, loci, schedules, layers, executions, and hosts are
 nested measurements and never increase N.
 
-Within each stratum, candidates advance in frozen index order through content
-and Phase-A gates. The first eight eligible candidates are frozen before any
-primary treatment outcome:
+Within each stratum, at most the first ten candidates in the frozen permutation
+may advance through content and Phase-A gates. The first six eligible candidates
+are the primary sample. If any stratum yields fewer than six eligible candidates
+among those ten, the terminal pre-treatment result is
+`RECIPE_INFEASIBLE_PRETREATMENT`; no alternate template, extra index, or primary
+treatment is allowed under v13.
 
-- eligible positions 1--6: primary sample;
-- eligible position 7: downstream discovery reserve;
-- eligible position 8: downstream confirmation reserve.
-
-If a stratum has fewer than eight eligible candidates, new candidate indices
-continue under the already frozen generator while all treatment remains
-machine-blocked. No replacement or authoring occurs after any primary treatment
-outcome is exposed.
-
-The primary sample therefore has six eligible fixtures per stratum, maximum and
-planned `N=48`. Balanced looks use the first 3, 4, and 6 eligible fixtures per
-stratum: `N=24`, `N=32`, and `N=48`. Fixture order within a look is frozen in an
-interleaved eight-stratum block order and is unrelated to pod boundaries.
+The primary sample therefore has exactly six eligible fixtures per stratum and
+`N=48`. N=24 and N=32 are durability/progress checkpoints only; no treatment
+statistic is computed or unmasked there. The single inferential analysis is at
+N=48. Fixture execution order is frozen in an interleaved eight-stratum block
+order and is unrelated to pod boundaries.
 
 The realized content/Phase-A acceptance rate and every rejection reason are
 reported. Inference is to the conditional recipe `R | eligible`, not the
@@ -132,10 +135,11 @@ unfiltered generator.
 
 ### 3.3 Legacy sensitivity
 
-`e01` is outcome-seen and is technical/pilot material only. All five outcome-
-unseen v12 cases `e02`--`e06` are rebound without editing and run as one fixed
-legacy sensitivity panel if budget permits. They are never mixed into the new
-recipe CI, and no subset is selected from them.
+`e01` is outcome-seen and is technical/pilot material only. The five outcome-
+unseen v12 cases `e02`--`e06` remain candidate legacy sensitivity cases pending
+literal successor revalidation. If all pass, all five are rebound without
+editing and run as one fixed panel if budget permits. They are never mixed into
+the new recipe result, and no subset is selected.
 
 ## 4. Content eligibility before any subject forward
 
@@ -161,16 +165,19 @@ Every candidate must pass all of the following on literal bytes:
     distinct while recording intentional within-template structure;
 12. third-reviewer adjudication by another model family for any disagreement.
 
-Failed candidates are archived under their original hashes. Repairs create new
-candidate indices; reviewed files are never edited in place. Qwen is not an
-author or judge.
+Failed candidates are archived under their original hashes. Before static
+freeze, a repair creates a new additive candidate and regenerates the literal
+permutation/manifest; reviewed files are never edited in place. After static
+freeze, only the first ten already bound indices may run and no repair or
+replacement is allowed. Qwen is not an author or judge.
 
 ## 5. Genuine carrier renders
 
-Each fixture has exactly two accepted stochastic subject-generated handoffs:
-
-- render 1 originates under full history C;
-- render 2 originates under full history W.
+Each fixture has exactly two accepted independently seeded stochastic handoffs,
+both generated on-policy under full history C. This targets the motivating
+deployment path and makes the within-fixture difference a genuine same-origin
+render replicate rather than a render-plus-origin contrast. Exact IDs from both
+renders are separately forced under C, W, and F.
 
 Exact prompt:
 
@@ -183,26 +190,29 @@ Sampling is q=1, temperature `0.7`, top-p `0.95`, top-k disabled, maximum 80
 content tokens, normal EOS required. Attempt seeds derive from
 `SHA256(design_id | case_id | render_index | attempt_index)` and are converted
 to a recorded nonnegative 63-bit PyTorch generator seed. At most three attempts
-per origin are allowed, in order.
+per render are allowed, in order.
 
 An accepted render must:
 
-- contain 40--80 content tokens and end normally;
+- contain 40--60 whitespace-delimited words, 40--80 production-tokenizer
+  content tokens, and end normally; both limits are deliberate and binding;
 - contain no embedded special token or cap hit;
 - contain no digit, target/countertarget, changed value, declared focal or
   nonfocal fact, or case-declared forbidden phrase under Unicode-casefolded
-  matching;
+  matching; forbidden lists include digit, punctuation, and spelled-out forms
+  of every number/name/value;
 - be certified by an independent target-aware reviewer as compatible with both
   C and W and free of focal/nonfocal information.
 
 Every rejected and accepted attempt is persisted before another attempt:
-origin, seed, sampler/RNG/library versions, prompt, complete history, text,
+render index, seed, sampler/RNG/library versions, prompt, complete history, text,
 token IDs, per-token log probabilities, stop token/reason, boundaries,
 positions, and hashes. Rejection advances the seed; text is never edited.
 
 For each accepted text, the exact same IDs are forced q=1 under C and W and
-freshly encoded in F. Within a render, visible tokens and logical positions are
-identical across histories. Generated-to-forced identity on the origin history
+freshly encoded in F. Within a render, the selected carrier/post-compaction
+tokens and logical positions are identical across C/W/F; the evicted C/W
+histories are intentionally different. Generated-to-forced identity under C
 must be bit-exact for IDs, positions, token log-probability bits, selected K/V
 rows, and EOS witness. The two render results are averaged within fixture
 before inference. Their difference is reported as nested render variability;
@@ -221,6 +231,20 @@ Every source history appends:
 Fresh compaction retains the original system message and the exact items 1--5,
 at their original logical positions with the evicted-history gap. All arms use
 the same visible text within a render.
+
+`A_C` is the untouched full C-history source continued through the selected
+carrier, acknowledgment, retained tail, and probe. `A_W` is the corresponding
+untouched W-history source. `FF` and all graft arms begin from the compacted
+system-plus-items-1--5 destination. Focal and nonfocal scores are separate forks
+from the same completed base state: append one byte-identical case-declared user
+probe, append the canonical assistant generation header, then teacher-force the
+C target and W countertarget as two separate branches beginning at the first
+assistant-content position. `L_C`/`L_W` are arithmetic mean token log
+probabilities over only those declared content tokens; message framing is not
+scored. Greedy generation starts at the identical answer position, is capped at
+16 content tokens, must end with normal EOS for an oracle gate, and is recorded
+separately from teacher forcing. The focal and nonfocal probe texts, targets,
+countertargets, token IDs, answer position, and cap are bound in every fixture.
 
 The primary source schedule `N` is role-native q=1 replay:
 
@@ -263,29 +287,43 @@ history-specificity controls at identical token IDs and logical positions.
 ### V-row placebo
 
 Cached K rows are post-RoPE and may never be permuted across positions. VP keeps
-fresh K and permutes complete bf16 V token rows within frozen event classes,
-using the same fixed-point-free cyclic permutation at every layer. Candidate
-shifts are a SHA-derived frozen order over all nonzero shifts in each class.
-Selection may inspect only tensor geometry and C/W/F row values, never a probe,
-target logit, continuation, or treatment outcome.
+fresh K and moves complete bf16 V rows only. The two event classes are (a)
+carrier assistant content R1 and (b) the structural suffix R2 minus R1
+(canonical carrier close, acknowledgment user message, and acknowledgment
+assistant header).
 
-The first candidate is accepted only if:
+For each class of width `m`, SHA256 of
+`design_id|case_id|render|class` defines a permutation of its row indices. The
+frozen moved-row counts are `[2,4,8,16,32,64,m]`, retaining only distinct values
+between 2 and m. For each ordered count pair and rotation direction `+1,-1`,
+rotate the selected rows by one cycle and leave unselected rows fresh. Apply the
+same token-index map at every layer. Evaluate at most the first 98 distinct
+candidates in lexicographic `(content_count, structural_count, direction)`
+order after SHA index permutation. Selection may inspect only C/W/F row values
+and geometry, never a probe, target logit, continuation, or outcome.
 
-- applied bytes differ from FC and FF at every layer with a nonzero real
-  displacement;
-- no token row remains fixed in a class of size greater than one;
-- aggregate Frobenius displacement norm ratio
-  `||VP-F|| / ||C-F||` lies in `[0.80, 1.25]`;
-- the median per-layer norm ratio lies in `[0.80, 1.25]`;
-- absolute aggregate cosine with the semantic `C-W` V delta is at most `0.10`.
+All norms and cosines are accumulated on CPU float64 in layer-major,
+class-major, token-major, head-major, dimension-major order. An active layer has
+finite `||C_l-F_l||_F > 0`; zero-real-delta layers, including possible layer 0,
+are excluded from ratios rather than divided by zero. A candidate is accepted
+only if at least 24 layers are active, every moved row changes bytes in at least
+one active layer, aggregate active-layer displacement ratio
+`||VP-F||/||C-F||` is in `[0.75,1.33]`, median active-layer ratio is in
+`[0.50,2.00]`, and absolute active-layer aggregate cosine with `C-W` is at most
+`0.20`. A zero/nonfinite denominator or cosine rejects the candidate.
 
-If no candidate passes, VP is `PLACEBO_UNAVAILABLE` for that render; no
-tolerance is changed and no substitute is invented. Exact-subject pilot
-geometry must demonstrate at least one available VP before primary treatment.
-The availability rate across primary renders is reported. If fewer than 90% of
-eligible primary fixtures have two available VP renders, the main treatment UCB
-may still be computed but the result is explicitly **not matched-placebo-
-complete** and cannot receive the strongest conclusion label in Section 17.
+If none passes, VP is `PLACEBO_UNAVAILABLE`; no tolerance changes. Realistic
+exact-subject e01 geometry must demonstrate availability before scaled Phase A,
+and VP availability is computed outcome-blind for every selected render before
+treatment release. The availability rate and every rejected diagnostic are
+reported. VP qualifies **only the value-only cell**: `VALUE_PLACEBO_COMPLETE`
+requires both renders available in at least 90% of primary fixtures. Full-KV
+has the decoded-valid same-position WW history control but no nonsemantic
+full-KV placebo, and is never described as placebo-complete. Primary numerical
+bounds remain computable when VP is unavailable, with the control limitation in
+the conclusion label. No positive/history-specific interpretation is allowed
+unless correct-source movement also exceeds wrong-history movement and the VP
+distribution in the preregistered fresh confirmation sample.
 
 ### Exact identity
 
@@ -316,17 +354,25 @@ For render `r` of fixture `i`:
 - value specificity: `H_V_ir = L_C(FC) - L_C(FW)`;
 - placebo movement: `P_ir = L_C(VP) - L_C(FF)` when available.
 
-The fixture values `X_R_i` and `X_V_i` are arithmetic means over its two
-accepted renders. Signed values are never truncated at zero. Focal margin,
-nonfocal target/margin, specificity, damage, placebo, render-origin interaction,
-and ratio-of-means are secondary components.
+The raw fixture values `X_R_i` and `X_V_i` are arithmetic means over its two
+accepted same-origin renders. Signed values are never truncated at zero. The
+bounded primary mean endpoints are
+`Z_R_i = clip(X_R_i, -0.5, 0.5)` and
+`Z_V_i = clip(X_V_i, -0.5, 0.5)`. Clipping is part of the estimand, not data
+cleaning. The separate tail endpoint preserves visibility of effects above the
+cap. Raw correct-target effects, focal margin, nonfocal target/margin,
+specificity, damage, placebo, within-fixture render difference, and
+ratio-of-means are mandatory companion components.
 
 ## 9. Treatment-blind Phase-A eligibility
 
 Phase A may expose only content/review evidence, carrier attempts and leakage
-review, technical identities, A_C/A_W/FF scores, forced-token support, and
-runtime/cost. It cannot construct, score, persist, or reveal CC/WW/FC/FW/VP
-probe outcomes.
+review, technical identities, A_C/A_W/FF scores, forced-token support, source
+and fresh R2 tensor bundles/hashes, VP construction availability without any
+continuation/probe, and runtime/cost. It cannot construct, score, persist, or
+reveal CC/WW/FC/FW/VP continuation or probe outcomes. Persisting the exact
+selected source/fresh rows is mandatory and is treatment-input reuse, not an
+outcome.
 
 A content-eligible fixture becomes primary recovery-eligible only if, for both
 accepted renders:
@@ -342,126 +388,127 @@ accepted renders:
 This defines `R | eligible`. It is a sensitivity-enriched benchmark and not a
 prevalence estimate for ordinary conversations. Candidate eligibility and
 selection are committed in a treatment release manifest before any primary
-outcome. If eight eligible fixtures per stratum are not available, no primary
-treatment begins.
+outcome. If six eligible fixtures per stratum are not available within the
+first ten frozen candidates, no primary treatment begins.
 
-## 10. Primary sequential confidence rule
+## 10. Primary finite-sample confidence rule
 
-There are `H=8` fixed strata with equal weights `w_h=1/8`. At look k each
-stratum contributes `n_h` fixture values per cell, with
-`n_h in {3,4,6}` for `N in {24,32,48}`.
+There are `H=8` fixed strata, six fixtures per stratum, and N=48. Because the
+sample is balanced, the equal-weight recipe mean is the ordinary mean across
+all 48 fixture values. The frozen without-replacement sampling order and bounded
+endpoints permit Hoeffding's sampling-without-replacement bound; using the
+independent bounded form is conservative. No normality, nonzero observed
+variance, or asymptotic approximation enters the primary guarantee.
 
-For cell `c in {R,V}`:
+The joint family alpha `0.05` is allocated once at the sole final analysis:
 
-```
-mu_hat_c = sum_h w_h * mean_hc
-var_hat_c = sum_h w_h^2 * s_hc^2 / n_h
-df_c = var_hat_c^2 /
-       sum_h ((w_h^2 * s_hc^2 / n_h)^2 / (n_h - 1))
-```
+- `0.04` to the two clipped-mean cells, `gamma_R=gamma_V=0.02`;
+- `0.01` to the large-responder prevalence endpoint.
 
-Terms with zero variance contribute zero to the denominator. If every stratum
-variance is zero, the UCB equals the observed mean. Missing/nonfinite cells,
-invalid degrees of freedom, duplicate fixtures, render duplication, or
-unbalanced looks fail closed.
-
-One-sided family alpha `0.05` is spent over looks as:
-
-- N=24: `alpha_1 = 0.005`;
-- N=32: `alpha_2 = 0.010`;
-- N=48: `alpha_3 = 0.035`.
-
-Within a look, divide alpha equally across the two primary cells:
+For `c in {R,V}`, with `Z_ci in [-0.5,0.5]`:
 
 ```
-gamma_kc = alpha_k / 2
-U_kc = mu_hat_c + t(df_c, 1 - gamma_kc) * sqrt(var_hat_c)
-U_primary_k = max(U_kR, U_kV)
+mean_Z_c = (1/48) * sum_i Z_ci
+U_Z_c = min(0.5,
+            mean_Z_c + sqrt(log(1/gamma_c) / (2*48)))
+U_Z_primary = max(U_Z_R, U_Z_V)
 ```
 
-Under independent normal errors within the frozen strata, the union bound over
-all six look/cell events gives at least 95% simultaneous coverage for the
-selected look. Correlation between cells is harmless. This assumption and its
-stress tests are reported; the t result is not called distribution-free.
+The range is exactly one nat, hence no range multiplier is omitted. Missing or
+nonfinite cells, duplicate fixtures/renders, wrong render count, unbalanced
+strata, an altered sample order, or N other than 48 fails closed. Constant/all-
+zero observations retain the positive Hoeffding radius; they never create a
+zero-width interval.
 
-The absolute operational-resolution target is `delta_nat = 0.25` nat/token.
-It is approximately two to four times the previously observed 0.06--0.13-nat
-schedule sensitivity and corresponds to a 1.284 odds multiplier for a one-token
-target. It is a stopping threshold, not a universal practical-importance claim.
+Large response is
+`H_i = 1{max(X_R_i, X_V_i) > 0.5 nat/token}`. Let `S=sum_i H_i`. If `S=0`,
+the without-replacement zero-event probability is no larger than its
+with-replacement counterpart; AM--GM then gives the conservative average-
+prevalence bound
+`U_H = 1 - 0.01^(1/48)`, even with unequal stratum prevalences. If `S>0`, use
+the distribution-free Hoeffding bound
+`U_H = min(1, S/48 + sqrt(log(1/0.01)/(2*48)))`; no binomial-iid claim is made.
 
-At each scheduled look:
+The union bound gives at least 95% joint coverage for both clipped cell means
+and the responder-prevalence component under the frozen sampling law. Cell
+correlation is harmless.
 
-- if `U_primary_k <= 0.25`, stop the primary batch and report the observed
-  bound;
-- otherwise continue to the next frozen look;
-- at N=48 stop and report, whether the bound resolved or remained above 0.25.
+The operational resolution thresholds are `delta_clip=0.35` nat/token and
+`delta_tail=0.10`. The clipped threshold is about three to six times the
+observed 0.06--0.13-nat schedule sensitivity, at most 7% of the minimum eligible
+damage, and a 1.42 odds multiplier for one token. It is a scoped resolution
+target, not universal practical irrelevance. The actual UCBs are always
+reported.
 
-No lower-bound switch consumes this alpha. A large positive result is reported
-as observed and can redirect only the preregistered untouched-reserve
-exploration; any confirmatory positive claim requires a separately frozen fresh
-sample. Pod/session boundaries never create looks. Completed overshoot cases
-remain durable but are masked from the current look.
+N=24 and N=32 reveal only completion/cost/control counts. Treatment scores stay
+masked. At N=48:
 
-## 11. Robustness, heterogeneity, and behavioral endpoints
+- joint resolution requires `U_Z_primary <= 0.35` and `U_H <= 0.10`;
+- cell-specific clipped bounds remain valid and are reported even if the joint
+  criterion fails;
+- any raw positive/history-specific claim requires a separately frozen fresh
+  sample and cannot be manufactured from the primary alpha.
 
-Primary companion analyses, without replacing the frozen UCB, are:
+## 11. Raw-nat, render, placebo, and behavioral companions
 
-- stratified fixture-cluster bootstrap (100,000 resamples within strata), with
-  both renders retained as one cluster;
-- stratum-specific means and leave-one-stratum-out results;
-- median, MAD, sign count, min/max, and complete fixture/render table;
-- t interval after deleting no observations;
-- bounded-score Hoeffding sensitivity for preregistered clipped endpoints at
-  `[-5,5]` and `[-1,1]`, explicitly labeled as clipped estimands;
-- Fieller one-sided ratio-of-means UCB `E(X)/E(Dplus)`; return `+infinity` if
-  denominator support is inadequate or the confidence set is unbounded.
+Mandatory companions, none substituted for the finite-sample primary bound:
 
-Rare response is a separate fixture endpoint:
-
-`H_i = 1{max(X_R_i, X_V_i) > 0.5 nat/token}`.
-
-Report exact Clopper--Pearson prevalence bounds for `P_R(H=1)` at each look
-using its own explicitly labeled marginal alpha ledger. This tail result never
-cancels the mean UCB and cannot be promoted as jointly 95% with the primary
-unless its alpha is subtracted from the primary family in a later additive
-amendment made before outcomes.
+- raw `X_R/X_V` means and a stratified fixture-cluster bootstrap with 100,000
+  within-stratum resamples, both renders retained as one cluster;
+- Welch--Satterthwaite and ordinary t UCBs labeled **model-based nominal**, not
+  guaranteed 95%; zero observed variance returns no nominal interval;
+- stratum-specific and leave-one-stratum-out means, median, MAD, sign count,
+  min/max, and complete fixture/render values;
+- pooled within-fixture variance from the two same-C-origin render replicates;
+- raw focal margin/correct/countertarget components, nonfocal movement,
+  specificity, damage, and VP movement/availability;
+- ratio-of-means `E(X)/E(Dplus)` by Fieller inversion labeled model-based and
+  returning `+infinity` when denominator support is inadequate.
 
 Behavioral eligibility requires A_C to generate the exact C target and FF not
-to do so. One fixture-level flip endpoint is frozen:
-
-`B_i = 1{CC or FC changes the damaged fresh answer to begin with the exact C target}`.
-
-The any-cell definition prevents post-hoc cell selection. Exact binomial bounds
-use the scheduled-look alpha rather than the fixed-N 0/24 shortcut. Greedy
-answers are generated only for A_C, A_W, FF, CC, and FC; wrong/placebo arms are
-score-only unless a later outcome-blind audit requires generation.
+to do so. Freeze one fixture-level endpoint:
+`B_i = 1{CC or FC begins with the exact C target}`. It is reported as a named
+finite-panel count. A marginal binomial interval, if shown, is explicitly
+model-based because stratum flip probabilities may differ; it is not part of
+the joint 0.05 family. Greedy answers are generated only for A_C, A_W, FF, CC,
+and FC; wrong/placebo arms remain score-only.
 
 ## 12. Analysis validation before release
 
-The complete selector and stopping algorithm must be implemented twice or
-independently recomputed and pass:
+The final algorithm must be implemented twice or independently recomputed and
+pass before treatment release:
 
-1. at least 200,000 simulated trials under independent normal stratum outcomes,
-   with primary-cell correlations 0, 0.5, and 0.9;
-2. skewed lognormal/beta, t3, two-point rare-responder, and single-outlier
-   contamination stress tests, reporting—not concealing—t undercoverage;
-3. damage near the 5-nat gate correlated with recovery;
-4. power/stop grids over means, variances, and responder prevalence;
-5. host offsets and identity/placebo failures that abort without adding N;
-6. golden cases for constant scores, zero variance, NaN, missing cells, row
-   order, duplicate renders, duplicate fixtures, look overshoot, zero flips,
-   and Fieller unbounded denominators;
-7. machine verification that spent alpha across primary look/cell events sums
-   to exactly 0.05;
-8. byte-for-byte agreement between the production analysis and an independent
-   final-bound recomputation.
+1. machine proof that the alpha ledger is exactly `0.02+0.02+0.01=0.05` and
+   that the clipped range is exactly one;
+2. at least 200,000 trials under bounded two-point, uniform, beta, skewed,
+   rare-responder, and contaminated distributions, with cell correlations 0,
+   0.5, and 0.9; empirical noncoverage may exceed 0.05 only by a preregistered
+   two-sided 99% Monte Carlo binomial tolerance around 0.05;
+3. a zero-variance/rare-responder case that the old draft falsely resolved must
+   retain the positive Hoeffding radius and correct tail bound;
+4. power grids over clipped means, variance, and tail prevalence. Freeze gate:
+   N=48 joint-resolution probability must be at least 0.80 for two independent
+   worst-variance endpoints on `{-0.5,+0.5}` with true mean `0.05` and zero
+   `>0.5` responders, and at least 0.95 when both true clipped means are zero
+   with SD at most 0.25;
+5. damage near the 5-nat gate correlated with raw recovery, verifying that the
+   code labels the estimand conditional rather than claiming unfiltered R;
+6. host offsets and identity/placebo failures abort without adding N;
+7. golden cases for constant/all-zero scores, NaN, missing cells, row order,
+   duplicate renders/fixtures, wrong stratum counts, raw effects beyond both
+   clipping limits, zero and nonzero responder counts, and Fieller unbounded
+   denominators;
+8. byte-for-byte agreement between production and independent final-bound
+   recomputation.
 
-Simulation failures do not license threshold tuning after outcomes. Revise the
-draft now or report the method's limitation.
+The prior nominal-t first-pass simulation is retained as negative design
+evidence; it observed severe undercoverage on skewed/rare-responder mixtures and
+cannot authorize treatment. Simulation failures revise the draft before
+outcomes; they never tune thresholds afterward.
 
 ## 13. Exact production gates
 
-Before primary outcomes on each host/config:
+Before any paid Phase A on the primary host, the static release must bind:
 
 1. successor release/case/review/selector/code/lock/model binding, plus deliberate
    one-token, position, source, hash, and control corruptions that fail;
@@ -475,14 +522,31 @@ Before primary outcomes on each host/config:
    using exactly four `nextafter` ULP steps at the frozen maximal-gradient
    coordinates and requiring plus/minus margin movements of at least `1e-4` in
    opposite directions;
-8. observed VP availability at exact-subject realistic geometry with a bounded
-   tensor evidence bundle;
-9. checkpoint corruption and hard-kill resume tests with no more than one active
+8. the complete deterministic VP search and its expected unavailable path;
+9. checkpoint corruption and hard-kill tests with no more than one active
    case at risk;
 10. warm-order equivalence: a case standalone, after another case, and in
     reversed order must have exact plan/row/score bits;
-11. one e01 short production timing canary and one 4.5k-token geometry timing
-    canary, both durable and independently read back.
+11. literal technical/e01/long-geometry fixture hashes, path-control coordinates
+    and comparator semantics, warm-order fields, kill points, and rejection
+    codes.
+
+The static freeze then authorizes, in this order and only within Section 16's
+Phase-A cap: one e01 short production timing/VP canary; one 4.5k-token geometry
+timing canary; then treatment-blind candidate carrier generation, A_C/A_W/FF
+screening, and source-row persistence. Scaled screening requires observed VP
+availability on e01. Before treatment release, every selected render must have
+its VP availability status computed without a probe or continuation.
+
+The independent-host audit replays both saved renders of the eligible-rank-1
+fixture from each stratum (eight fixtures) after the primary run. It requires a
+different GPU UUID and fresh provider allocation but the same model revision,
+dtype, backend, dependency hashes, and admitted GPU class. Token IDs, plan/call
+traces, selected-row hashes, and greedy IDs must match exactly. Every persisted
+target log probability and margin must differ by at most `1e-5` nat. Failure
+does not void the internally valid primary-host result; it makes
+`PORTABILITY_UNRESOLVED` the highest portability label and scopes all numerical
+claims to the primary runtime fingerprint.
 
 The old non-gating natural calibration is not inherited because it gates no v13
 claim.
@@ -504,7 +568,7 @@ Per case/render persistence order:
 1. exclusive-create `STARTED` record;
 2. accepted/rejected render artifact, read-back and hash;
 3. plans and Phase-A/oracle scores;
-4. immutable source/fresh foundation binding;
+4. immutable lossless selected C/W/F R2 tensor bundles plus foundation binding;
 5. each arm checkpoint synchronously before the next model operation;
 6. terminal case artifact, independent validation, then eviction.
 
@@ -515,130 +579,187 @@ result, and provider receipt lands in `results/coherent_state_powered_v13/`
 under a unique model-and-UTC name. Rejected or invalid artifacts go to a
 quarantine subdirectory and are never deleted.
 
-Lossless tensor bundles are mandatory for technical/control-validation fixtures
-and optional for every semantic case once exact model/code/input/row hashes are
-durable. Every render is mandatory text/token evidence.
+Lossless selected-row tensor bundles are mandatory for technical/control
+fixtures and every Phase-A-eligible semantic render. They are bounded by 256
+rows x 48 layers and permit treatment reuse without rerunning historical source
+replay on the same compatible runtime. Every render is mandatory text/token
+evidence.
 
-## 15. Release and unblinding boundary
+A hard kill or process error quarantines every partial artifact for the one live
+case. Partial arms are never resumed into a terminal case and never count as N;
+the entire case/render is recomputed from its validated Phase-A bundles. A
+terminal immutable case is skipped only after exact release/runtime/case/render
+binding validates. This is the sole resume policy.
 
-The successor seal binds only experiment-bearing bytes:
+## 15. Staged release and unblinding boundary
 
-- this preregistration and any additive amendment;
-- literal template/parameter/generator and candidate files;
-- content/review manifests;
-- Phase-A carrier/eligibility manifest;
-- selector/alpha manifest;
-- successor schema/planner/runtime/control/analysis/runner code;
-- relevant reused low-level source files;
-- dependency lockfiles and model snapshot contract;
-- exact execution commit.
+There is no self-hashing commit or circular amendment.
 
-Mutable orientation docs and unrelated repository history are not sealed.
+### Stage A — static Phase-A release
 
-Primary treatment is impossible until an independent validator commits a unique
-release manifest containing the exact 48 primary and 16 reserve case/render
-hashes and all gates. The remote job checks out the exact commit, rehashes every
-bound byte, and refuses an absent, duplicate, stale, or modified release.
-Resume accepts only terminal immutable per-case artifacts with matching release,
-runtime, selector, case, and render fingerprints.
+A static manifest binds only experiment-bearing bytes: this preregistration and
+additive disposition; template/pool/generator/permutation and content-review
+files; selector/alpha and analysis code; successor schema/planner/runtime/
+control/runner code; reused low-level primitives; dependency locks; model
+contract; literal gate fixtures; and the exact **parent commit** containing all
+those bytes. Mutable orientation docs and unrelated history are excluded.
+
+After Section 18's unpaid gates pass, a dedicated commit changes status to
+`STATIC_FROZEN_PHASE_A_AUTHORIZED`. Its manifest references its immutable parent
+tree/commit rather than the commit that contains itself. It authorizes only the
+capped treatment-blind operations in Sections 13 and 16. No CC/WW/FC/FW/VP
+continuation or probe may execute.
+
+### Stage B — primary treatment release
+
+Phase-A artifacts and the exact first six eligible fixtures per stratum are
+committed before release. A unique treatment manifest lists 48 case hashes, 96
+accepted-render hashes, all rejected-attempt/review hashes, Phase-A score and
+tensor-bundle hashes, VP-availability statuses, selector/analysis hashes, and
+the immutable `phase_a_root_commit` that is its immediate parent. The commit
+adding this manifest contains no other experiment change. The launch receipt,
+created after that commit exists, records the release-commit hash and manifest
+SHA-256; the manifest never claims its own commit hash.
+
+The remote checks out the recorded release commit, verifies its parent equals
+`phase_a_root_commit`, rehashes every listed byte, then persists separate live
+host/runtime attestations. An absent, duplicate, stale, modified, or wrong-
+parent release fails. Only then may treatment run. Terminal-case reuse follows
+Section 14; partial cases quarantine and recompute.
 
 ## 16. Provider and compute gate
 
 The last observed provider state before this draft was `$57.1287946692`, no
 active pods, at `2026-07-12T14:39:21Z`. Refresh immediately before allocation.
 
-Planning buckets:
+Hard buckets before observed release:
 
-- `$1.50` admission, exact gate, and short/long pilots;
-- `$18.00` primary through N=24;
-- `$16.70` conditional continuation through N=48;
-- `$4.50` independent-host audit;
-- `$12.00` locked failure/CI reserve;
-- remainder unallocated until observed cost releases it.
+- at most `$12.00` total for admission, exact gates, e01/long pilots, render
+  attempts, balanced yield measurement, and all treatment-blind Phase A;
+- at most `$30.00` projected for the 48-case treatment core after mandatory
+  source-bundle reuse;
+- at most `$4.50` for the independent-host audit;
+- at least `$8.00` left unallocated for failed acquisition, cleanup, artifact
+  recovery, and analysis. It is not called a CI reserve because no later look
+  exists.
 
-After pilots, scale only if all were observed:
+After e01/long pilots and the first two candidates in every stratum complete,
+compute observed provider seconds per candidate, accepted-render yield,
+content/Phase-A eligibility yield, source-bundle bytes, and arm time. Use the
+maximum observed balanced-batch per-candidate time and the 90% one-sided exact
+lower confidence bound on overall eligibility yield to project the candidates
+needed, capped by ten per stratum. If the yield lower bound is zero, projection
+is infinite. Continue screening only if:
+
+`spent_phaseA + projected_remaining_phaseA + projected_core + 4.50 + 8.00 <= live_balance`.
+
+Scaled Phase A also requires:
 
 - gate durable completion within 900 provider seconds;
-- short two-render/six-arm case within 1,200 seconds;
+- e01 two-render/six-arm timing canary within 1,200 seconds;
 - arm median at most 18 seconds and maximum at most 25 seconds;
 - 4.5k-token two-render extrapolation at most 4,000 seconds;
-- checkpoint reconstruction, eviction, and warm equivalence pass;
-- projected primary core at most `$35`;
-- `projected core + $4.50 host audit + $12 reserve <= current balance`.
+- checkpoint quarantine/recompute, eviction, and warm equivalence pass;
+- e01 VP available under the frozen search;
+- projected treatment core at most `$30` after measured source-bundle reuse.
 
 One fresh admitted-host timing measurement may distinguish a slow host from a
 design overrun before unseen outcomes. The gate controls waste; it does not
-authorize shrinking N after seeing treatment results.
+authorize shrinking N after seeing treatment results. Exceeding a candidate,
+time, Phase-A dollar, or yield bound produces
+`RECIPE_INFEASIBLE_PRETREATMENT` or `BUDGET_INFEASIBLE_PRETREATMENT`, preserves
+all artifacts, and exposes no treatment.
 
-Keep the admitted core host warm through the case batch and treatment-release
-review unless observed idle cost exceeds a fresh acquisition plus verified
-restart risk. No network volume is created for the core under the current
-session-economics decision. Harvest and verify before deletion.
+Keep the admitted core host warm through the treatment-release review for at
+most 45 idle minutes or `$1.10`, whichever occurs first. If release is not ready,
+harvest bundles and terminate; a new host must rebuild or independently verify
+compatible bundles under the post-screen projection. No network volume is
+created for the core under the current session-economics decision. Harvest and
+verify before deletion.
 
 ## 17. Conclusion labels and surplus order
 
-After a scheduled look:
+Terminal labels are mutually prioritized:
 
-- **BOUND_RESOLVED:** primary simultaneous UCB at most 0.25, all technical gates
-  pass, and at least 90% of fixtures are matched-placebo-complete;
-- **BOUND_RESOLVED_CONTROL_LIMITED:** UCB at most 0.25 but placebo completeness
-  is below 90%; report the numerical bound and missing-control limitation;
-- **POSITIVE_LEAD:** a primary mean is positive with compelling assumption-
-  robust evidence, but no confirmatory positive population claim is made from
-  this one sample;
-- **INCONCLUSIVE_AT_CAP:** N=48 UCB remains above 0.25 without a confirmed
-  positive effect;
-- **INVALID_TECHNICAL:** a decision-bearing technical/release identity fails;
+- **RECIPE_INFEASIBLE_PRETREATMENT** or **BUDGET_INFEASIBLE_PRETREATMENT:** a
+  bounded static/Phase-A gate failed before any primary treatment;
+- **INVALID_TECHNICAL:** a decision-bearing technical/release identity failed;
+- **JOINT_BOUND_RESOLVED_VALUE_CONTROL_COMPLETE:** the joint bound resolved and
+  `VALUE_PLACEBO_COMPLETE` also holds;
+- **JOINT_BOUND_RESOLVED:** at N=48, `U_Z_primary <= 0.35` and `U_H <= 0.10`;
+- **CLIPPED_MEAN_BOUND_ONLY:** both clipped cell UCBs are at most 0.35 but the
+  large-responder prevalence bound exceeds 0.10;
+- **CELL_BOUND_ONLY:** one named clipped cell UCB is at most 0.35 and the other
+  is not;
+- **BOUND_NOT_RESOLVED_AT_N48:** neither joint nor cell criteria resolve; report
+  the valid numerical UCBs rather than calling the experiment failed;
 - **PORTABILITY_UNRESOLVED:** the primary host is valid but the frozen second-
-  host replay fails its tolerance.
+  host audit fails; this suffix overrides any portability wording but not the
+  internally valid primary-host numerical label.
 
 Regardless of label, report the actual per-cell means/UCBs, damage, specificity,
 placebo, tail, flips, renders, strata, rejections, and costs. A null at R2 is
 never phrased as no hidden cache information.
 
-First surplus experiment, already split without treatment access, directly
-tests the mechanisms proposed in the Opus speculation note whose slug is
-`speculation-why-graft-fails-and-mitigations`. That note supplies hypotheses,
-not evidence:
+The Opus note whose slug is `speculation-why-graft-fails-and-mitigations`
+pre-ranks downstream/retained-tail, verbatim second-carrier trail, read-demand,
+and maximal-state tests. It supplies hypotheses, not authorization. No surplus
+treatment, outcome-driven winner selection, or confirmation claim is authorized
+by this document. After primary artifacts are safe, a separate additive
+preregistration must freeze literal loci/trails/bridges, arms, sample supply,
+estimands, selector/tie-break, multiplicity, and success rules. Until then the
+work is fixed-panel exploration only.
 
-1. on eligible reserve position 7 in every stratum, compare (M1) downstream
-   request/header and retained-tail rows, (M2') a position-preserving verbatim
-   second carrier copy as a note-inducing trail, and (M3) a frozen read-demand
-   bridge at the probe;
-2. include a maximal-visible-state restart as a channel ceiling and an inert
-   trail of matched length as the M2' negative control;
-3. freeze one winning or null-covering condition using discovery outcomes;
-4. confirm it once on untouched eligible reserve position 8 in every stratum;
-5. then, if budget remains, shorter-context/schedule precision, layer/alpha,
-   second checkpoint/model, true KV quantization, and natural/self-summary work
-   in that priority order after separate additive preregistration.
-
-M2' value-only is the first rung because copied values are not RoPE-positioned.
+M2' value-only remains the first-ranked rung because copied values are not
+RoPE-positioned.
 A full-KV second-copy-to-first-copy transplant is forbidden unless it preserves
 the later logical positions or a separately validated key-position transform
 has an effect floor well below the decision scale. No result from this menu can
 retroactively change the primary R2 selector or UCB.
 
-If primary stops at N24/N32, unused continuation funds become exploration
-budget while the `$12` reserve remains locked until all data and host audits are
-safe. Paid pods terminate before paper analysis/writing.
+Only observed post-primary surplus beyond the `$8` failure/cleanup reserve may
+fund the separately frozen exploration. Paid pods terminate before paper
+analysis/writing.
 
-## 18. Conditions to change DRAFT to FROZEN
+## 18. Authorization conditions
 
-Before this document can authorize paid or unseen primary treatment:
+### DRAFT to STATIC_FROZEN_PHASE_A_AUTHORIZED
 
-1. a fresh focused Fable review writes a serious assessment into `notes/` using
-   this literal draft, the design-review disposition, and the statistical audit;
-2. the main agent dispositions every blocking Fable item additively;
-3. independent statistical and harness reviewers approve the final literal
-   implementation against Sections 10--15;
-4. the analysis simulation/golden-test artifact passes;
-5. the complete template/generator/candidate and content-review manifests pass;
-6. local build-ladder, corruption, checkpoint, and warm-order tests pass;
-7. the exact release verifier has demonstrated both acceptance and deliberate
+Before any paid work:
+
+1. the archived Fable freeze review and independent adversarial
+   statistics/release review have additive main-agent dispositions;
+2. a fresh independent reviewer approves the corrected finite-sample formula,
+   sampling law, probe construction, staged release, placebo algorithm, and
+   Phase-A economics;
+3. the corrected analysis simulation/golden artifact passes every Section 12
+   threshold and an independent implementation agrees byte-for-byte;
+4. complete template/pool/generator/permutation and content-review manifests
+   pass locally for every candidate allowed by the ten-per-stratum cap;
+5. local build-ladder, corruption, checkpoint-quarantine, and warm-order tests
+   pass;
+6. the Stage-A verifier has demonstrated acceptance plus deliberate token,
+   position, source, hash, control, parent-commit, and duplicate-manifest
    rejection cases;
-8. a separately committed amendment changes `Status` to `FROZEN` and binds the
-   release artifact hashes.
+7. one dedicated authorization commit contains only the status/manifest needed
+   by Section 15 and changes the status to
+   `STATIC_FROZEN_PHASE_A_AUTHORIZED`.
+
+### Phase A to TREATMENT_RELEASED
+
+Before any primary treatment:
+
+1. exact e01 and long-geometry gates/timings pass within the Phase-A cap;
+2. the e01 VP is observed available and its tensor evidence independently
+   validates;
+3. balanced yield/cost projection passes after two candidates per stratum;
+4. exactly six eligible fixtures per stratum, 96 accepted render artifacts,
+   mandatory source/fresh bundles, all rejections, and outcome-blind VP statuses
+   are durable and committed;
+5. the live balance inequality and `$30` core projection pass;
+6. an independent validator builds the acyclic Stage-B manifest, demonstrates
+   every rejection path, and the release-only commit/launch receipt satisfy
+   Section 15.
 
 No informal message, old seal, green status string, or provider allocation can
 waive these conditions.

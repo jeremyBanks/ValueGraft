@@ -52,15 +52,20 @@ insufficiently tested.
 
 1. Refresh provider balance/pods immediately before launch and verify the
    literal reusable artifacts.
-2. Pre-generate a diverse experiment menu before choosing the successor.
-3. Freeze a new CI-driven, replicated, multi-fixture design with decoded-valid
-   matched controls and a placebo demonstrated feasible at the applied dtype.
-4. Re-verify only the production apparatus paths the new design relies on,
+2. The diverse experiment menu is complete and archived under the slug
+   `powered-successor-experiment-menu`.
+3. Finish the corrected v13 static design gate: fixed N=48, two same-C-origin
+   renders per fixture, distribution-free clipped-mean plus responder-tail
+   bounds, decoded-valid matched controls, and applied-bf16 VP feasibility.
+   The protocol is still DRAFT and authorizes no paid work.
+4. Author/review the frozen fixture pool and re-verify only the production
+   apparatus paths the new design relies on,
    including the required model/config build ladder and literal-input failure
    tests; do not reopen an apparatus-validation spiral.
-5. Launch and checkpoint the powered Goal-A run, persist every render and raw
+5. After a dedicated static authorization, run capped treatment-blind Phase A;
+   only a later parent-rooted release may launch and checkpoint Goal A. Persist every render and raw
    outcome under unique names, compute the gap after every cycle, and continue
-   until the frozen CI rule resolves.
+   through the fixed N=48 analysis.
 6. Spend the genuine surplus on the highest-value preregistered exploration,
    with downstream-token locus and configuration/model diversity as leading
    candidates.

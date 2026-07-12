@@ -207,3 +207,14 @@ Disposition:
   separately validated position transform.
 - No expected direction from the note enters a gate, exclusion, or primary
   analysis.
+
+## Correction — first v13 statistical design retired before outcomes
+
+The v13 draft built from this disposition was adversarially falsified before
+freeze. Its sequential Welch--Satterthwaite bound and zero-variance branch do
+not support the stated finite-sample 95% claim under skew/rare responders. The
+sampling, release, render-origin, placebo, and Phase-A budget specifications also
+required correction. The additive note whose slug is
+`powered-v13-adversarial-review-disposition` is authoritative for those topics.
+This historical disposition remains useful for the broad menu and audit trail;
+do not use its t-UCB, N-look, render-origin, or cost language to implement v13.

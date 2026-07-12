@@ -2,9 +2,9 @@
 
 This module contains no model code and performs no file discovery.  Callers
 must supply literal render-level rows from the release-bound primary sample.
-The module enforces the independent-unit contract: exactly two render origins
-collapse to one fixture value, and balanced looks contain the first 3/4/6
-eligible fixtures from every one of eight fixed strata.
+The module enforces the independent-unit contract: exactly two independently
+seeded C-origin renders collapse to one fixture value, and the sole inferential
+analysis contains six fixtures from every one of eight fixed strata.
 """
 
 from __future__ import annotations
@@ -20,10 +20,16 @@ from scipy import stats
 DESIGN_ID = "coherent-state-powered-successor-v13"
 STRATA = tuple(f"s{index}" for index in range(1, 9))
 CELLS = ("full_kv", "value_only")
-RENDER_ORIGINS = ("C", "W")
-LOOKS = ((24, 3, 0.005), (32, 4, 0.010), (48, 6, 0.035))
+RENDER_IDS = ("r1", "r2")
+FINAL_N = 48
+PER_STRATUM = 6
 FAMILY_ALPHA = 0.05
-DELTA_NAT = 0.25
+MEAN_FAMILY_ALPHA = 0.04
+TAIL_ALPHA = 0.01
+CLIP_LOWER = -0.5
+CLIP_UPPER = 0.5
+DELTA_CLIP = 0.35
+DELTA_TAIL = 0.10
 
 
 class V13StatsError(ValueError):
@@ -62,13 +68,13 @@ class FixtureValue:
         _finite_number(self.value_only, "value_only")
         _require(len(self.render_values) == 2,
                  f"{self.case_id} does not have exactly two renders")
-        origins = tuple(row[0] for row in self.render_values)
-        _require(set(origins) == set(RENDER_ORIGINS) and len(set(origins)) == 2,
-                 f"{self.case_id} render origins differ from C/W")
-        for origin, full_kv, value_only in self.render_values:
-            _require(origin in RENDER_ORIGINS, "invalid render origin")
-            _finite_number(full_kv, f"{self.case_id}:{origin}:full_kv")
-            _finite_number(value_only, f"{self.case_id}:{origin}:value_only")
+        render_ids = tuple(row[0] for row in self.render_values)
+        _require(set(render_ids) == set(RENDER_IDS) and len(set(render_ids)) == 2,
+                 f"{self.case_id} render IDs differ from r1/r2")
+        for render_id, full_kv, value_only in self.render_values:
+            _require(render_id in RENDER_IDS, "invalid render ID")
+            _finite_number(full_kv, f"{self.case_id}:{render_id}:full_kv")
+            _finite_number(value_only, f"{self.case_id}:{render_id}:value_only")
         _require(math.isclose(
             self.full_kv,
             sum(row[1] for row in self.render_values) / 2.0,
@@ -83,7 +89,7 @@ class FixtureValue:
 
 
 def collapse_render_rows(rows: Iterable[Mapping[str, object]]) -> list[FixtureValue]:
-    """Collapse exactly one C-origin and one W-origin row per fixture."""
+    """Collapse exactly two unique C-origin render rows per fixture."""
     grouped: dict[str, list[Mapping[str, object]]] = {}
     for row in rows:
         _require(isinstance(row, Mapping), "render row is not a mapping")
@@ -98,17 +104,20 @@ def collapse_render_rows(rows: Iterable[Mapping[str, object]]) -> list[FixtureVa
         _require(len(case_rows) == 2,
                  f"{case_id} has {len(case_rows)} render rows, expected two")
         origins = [row.get("render_origin") for row in case_rows]
-        _require(set(origins) == set(RENDER_ORIGINS) and len(set(origins)) == 2,
-                 f"{case_id} render origins differ from C/W")
+        _require(len(origins) == 2 and all(origin == "C" for origin in origins),
+                 f"{case_id} renders are not both C-origin")
+        render_ids = [row.get("render_id") for row in case_rows]
+        _require(set(render_ids) == set(RENDER_IDS) and len(set(render_ids)) == 2,
+                 f"{case_id} render IDs differ from r1/r2")
         strata = {row.get("stratum") for row in case_rows}
         ranks = {row.get("eligible_rank") for row in case_rows}
         _require(len(strata) == 1 and next(iter(strata)) in STRATA,
                  f"{case_id} stratum differs")
         _require(len(ranks) == 1 and isinstance(next(iter(ranks)), int),
                  f"{case_id} eligible rank differs")
-        ordered = sorted(case_rows, key=lambda row: str(row["render_origin"]))
+        ordered = sorted(case_rows, key=lambda row: str(row["render_id"]))
         render_values = tuple(
-            (str(row["render_origin"]),
+            (str(row["render_id"]),
              _finite_number(row.get("full_kv"), f"{case_id}:full_kv"),
              _finite_number(row.get("value_only"), f"{case_id}:value_only"))
             for row in ordered
@@ -130,12 +139,8 @@ def collapse_render_rows(rows: Iterable[Mapping[str, object]]) -> list[FixtureVa
                                                   fixture.case_id))
 
 
-def select_balanced_look(fixtures: Sequence[FixtureValue], n_total: int
-                         ) -> list[FixtureValue]:
-    """Select exactly ranks 1..m in every stratum, masking any overshoot."""
-    look = next((row for row in LOOKS if row[0] == n_total), None)
-    _require(look is not None, f"N={n_total} is not a frozen look")
-    per_stratum = int(look[1])
+def select_final_sample(fixtures: Sequence[FixtureValue]) -> list[FixtureValue]:
+    """Select exactly eligible ranks 1..6 in every stratum."""
     seen_ids: set[str] = set()
     selected: list[FixtureValue] = []
     for fixture in fixtures:
@@ -150,122 +155,144 @@ def select_balanced_look(fixtures: Sequence[FixtureValue], n_total: int
         ranks = [fixture.eligible_rank for fixture in members]
         _require(len(ranks) == len(set(ranks)),
                  f"duplicate eligible rank in {stratum}")
-        required = list(range(1, per_stratum + 1))
-        _require(ranks[:per_stratum] == required,
+        required = list(range(1, PER_STRATUM + 1))
+        _require(ranks[:PER_STRATUM] == required,
                  f"{stratum} lacks frozen ranks {required}")
-        selected.extend(members[:per_stratum])
-    _require(len(selected) == n_total, "balanced look size differs")
+        selected.extend(members[:PER_STRATUM])
+    _require(len(selected) == FINAL_N, "final sample size differs")
     return selected
 
 
 @dataclass(frozen=True)
-class StratifiedCellResult:
+class BoundedCellResult:
     cell: str
-    estimate: float
-    standard_error: float
-    degrees_of_freedom: float
-    critical_value: float
+    raw_mean: float
+    clipped_mean: float
+    radius: float
     ucb: float
-    gamma: float
-    stratum_means: Mapping[str, float]
-    stratum_sds: Mapping[str, float]
-
-
-def stratified_cell_ucb(fixtures: Sequence[FixtureValue], *, cell: str,
-                        alpha_for_look: float) -> StratifiedCellResult:
-    _require(cell in CELLS, f"unknown primary cell {cell!r}")
-    _require(0.0 < alpha_for_look < 1.0, "look alpha outside (0,1)")
-    gamma = alpha_for_look / len(CELLS)
-    weight = 1.0 / len(STRATA)
-    means: dict[str, float] = {}
-    sds: dict[str, float] = {}
-    variance_terms: list[float] = []
-    df_terms: list[float] = []
-    for stratum in STRATA:
-        values = np.asarray([
-            getattr(fixture, cell) for fixture in fixtures
-            if fixture.stratum == stratum
-        ], dtype=np.float64)
-        _require(values.size >= 2, f"{stratum} has fewer than two fixtures")
-        _require(np.isfinite(values).all(), f"{stratum}:{cell} is nonfinite")
-        mean = float(np.mean(values))
-        # NumPy's two-pass arithmetic can return an ~1e-34 artifact for a
-        # literally constant non-binary float such as 0.1.  The frozen zero-SD
-        # branch is about exact observed equality, so detect that explicitly.
-        variance = (0.0 if bool(np.all(values == values[0]))
-                    else float(np.var(values, ddof=1)))
-        sd = math.sqrt(variance)
-        component = weight * weight * variance / values.size
-        means[stratum] = mean
-        sds[stratum] = sd
-        variance_terms.append(component)
-        if component > 0.0:
-            df_terms.append(component * component / (values.size - 1))
-    estimate = sum(weight * means[stratum] for stratum in STRATA)
-    variance_estimate = sum(variance_terms)
-    standard_error = math.sqrt(variance_estimate)
-    if variance_estimate == 0.0:
-        degrees_of_freedom = math.inf
-        critical = 0.0
-        ucb = estimate
-    else:
-        denominator = sum(df_terms)
-        _require(denominator > 0.0, "Satterthwaite denominator is zero")
-        degrees_of_freedom = variance_estimate * variance_estimate / denominator
-        _require(math.isfinite(degrees_of_freedom) and degrees_of_freedom > 0.0,
-                 "invalid Satterthwaite degrees of freedom")
-        critical = float(stats.t.ppf(1.0 - gamma, degrees_of_freedom))
-        _require(math.isfinite(critical) and critical > 0.0,
-                 "invalid Student-t critical value")
-        ucb = estimate + critical * standard_error
-    return StratifiedCellResult(
-        cell=cell, estimate=estimate, standard_error=standard_error,
-        degrees_of_freedom=degrees_of_freedom, critical_value=critical,
-        ucb=ucb, gamma=gamma, stratum_means=means, stratum_sds=sds)
+    alpha: float
+    clipped_count_low: int
+    clipped_count_high: int
+    stratum_raw_means: Mapping[str, float]
+    stratum_clipped_means: Mapping[str, float]
 
 
 @dataclass(frozen=True)
-class LookResult:
+class PrimaryResult:
     n_total: int
-    per_stratum: int
-    alpha_for_look: float
-    cells: Mapping[str, StratifiedCellResult]
-    primary_ucb: float
-    stop_for_bound: bool
+    cells: Mapping[str, BoundedCellResult]
+    clipped_primary_ucb: float
+    responder_count: int
+    responder_ucb: float
+    joint_resolved: bool
+    clipped_means_resolved: bool
+    value_cell_resolved: bool
+    full_cell_resolved: bool
     case_ids: tuple[str, ...]
 
 
-def analyze_look(fixtures: Sequence[FixtureValue], n_total: int,
-                 *, delta_nat: float = DELTA_NAT) -> LookResult:
-    _require(math.isfinite(delta_nat), "delta is nonfinite")
-    look = next((row for row in LOOKS if row[0] == n_total), None)
-    _require(look is not None, f"N={n_total} is not a frozen look")
-    selected = select_balanced_look(fixtures, n_total)
-    alpha = float(look[2])
-    cells = {
-        cell: stratified_cell_ucb(selected, cell=cell,
-                                  alpha_for_look=alpha)
-        for cell in CELLS
-    }
-    primary_ucb = max(result.ucb for result in cells.values())
-    return LookResult(
-        n_total=n_total, per_stratum=int(look[1]), alpha_for_look=alpha,
-        cells=cells, primary_ucb=primary_ucb,
-        stop_for_bound=primary_ucb <= delta_nat,
+def responder_prevalence_ucb(successes: int, n: int, alpha: float) -> float:
+    """Distribution-free bound for average responder prevalence.
+
+    Zero successes uses the AM--GM inversion, valid for heterogeneous unit
+    prevalences.  Nonzero counts use Hoeffding for independent bounded
+    indicators (and is also conservative for sampling without replacement).
+    """
+    _require(isinstance(successes, int) and isinstance(n, int),
+             "responder counts must be integers")
+    _require(0 <= successes <= n and n > 0, "invalid responder counts")
+    _require(0.0 < alpha < 1.0, "responder alpha outside (0,1)")
+    if successes == 0:
+        return 1.0 - alpha ** (1.0 / n)
+    return min(1.0, successes / n + math.sqrt(
+        math.log(1.0 / alpha) / (2.0 * n)))
+
+
+def analyze_primary(fixtures: Sequence[FixtureValue]) -> PrimaryResult:
+    selected = select_final_sample(fixtures)
+    cell_results: dict[str, BoundedCellResult] = {}
+    gamma = MEAN_FAMILY_ALPHA / len(CELLS)
+    radius = (CLIP_UPPER - CLIP_LOWER) * math.sqrt(
+        math.log(1.0 / gamma) / (2.0 * FINAL_N))
+    for cell in CELLS:
+        raw = np.asarray([getattr(fixture, cell) for fixture in selected],
+                         dtype=np.float64)
+        _require(np.isfinite(raw).all(), f"{cell} contains nonfinite values")
+        clipped = np.clip(raw, CLIP_LOWER, CLIP_UPPER)
+        raw_strata: dict[str, float] = {}
+        clipped_strata: dict[str, float] = {}
+        for stratum in STRATA:
+            mask = np.asarray([fixture.stratum == stratum
+                               for fixture in selected])
+            _require(int(mask.sum()) == PER_STRATUM,
+                     f"{stratum} count differs")
+            raw_strata[stratum] = float(raw[mask].mean())
+            clipped_strata[stratum] = float(clipped[mask].mean())
+        clipped_mean = float(clipped.mean())
+        cell_results[cell] = BoundedCellResult(
+            cell=cell, raw_mean=float(raw.mean()),
+            clipped_mean=clipped_mean, radius=radius,
+            ucb=min(CLIP_UPPER, clipped_mean + radius), alpha=gamma,
+            clipped_count_low=int(np.sum(raw < CLIP_LOWER)),
+            clipped_count_high=int(np.sum(raw > CLIP_UPPER)),
+            stratum_raw_means=raw_strata,
+            stratum_clipped_means=clipped_strata)
+    responders = sum(
+        max(fixture.full_kv, fixture.value_only) > CLIP_UPPER
+        for fixture in selected)
+    tail_ucb = responder_prevalence_ucb(responders, FINAL_N, TAIL_ALPHA)
+    primary_ucb = max(result.ucb for result in cell_results.values())
+    return PrimaryResult(
+        n_total=FINAL_N, cells=cell_results,
+        clipped_primary_ucb=primary_ucb,
+        responder_count=int(responders), responder_ucb=tail_ucb,
+        joint_resolved=(primary_ucb <= DELTA_CLIP and
+                        tail_ucb <= DELTA_TAIL),
+        clipped_means_resolved=primary_ucb <= DELTA_CLIP,
+        value_cell_resolved=cell_results["value_only"].ucb <= DELTA_CLIP,
+        full_cell_resolved=cell_results["full_kv"].ucb <= DELTA_CLIP,
         case_ids=tuple(sorted(fixture.case_id for fixture in selected)))
 
 
-def sequential_decision(fixtures: Sequence[FixtureValue], *,
-                        delta_nat: float = DELTA_NAT
-                        ) -> tuple[LookResult, tuple[LookResult, ...]]:
-    """Evaluate only frozen looks and return the selected terminal look."""
-    results: list[LookResult] = []
-    for n_total, _, _ in LOOKS:
-        result = analyze_look(fixtures, n_total, delta_nat=delta_nat)
-        results.append(result)
-        if result.stop_for_bound:
-            break
-    return results[-1], tuple(results)
+@dataclass(frozen=True)
+class NominalCellResult:
+    cell: str
+    estimate: float
+    standard_error: float | None
+    degrees_of_freedom: float | None
+    critical_value: float | None
+    ucb: float | None
+    alpha: float
+
+
+def nominal_stratified_t_ucb(fixtures: Sequence[FixtureValue], *, cell: str,
+                             alpha: float = 0.05) -> NominalCellResult:
+    """Model-based companion only; never used for a primary conclusion."""
+    _require(cell in CELLS, f"unknown cell {cell!r}")
+    _require(0.0 < alpha < 1.0, "nominal alpha outside (0,1)")
+    selected = select_final_sample(fixtures)
+    weight = 1.0 / len(STRATA)
+    estimate = 0.0
+    components: list[float] = []
+    for stratum in STRATA:
+        values = np.asarray([getattr(fixture, cell) for fixture in selected
+                             if fixture.stratum == stratum], dtype=np.float64)
+        estimate += weight * float(values.mean())
+        variance = (0.0 if bool(np.all(values == values[0]))
+                    else float(values.var(ddof=1)))
+        components.append(weight * weight * variance / values.size)
+    variance_estimate = sum(components)
+    if variance_estimate <= 0.0:
+        return NominalCellResult(cell, estimate, None, None, None, None, alpha)
+    denominator = sum(component * component / (PER_STRATUM - 1)
+                      for component in components if component > 0.0)
+    _require(denominator > 0.0, "nominal df denominator is zero")
+    degrees = variance_estimate * variance_estimate / denominator
+    critical = float(stats.t.ppf(1.0 - alpha, degrees))
+    standard_error = math.sqrt(variance_estimate)
+    return NominalCellResult(
+        cell, estimate, standard_error, degrees, critical,
+        estimate + critical * standard_error, alpha)
 
 
 def clopper_pearson_interval(successes: int, n: int, alpha: float
@@ -312,9 +339,13 @@ def hoeffding_ucb(values: Sequence[float], *, lower: float, upper: float,
 
 def alpha_ledger() -> dict[str, object]:
     events = [
-        {"n_total": n_total, "cell": cell, "alpha": alpha / len(CELLS)}
-        for n_total, _, alpha in LOOKS for cell in CELLS
-    ]
+        {"n_total": FINAL_N, "endpoint": "clipped_mean",
+         "cell": cell, "alpha": MEAN_FAMILY_ALPHA / len(CELLS)}
+        for cell in CELLS
+    ] + [{
+        "n_total": FINAL_N, "endpoint": "large_responder_prevalence",
+        "cell": "any_primary_cell", "alpha": TAIL_ALPHA,
+    }]
     spent = math.fsum(float(event["alpha"]) for event in events)
     _require(math.isclose(spent, FAMILY_ALPHA, rel_tol=0.0, abs_tol=1e-15),
              "primary alpha ledger does not sum to 0.05")

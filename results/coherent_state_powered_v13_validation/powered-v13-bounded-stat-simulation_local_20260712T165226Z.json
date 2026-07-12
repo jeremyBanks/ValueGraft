@@ -1,0 +1,132 @@
+{
+  "alpha_ledger": {
+    "events": [
+      {
+        "alpha": 0.02,
+        "cell": "full_kv",
+        "endpoint": "clipped_mean",
+        "n_total": 48
+      },
+      {
+        "alpha": 0.02,
+        "cell": "value_only",
+        "endpoint": "clipped_mean",
+        "n_total": 48
+      },
+      {
+        "alpha": 0.01,
+        "cell": "any_primary_cell",
+        "endpoint": "large_responder_prevalence",
+        "n_total": 48
+      }
+    ],
+    "family_alpha": 0.05,
+    "spent": 0.05
+  },
+  "coverage": {
+    "positive_contamination_p001": {
+      "joint_noncoverage_rate": 0.0,
+      "joint_resolution_rate": 0.381415,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.21025740677522456,
+      "mean_tail_ucb": 0.1902483113388574,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 0.381415
+    },
+    "rare_responder_p006": {
+      "joint_noncoverage_rate": 0.002495,
+      "joint_resolution_rate": 0.002495,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.2413527713585579,
+      "mean_tail_ucb": 0.3351789464796403,
+      "tail_noncoverage_rate": 0.002495,
+      "zero_responder_rate": 0.002495
+    },
+    "skew_beta": {
+      "joint_noncoverage_rate": 0.0,
+      "joint_resolution_rate": 1.0,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.0006615578717476561,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    },
+    "t3_clipped": {
+      "joint_noncoverage_rate": 0.002055,
+      "joint_resolution_rate": 0.0,
+      "mean_noncoverage_rate": 0.001185,
+      "mean_primary_ucb": 0.23743170225503069,
+      "mean_tail_ucb": 0.7644181833407601,
+      "tail_noncoverage_rate": 0.00091,
+      "zero_responder_rate": 0.0
+    },
+    "uniform_rho_0.0": {
+      "joint_noncoverage_rate": 0.0,
+      "joint_resolution_rate": 0.99974,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.2254511359499135,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    },
+    "uniform_rho_0.5": {
+      "joint_noncoverage_rate": 0.0,
+      "joint_resolution_rate": 0.999645,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.21883136203055648,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    },
+    "uniform_rho_0.9": {
+      "joint_noncoverage_rate": 5e-06,
+      "joint_resolution_rate": 0.999755,
+      "mean_noncoverage_rate": 5e-06,
+      "mean_primary_ucb": 0.20971529455181778,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    }
+  },
+  "design_id": "coherent-state-powered-successor-v13",
+  "formula": {
+    "clip": [
+      -0.5,
+      0.5
+    ],
+    "delta_clip": 0.35,
+    "delta_tail": 0.1,
+    "mean_gamma_per_cell": 0.02,
+    "mean_radius": 0.20186688594189123,
+    "tail_alpha": 0.01
+  },
+  "gates": {
+    "all_pass": true,
+    "coverage_pass": true,
+    "power_pass": true
+  },
+  "monte_carlo_joint_noncoverage_tolerance_99pct": 0.051255303924451184,
+  "power": {
+    "mean_zero_sd_025": {
+      "joint_noncoverage_rate": 0.0,
+      "joint_resolution_rate": 0.99999,
+      "mean_noncoverage_rate": 0.0,
+      "mean_primary_ucb": 0.22133304282307512,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    },
+    "worst_variance_mean_005": {
+      "joint_noncoverage_rate": 0.003725,
+      "joint_resolution_rate": 0.86834,
+      "mean_noncoverage_rate": 0.003725,
+      "mean_primary_ucb": 0.29215755071382754,
+      "mean_tail_ucb": 0.09148242434831322,
+      "tail_noncoverage_rate": 0.0,
+      "zero_responder_rate": 1.0
+    }
+  },
+  "schema": "coherent_state_powered_v13_bounded_simulation_v2",
+  "seed": 20260712,
+  "trials_per_scenario": 200000
+}
