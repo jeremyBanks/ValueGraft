@@ -1,0 +1,497 @@
+{
+  "captured_at_utc": "2026-07-12T12:45:15.977773Z",
+  "completeness_basis": "The official GET /billing/pods contract returns a JSON array and exposes no pagination parameter; this response had no pagination headers. The official GET /pods contract returned the same complete active inventory immediately before and after billing capture.",
+  "request": {
+    "active_inventory_endpoint": "https://rest.runpod.io/v1/pods",
+    "authorization_serialized": false,
+    "billing_endpoint": "https://rest.runpod.io/v1/billing/pods",
+    "parameters": {
+      "bucketSize": "day",
+      "endTime": "2026-07-12T12:45:14.778043Z",
+      "grouping": "podId",
+      "startTime": "2026-07-01T00:00:00Z"
+    }
+  },
+  "response_commitments": {
+    "active_after_content_type": "application/json",
+    "active_after_http_status": 200,
+    "active_after_response_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "active_before_content_type": "application/json",
+    "active_before_http_status": 200,
+    "active_before_response_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "active_inventory_stable": true,
+    "billing_bucket_row_count": 92,
+    "billing_content_type": "application/json",
+    "billing_http_status": 200,
+    "billing_pagination_headers": {},
+    "billing_response_sha256": "94ceaa3d8bebe417ef8eccdb9af8fc0c328409c7a279a12a77cdd64bfec053e2"
+  },
+  "schema": "runpod_billing_collection_receipt_v1",
+  "snapshot": {
+    "account_billed_time_ms": 1097688401,
+    "account_total_usd": "424.871205699397249212",
+    "active_inventory_complete": true,
+    "active_pod_ids": [],
+    "captured_at_utc": "2026-07-12T12:45:15.977773Z",
+    "pagination_complete": true,
+    "pod_totals": [
+      {
+        "amount_usd": "7.325012945570052",
+        "billed_time_ms": 18599554,
+        "gpu_type_id": null,
+        "pod_id": "0q6qigyy02hbeq"
+      },
+      {
+        "amount_usd": "2.3374045686796308",
+        "billed_time_ms": 6749011,
+        "gpu_type_id": null,
+        "pod_id": "0rjwbqwpte2rzf"
+      },
+      {
+        "amount_usd": "24.816420534625649",
+        "billed_time_ms": 63013751,
+        "gpu_type_id": null,
+        "pod_id": "0u1nt1z6zoxhvm"
+      },
+      {
+        "amount_usd": "3.505328248720616",
+        "billed_time_ms": 8904687,
+        "gpu_type_id": null,
+        "pod_id": "0ufjmmzvagptfd"
+      },
+      {
+        "amount_usd": "28.145487501751632",
+        "billed_time_ms": 71461934,
+        "gpu_type_id": null,
+        "pod_id": "13e4gahyjfwrz1"
+      },
+      {
+        "amount_usd": "0.6718287887051702",
+        "billed_time_ms": 1704017,
+        "gpu_type_id": null,
+        "pod_id": "27irwplre7fmm6"
+      },
+      {
+        "amount_usd": "8.649392755236477",
+        "billed_time_ms": 21963655,
+        "gpu_type_id": null,
+        "pod_id": "28ibm2tba11soz"
+      },
+      {
+        "amount_usd": "12.7976868804544215",
+        "billed_time_ms": 31874105,
+        "gpu_type_id": null,
+        "pod_id": "2aoqkuio5zt5nu"
+      },
+      {
+        "amount_usd": "13.8440613020211455",
+        "billed_time_ms": 35159679,
+        "gpu_type_id": null,
+        "pod_id": "2dlybozd35bzr4"
+      },
+      {
+        "amount_usd": "0.2385863196104765",
+        "billed_time_ms": 605931,
+        "gpu_type_id": null,
+        "pod_id": "2k4s986sioi2p2"
+      },
+      {
+        "amount_usd": "0.2474448038265109",
+        "billed_time_ms": 1715921,
+        "gpu_type_id": null,
+        "pod_id": "2ljom5e6eyir09"
+      },
+      {
+        "amount_usd": "0.3126891953870654",
+        "billed_time_ms": 744305,
+        "gpu_type_id": null,
+        "pod_id": "2vasci152rpelv"
+      },
+      {
+        "amount_usd": "2.46368282847106438",
+        "billed_time_ms": 6254862,
+        "gpu_type_id": null,
+        "pod_id": "381vhlt0yjlcdu"
+      },
+      {
+        "amount_usd": "4.681241442449391",
+        "billed_time_ms": 13839610,
+        "gpu_type_id": null,
+        "pod_id": "3pww5ajhfsjqnf"
+      },
+      {
+        "amount_usd": "2.43401250289753084",
+        "billed_time_ms": 6178018,
+        "gpu_type_id": null,
+        "pod_id": "4dt7559i8t2ec1"
+      },
+      {
+        "amount_usd": "0.26508821826428175",
+        "billed_time_ms": 674569,
+        "gpu_type_id": null,
+        "pod_id": "4tvh7tirs654dx"
+      },
+      {
+        "amount_usd": "1.4906320092268288",
+        "billed_time_ms": 3782692,
+        "gpu_type_id": null,
+        "pod_id": "54ejwte7eay1sg"
+      },
+      {
+        "amount_usd": "21.14695904729888",
+        "billed_time_ms": 53695961,
+        "gpu_type_id": null,
+        "pod_id": "5nbs5exro1ppc2"
+      },
+      {
+        "amount_usd": "1.9547285363078117",
+        "billed_time_ms": 4966683,
+        "gpu_type_id": null,
+        "pod_id": "6ii6w03u4t1x78"
+      },
+      {
+        "amount_usd": "0.047182347159832716",
+        "billed_time_ms": 367098,
+        "gpu_type_id": null,
+        "pod_id": "6kay2v5yt2or9n"
+      },
+      {
+        "amount_usd": "0.25963478069752455",
+        "billed_time_ms": 660445,
+        "gpu_type_id": null,
+        "pod_id": "754gbs86hbt1z7"
+      },
+      {
+        "amount_usd": "7.436864393297583",
+        "billed_time_ms": 18883246,
+        "gpu_type_id": null,
+        "pod_id": "8f4eqv3q28nj43"
+      },
+      {
+        "amount_usd": "1.1647326848469675",
+        "billed_time_ms": 2962617,
+        "gpu_type_id": null,
+        "pod_id": "8lrh1yuoq93ird"
+      },
+      {
+        "amount_usd": "0.62638043705374",
+        "billed_time_ms": 509864,
+        "gpu_type_id": null,
+        "pod_id": "8wgdf4snci5fbe"
+      },
+      {
+        "amount_usd": "2.616674511693418",
+        "billed_time_ms": 7565850,
+        "gpu_type_id": null,
+        "pod_id": "96yjg965q8fnhi"
+      },
+      {
+        "amount_usd": "0.10164382820948958",
+        "billed_time_ms": 257255,
+        "gpu_type_id": null,
+        "pod_id": "9bsxwfmr7pzl6a"
+      },
+      {
+        "amount_usd": "8.614699882920831",
+        "billed_time_ms": 21873803,
+        "gpu_type_id": null,
+        "pod_id": "9gm7ypcafpazq6"
+      },
+      {
+        "amount_usd": "0.10394732188433409",
+        "billed_time_ms": 729681,
+        "gpu_type_id": null,
+        "pod_id": "9jb0bqjrcfuq0t"
+      },
+      {
+        "amount_usd": "7.310100180096924",
+        "billed_time_ms": 18560931,
+        "gpu_type_id": null,
+        "pod_id": "9knz1qj9c44bi0"
+      },
+      {
+        "amount_usd": "0.15329545876011252",
+        "billed_time_ms": 391029,
+        "gpu_type_id": null,
+        "pod_id": "an5g3hkylbcu1t"
+      },
+      {
+        "amount_usd": "17.875474248081445",
+        "billed_time_ms": 52844572,
+        "gpu_type_id": null,
+        "pod_id": "b2bhmx002t2vza"
+      },
+      {
+        "amount_usd": "1.776228460483253",
+        "billed_time_ms": 5135369,
+        "gpu_type_id": null,
+        "pod_id": "bf1qyogdx9o0qa"
+      },
+      {
+        "amount_usd": "12.017230124212801",
+        "billed_time_ms": 29936711,
+        "gpu_type_id": null,
+        "pod_id": "bgoasqa2g8nzsi"
+      },
+      {
+        "amount_usd": "6.356573832221329",
+        "billed_time_ms": 16139328,
+        "gpu_type_id": null,
+        "pod_id": "c0e9j71vncdihm"
+      },
+      {
+        "amount_usd": "0.8974463995546103",
+        "billed_time_ms": 2276360,
+        "gpu_type_id": null,
+        "pod_id": "d5ub9am6ephqlo"
+      },
+      {
+        "amount_usd": "2.1625438001938164",
+        "billed_time_ms": 5486924,
+        "gpu_type_id": null,
+        "pod_id": "dywmaclndfieps"
+      },
+      {
+        "amount_usd": "0.048559342976659536",
+        "billed_time_ms": 119770,
+        "gpu_type_id": null,
+        "pod_id": "es2sc9kg3c2kle"
+      },
+      {
+        "amount_usd": "0.1158333346247673",
+        "billed_time_ms": 300000,
+        "gpu_type_id": null,
+        "pod_id": "h5xbshqihd9959"
+      },
+      {
+        "amount_usd": "0.92272456176579",
+        "billed_time_ms": 2293867,
+        "gpu_type_id": null,
+        "pod_id": "haraf45ijgnker"
+      },
+      {
+        "amount_usd": "29.315531927160918",
+        "billed_time_ms": 74438308,
+        "gpu_type_id": null,
+        "pod_id": "hdfl6s321bltro"
+      },
+      {
+        "amount_usd": "3.5577608707826585",
+        "billed_time_ms": 10272778,
+        "gpu_type_id": null,
+        "pod_id": "hp7jbpnsldiiff"
+      },
+      {
+        "amount_usd": "0.273073336109519",
+        "billed_time_ms": 798093,
+        "gpu_type_id": null,
+        "pod_id": "ik8irhx4yhqdj0"
+      },
+      {
+        "amount_usd": "2.2401036769151688",
+        "billed_time_ms": 6468661,
+        "gpu_type_id": null,
+        "pod_id": "jgio0mcsd7i0kk"
+      },
+      {
+        "amount_usd": "3.1481499867513776",
+        "billed_time_ms": 9313731,
+        "gpu_type_id": null,
+        "pod_id": "lveawgxzfm5xte"
+      },
+      {
+        "amount_usd": "0.07517359545454383",
+        "billed_time_ms": 188699,
+        "gpu_type_id": null,
+        "pod_id": "lyt5x3popltrgx"
+      },
+      {
+        "amount_usd": "17.989733720663935",
+        "billed_time_ms": 45674850,
+        "gpu_type_id": null,
+        "pod_id": "mgxyzamnu3ece6"
+      },
+      {
+        "amount_usd": "0.15642206650227308",
+        "billed_time_ms": 459204,
+        "gpu_type_id": null,
+        "pod_id": "moig8n55mp5k07"
+      },
+      {
+        "amount_usd": "0.6502519128844142",
+        "billed_time_ms": 706456,
+        "gpu_type_id": null,
+        "pod_id": "muhfah529vzrof"
+      },
+      {
+        "amount_usd": "11.829397099092603",
+        "billed_time_ms": 30037767,
+        "gpu_type_id": null,
+        "pod_id": "mvn478byps3ifl"
+      },
+      {
+        "amount_usd": "9.78250183770433",
+        "billed_time_ms": 24838374,
+        "gpu_type_id": null,
+        "pod_id": "obg4hhgb4gy572"
+      },
+      {
+        "amount_usd": "18.9851663256995375",
+        "billed_time_ms": 48204987,
+        "gpu_type_id": null,
+        "pod_id": "ocdluygijjaisw"
+      },
+      {
+        "amount_usd": "0.0772744263522327",
+        "billed_time_ms": 194140,
+        "gpu_type_id": null,
+        "pod_id": "otv9b2lyptkmh2"
+      },
+      {
+        "amount_usd": "0.274700989946723",
+        "billed_time_ms": 803017,
+        "gpu_type_id": null,
+        "pod_id": "p636wvrnqbzy06"
+      },
+      {
+        "amount_usd": "12.591676241718233",
+        "billed_time_ms": 31976044,
+        "gpu_type_id": null,
+        "pod_id": "p92qmwn1yzhj0i"
+      },
+      {
+        "amount_usd": "3.244691096711904",
+        "billed_time_ms": 8241646,
+        "gpu_type_id": null,
+        "pod_id": "ps53u6q7u3rm36"
+      },
+      {
+        "amount_usd": "10.778874064795673",
+        "billed_time_ms": 26849362,
+        "gpu_type_id": null,
+        "pod_id": "pwzzum543155ld"
+      },
+      {
+        "amount_usd": "0.1283457293175161",
+        "billed_time_ms": 326411,
+        "gpu_type_id": null,
+        "pod_id": "rv7x3vwmfyvpah"
+      },
+      {
+        "amount_usd": "0.4371178699657321",
+        "billed_time_ms": 1108123,
+        "gpu_type_id": null,
+        "pod_id": "t09se1chhqpw5e"
+      },
+      {
+        "amount_usd": "1.682117436081171",
+        "billed_time_ms": 4864669,
+        "gpu_type_id": null,
+        "pod_id": "t3j7uo66ix9tcg"
+      },
+      {
+        "amount_usd": "3.9403000487945974",
+        "billed_time_ms": 10007252,
+        "gpu_type_id": null,
+        "pod_id": "tg61alg8xc701h"
+      },
+      {
+        "amount_usd": "25.264447986148298",
+        "billed_time_ms": 64150129,
+        "gpu_type_id": null,
+        "pod_id": "tjlcskpgy0cfqy"
+      },
+      {
+        "amount_usd": "0.4710172740742564",
+        "billed_time_ms": 510333,
+        "gpu_type_id": null,
+        "pod_id": "u513d5hb7s4m3j"
+      },
+      {
+        "amount_usd": "8.41959778079763",
+        "billed_time_ms": 21380493,
+        "gpu_type_id": null,
+        "pod_id": "ugsa1p4n17vhzg"
+      },
+      {
+        "amount_usd": "8.89230943378061",
+        "billed_time_ms": 25710628,
+        "gpu_type_id": null,
+        "pod_id": "ujg3iqy5cirnga"
+      },
+      {
+        "amount_usd": "1.246371510438621",
+        "billed_time_ms": 2955439,
+        "gpu_type_id": null,
+        "pod_id": "usamhbexh7q6n0"
+      },
+      {
+        "amount_usd": "0.7534565413370728",
+        "billed_time_ms": 1915427,
+        "gpu_type_id": null,
+        "pod_id": "ussx6rs6q8twq2"
+      },
+      {
+        "amount_usd": "0.22331154625862837",
+        "billed_time_ms": 528359,
+        "gpu_type_id": null,
+        "pod_id": "v73xgjm79xu3uf"
+      },
+      {
+        "amount_usd": "1.6823556371964514",
+        "billed_time_ms": 4267252,
+        "gpu_type_id": null,
+        "pod_id": "vt7b2t2lo7bzb7"
+      },
+      {
+        "amount_usd": "1.5874428199604154",
+        "billed_time_ms": 4592264,
+        "gpu_type_id": null,
+        "pod_id": "w96yd5c5ehr3hm"
+      },
+      {
+        "amount_usd": "4.0657583195716143",
+        "billed_time_ms": 12019661,
+        "gpu_type_id": null,
+        "pod_id": "w99udryqm0szp1"
+      },
+      {
+        "amount_usd": "0.15670270379632711",
+        "billed_time_ms": 460053,
+        "gpu_type_id": null,
+        "pod_id": "waowgxxhysrgnd"
+      },
+      {
+        "amount_usd": "1.2025069706141949",
+        "billed_time_ms": 3469769,
+        "gpu_type_id": null,
+        "pod_id": "welhpjmbqyd880"
+      },
+      {
+        "amount_usd": "0.05550857027992606",
+        "billed_time_ms": 137768,
+        "gpu_type_id": null,
+        "pod_id": "x6odspzmulsje7"
+      },
+      {
+        "amount_usd": "2.7724572848528624",
+        "billed_time_ms": 7036580,
+        "gpu_type_id": null,
+        "pod_id": "x72deho8ka2cdy"
+      },
+      {
+        "amount_usd": "3.48664779542014",
+        "billed_time_ms": 8856306,
+        "gpu_type_id": null,
+        "pod_id": "ykjfg2za1xrglk"
+      },
+      {
+        "amount_usd": "25.4974909052252765",
+        "billed_time_ms": 64741703,
+        "gpu_type_id": null,
+        "pod_id": "zlialnk70whm91"
+      }
+    ],
+    "schema": "runpod_sanitized_provider_snapshot_v1"
+  }
+}
