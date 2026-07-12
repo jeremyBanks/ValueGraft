@@ -1,6 +1,33 @@
 # CLAIMS.md — audited claims ledger for the ValueGraft paper
 
-**This file is the single source of truth for every number the paper may ship.**
+> ## ⚠ SUPERSEDED AS FINAL-PAPER SOURCE (2026-07-12)
+>
+> This ledger is an exact historical audit through commit `f4b6a89` on
+> 2026-07-09. It is no longer the single source of truth for the final paper.
+> Later apparatus review and the coherent-state v12 program materially narrowed
+> what several rows can support. Preserve every row below as history, but draft
+> from the current `FINDINGS.md`/`STATE.md` plus:
+>
+> - `notes/2026071115-sol-final-paper-review.md` — the published README's
+>   blocking provenance/apparatus audit;
+> - `notes/2026071144-opus-paper-spine-and-methodological-postmortem.md` — the
+>   pre-canary narrative synthesis;
+> - `notes/2026071287-sol-e01-diagnostic-final-interpretation.md` — the final
+>   exact-stack diagnostic interpretation; and
+> - `notes/2026071288-sol-data-collection-stop-and-future-reentry.md` — the
+>   terminal collection decision.
+>
+> In particular: the held-out synthetic bodies were foreign-rendered; the old
+> state was reconstructed by prefill; the intervention covered summary plus
+> tail; three compression-sweep cells used mismatched reconstruction requests;
+> the selected SWE map has only a narrow likelihood-proxy result without its
+> matched placebo or out-of-sample behavior; and formal v12 stopped at its
+> written path-control gate. One later e01 diagnostic produced only a weak,
+> schedule-sensitive, placebo-uncontrolled value-only hint with no behavioral
+> recovery. None of those corrections is represented in the historical status
+> counts below.
+
+**At the time of this snapshot, this file was the single source of truth for every number the then-current paper could ship.**
 The paper is assembled *from* this ledger, not the other way around. Every claim
 below was **RECOMPUTED FROM DISK** at commit `f4b6a89` on 2026-07-09 — not copied
 from prose. Where a recompute disagrees with a stated claim, BOTH numbers are
