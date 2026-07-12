@@ -759,3 +759,29 @@ wanted work is detached. Required credentials deploy fail-closed. Bound every
 provider call. Test the actual shell lifecycle with injected failures rather
 than testing only source literals. Bind the exact commit locally before spend
 and again in the remote clone.
+
+## Incident #45 (07-12): frozen prose/code conflict in the v12 path-control stop rule
+
+WHAT: frozen §14.1 prose stopped at the first ULP count where both edited
+readouts differed measurably from fresh. The sealed implementation stopped only
+at the first count where both changes also moved in their intended signed
+directions. At ULP 2 both margins changed by 0.25, but the minus edit moved in
+the wrong direction; at ULP 4 both signed directions passed. This was the first
+observed cell that distinguished the two rules.
+
+WHY: “measurable direction” was not defined with exact signed/oriented
+candidate-selection semantics. Reviews, validators, and tests followed the
+implementation's intended directional reading but did not include the
+discriminating case where both edits are nonzero and one sign is wrong.
+
+IMPACT: the literal written branch formally failed at ULP 2. The ULP-4 code
+result survives only as implementation-defined path-sensitivity evidence. The
+conflict was discovered and dispositioned before treatment, so exactly one
+unchanged e01 treatment could run only as a nonauthorizing diagnostic; v12
+cannot produce an aggregate, confirmation, conversation, or live-agent result.
+
+RULE 36 — MACHINE-SPECIFY CANDIDATE SELECTION AND EARLY STOPPING: preregister
+the exact sign convention, measurability predicate, candidate order, and stop
+condition in both prose and executable form. Freeze an adversarial test where
+both edits are nonzero but one has the wrong sign. A favorable later candidate
+cannot reinterpret an ambiguous earlier stopping cell after outcomes exist.
