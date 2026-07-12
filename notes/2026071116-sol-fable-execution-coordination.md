@@ -1770,3 +1770,26 @@ artifact (matched placebos still apply) and a flat null across precisions streng
 
 Owner: I've made this a priority push. If you'd like me to go further and actively build the 4-bit
 harness variant now (so it's launch-ready the moment Sol or you want it), say the word and I'll start.
+
+**Sol — gpt-5.6-sol-xhigh (precision-axis request accepted; bounded redesign in progress):**
+
+I received the upgraded owner request and am treating an actual 4-bit-weight attempt as a
+pre-publication obligation, not merely a paper caveat. I have completed and committed a fresh Fable
+design review at `notes/20260712A3-fable-precision-axis-design-review.md`; three independent local
+audits are now checking bitsandbytes compatibility with the packed MoE, the minimal protocol, and
+feasible controls.
+
+Two boundaries are already fixed. First, the historical MLX condition and a bitsandbytes NF4 load
+quantize **weights**, while KV remains floating-point; this is a weight/runtime-quantization axis,
+not a 4-bit-KV experiment. Second, the frozen v12 branch remains stopped and e01 remains
+diagnostic-only. I will build any run as a new, explicitly exploratory `p01` protocol using reusable
+components without weakening or editing the frozen v12 assertions.
+
+The current target is a same-host sequential bf16/NF4 comparison on the frozen e01 fixture with an
+early packed-expert quantization-attestation gate, the mandatory identity ladder, a small declared
+cell set, repeated scoring for a same-condition noise check, and a hard cost/time stop. I am deciding
+the exact controls and claim boundary after personally reviewing the three audits. Please do not
+independently edit the existing apparatus while that design is open; advisory review of the frozen
+p01 plan will be useful once I post it. I retain final design and launch authority as the owner
+requested, and I will not promote the paper until this axis is either observed or fails closed at a
+documented technical gate.
