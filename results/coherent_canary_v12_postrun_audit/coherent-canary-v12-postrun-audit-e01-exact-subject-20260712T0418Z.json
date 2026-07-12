@@ -1,0 +1,153 @@
+{
+  "case_id": "e01",
+  "completed_at_utc": "2026-07-12T04:18:22.872027+00:00",
+  "fresh_phase_a_identity": {
+    "comparison": "canonical JSON bytes",
+    "probes": {
+      "focal": {
+        "canonical_json_equal": true,
+        "phase_a_canonical_sha256": "e742706b58d09f1dd4ebc04da2d1df91a29c637dfd3b81d8e1d96201922df3ff",
+        "treatment_canonical_sha256": "e742706b58d09f1dd4ebc04da2d1df91a29c637dfd3b81d8e1d96201922df3ff"
+      },
+      "nonfocal": {
+        "canonical_json_equal": true,
+        "phase_a_canonical_sha256": "3ce032e625e98cf19c125b2fe14e29bddca2a38c9d8cc3402a8526606a20f170",
+        "treatment_canonical_sha256": "3ce032e625e98cf19c125b2fe14e29bddca2a38c9d8cc3402a8526606a20f170"
+      }
+    },
+    "status": "PASS"
+  },
+  "harvester_replay": {
+    "comparison": {
+      "legitimate_path_or_timestamp_differences": [
+        {
+          "category": "timestamp",
+          "local_value_sha256": "2881054b4cea0751e703c11afc81cde59db0d495eec1831295de915ffb6209e7",
+          "pod_value_sha256": "b2bd176cc5fddd93b0128edcfc6f27caca8c6ca76e8692619ac4f06b4a63d425",
+          "pointer": "/completed_at_utc"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "1523b117ef9a20ba4196c4fdec3c8b8bb61f7f93d08a8a59433c71028c309d20",
+          "pod_value_sha256": "4e5ccffe5888d2d5aaba526eb1d39c9c2332a173edb10d5e5d7cf8168ff3e28e",
+          "pointer": "/treatment_artifact/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "9a62a109bf38f9595d583119452b09410be6d9c79163bd974a71b66d7ac1fe66",
+          "pod_value_sha256": "64418ade22308e87d6e4908128cc6eda1647d9c60130aa78f478ebc7445b4cf2",
+          "pointer": "/verified_bindings/case/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "257bc4a0bde5c78c1fa81f8d9053e9444d38bc9af2fb528065b3bc760b01a7b8",
+          "pod_value_sha256": "a45d619ff373101f55cfed3ad32d906f83149b72bdad199109b3642306571c6b",
+          "pointer": "/verified_bindings/phase_a_raw_artifact/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "fe2ede4d9057d43d0bf8e246b8d38a75c3eb4a4a721fe448eec90b00f5e75903",
+          "pod_value_sha256": "be8bd16f3f13282f1cfddda25f758e83c37fc15975aacecc725b75c90f4cc157",
+          "pointer": "/verified_bindings/phase_a_validation_report/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "5a281935bafce849722799c0ded060f409060f78215a5102c9323ee0990aa2b5",
+          "pod_value_sha256": "35c80ae3986f93f8e393aabedde714d0d4754bde86b260f06e539b5ec8aea745",
+          "pointer": "/verified_bindings/preregistration/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "22b294938b4bb4d892b26bc8101d97a792bbbec98ee754fe580201d6e1ed553c",
+          "pod_value_sha256": "654666e3b30e1f71a24a0836502609f36b598eb88e1a86f5bf23d111fd46b6a2",
+          "pointer": "/verified_bindings/revision4_blind_review/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "74eff3d5549433b60c4c40538b5642ab45a37d790462822ef2b1f3ae0d2ede51",
+          "pod_value_sha256": "998c13ef58507aac5b1890149caeb1b8bebf477ab256a775e6f0c285720b3393",
+          "pointer": "/verified_bindings/revision4_manifest/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "c4c7180d19a3494eceaf91350ed89fcc254878565e7592792ebd7f4872a9b458",
+          "pod_value_sha256": "6e9f959d21e293f2daf21206bf559a6a119264f6632cfc55efefcaa308157097",
+          "pointer": "/verified_bindings/revision4_paired_review/path"
+        },
+        {
+          "category": "path",
+          "local_value_sha256": "1439a7a03906094a8de802a1f035462e713c2542894f69dc2e6ae9028be0a1fd",
+          "pod_value_sha256": "7c28becf332f45a8af6713e9dda00bdaaa310ea06357327eb794c831ac605218",
+          "pointer": "/verified_bindings/technical_validation_report/path"
+        }
+      ],
+      "local_normalized_sha256": "cb86d2dd13f20fd6b551ee55534c01747069872945ad07438ca8e0171d1ce1d2",
+      "normalization_allowlist": [
+        "/completed_at_utc",
+        "/treatment_artifact/path",
+        "/verified_bindings/<binding>/path"
+      ],
+      "normalized_canonical_json_equal": true,
+      "pod_normalized_sha256": "cb86d2dd13f20fd6b551ee55534c01747069872945ad07438ca8e0171d1ce1d2",
+      "raw_difference_pointers": [
+        "/completed_at_utc",
+        "/treatment_artifact/path",
+        "/verified_bindings/case/path",
+        "/verified_bindings/phase_a_raw_artifact/path",
+        "/verified_bindings/phase_a_validation_report/path",
+        "/verified_bindings/preregistration/path",
+        "/verified_bindings/revision4_blind_review/path",
+        "/verified_bindings/revision4_manifest/path",
+        "/verified_bindings/revision4_paired_review/path",
+        "/verified_bindings/technical_validation_report/path"
+      ],
+      "status": "PASS",
+      "unexpected_difference_pointers": []
+    },
+    "local_harvest_canonical_sha256": "55500003760baa232a4466cda26f5fb4979f6c0b6a2e5aa17bf432817ee0a4e7",
+    "local_harvest_path": ".sol-v4/treatment_postrun_audit/run-20260712T0418Z/local_harvest.json",
+    "local_harvest_sha256": "5f3cb16c3777522194d92b6d001eeac84a85ff12b76b75ceae63bf1fc9667c07",
+    "returncode": 0,
+    "status": "PASS",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "bed0c1e218e28dd422773cc15a41858428f61220bf26937e10a0edfc769a0d01"
+  },
+  "inputs": {
+    "phase_a_raw": {
+      "path": "/Users/jeb/experimentation/results/coherent_canary_v12_phase_a/coherent-canary-v12-phase-a-e01_exact-subject_20260712T030639073087Z.json",
+      "sha256": "2cd7f6f190b9f4e9598844e45e5488779b72cd54a1fd51dd5b8a5b24154d672d"
+    },
+    "pod_harvest": {
+      "canonical_sha256": "c38f4f46364b0526d4d957f587369aa1cc93b15735bea51e36121efc450465a1",
+      "path": "/Users/jeb/experimentation/results/coherent_canary_v12_harvest/coherent-canary-v12-harvest-e01-exact-subject-20260712T040158Z.json",
+      "sha256": "fbe58027f0d35558654929a302f8adf079c807b7ee804fc69d047e5d5f07776d"
+    },
+    "tracked_harvester": {
+      "git_head": "a5ebb68a3697e7bd9a65239039c0ad1d944fa09d",
+      "head_blob_sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad",
+      "path": "/Users/jeb/experimentation/scripts/harvest_coherent_canary_v12.py",
+      "pre_run_expected_sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad",
+      "relative_path": "scripts/harvest_coherent_canary_v12.py",
+      "working_matches_head": true,
+      "working_matches_pre_run_freeze": true,
+      "working_sha256": "9dbe29ad84cd001e13c5144605f506d52a4f6b06d00353436a49fb67bbbfdfad"
+    },
+    "treatment": {
+      "path": "/Users/jeb/experimentation/.sol-v4/treatment_execution/reconstructed_raw/coherent-canary-v12-treatment-e01_exact-subject_20260712T040237879370Z.json",
+      "sha256": "f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082"
+    }
+  },
+  "raw_reconstruction": {
+    "byte_exact": true,
+    "canonical_json_equal": true,
+    "path": ".sol-v4/treatment_postrun_audit/run-20260712T0418Z/reconstructed_treatment_raw.json",
+    "reconstructed_canonical_sha256": "3345fa6ddc4fba8724968870f972309f54c490243270bb43c5f066850b902810",
+    "reconstructed_sha256": "f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082",
+    "source_canonical_sha256": "3345fa6ddc4fba8724968870f972309f54c490243270bb43c5f066850b902810",
+    "source_sha256": "f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082"
+  },
+  "schema": "coherent_canary_v12_e01_treatment_postrun_audit_v1",
+  "started_at_utc": "2026-07-12T04:18:22.646848+00:00",
+  "status": "PASS",
+  "subject": "exact-subject"
+}

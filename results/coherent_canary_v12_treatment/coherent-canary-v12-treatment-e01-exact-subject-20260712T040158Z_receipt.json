@@ -1,0 +1,43 @@
+{
+  "aggregate_expansion_authorized": false,
+  "artifacts": {
+    "harvest": {
+      "path": "results/coherent_canary_v12_harvest/coherent-canary-v12-harvest-e01-exact-subject-20260712T040158Z.json",
+      "sha256": "fbe58027f0d35558654929a302f8adf079c807b7ee804fc69d047e5d5f07776d",
+      "size_bytes": 68424
+    },
+    "job_log": {
+      "path": "results/coherent_canary_v12_treatment/coherent-canary-v12-treatment-e01-exact-subject-20260712T040158Z_job.md",
+      "sha256": "18bdd2625a5277b9b11b1a5fddad2c37f645c890f29eb0212e25a8d76c9d67c5",
+      "size_bytes": 6966
+    },
+    "raw": {
+      "path": "results/coherent_canary_v12_treatment/coherent-canary-v12-treatment-e01_exact-subject_20260712T040237879370Z.json",
+      "sha256": "f6622d978c80d8f4f874c208ef9f6d9546ab3f1bf7676655c9a0b4662718d082",
+      "size_bytes": 8897066
+    }
+  },
+  "available_placebo_control_count": 0,
+  "case_id": "e01",
+  "completed_at_utc": "2026-07-12T04:17:09.110462+00:00",
+  "design_id": "coherent-state-decision-canary-v12",
+  "diagnostic_only": true,
+  "expected_commit": "cbdfa481fe08de62bf8178d09ca040716d610f21",
+  "formal_v12_decision_eligible": false,
+  "gpu": "NVIDIA A100 80GB PCIe, GPU-b2a992b5-2caf-55c6-51d9-3de66c44468e, 580.159.04, 81920",
+  "harvest_status": "PASS",
+  "harvester_exit": 0,
+  "observed_commit": "cbdfa481fe08de62bf8178d09ca040716d610f21",
+  "phase_a_release_eligible": true,
+  "phase_a_release_status": "PRETREATMENT_PASS",
+  "placebo_control_count": 3,
+  "primary_arm_count": 31,
+  "provider_hourly_cost_usd": 1.39,
+  "runner_exit": 0,
+  "runner_status": "PASS",
+  "runner_wall_cap_seconds": 1500,
+  "runtime_fingerprint_sha256": "b6158b989b0b467c46589f3ecbe69acba88645d4cd193dd23d925e2e4cd69484",
+  "schema": "coherent_state_decision_canary_v12_treatment_pod_receipt_v1",
+  "semantic_evidence_eligible": true,
+  "terminal_status": "PASS"
+}

@@ -1,0 +1,5 @@
+{
+  "report_path": ".sol-v4/treatment_postrun_audit/run-20260712T0418Z/audit_report.json",
+  "report_sha256": "5dccadd1b4ad50d1a5ad55737c99f00125b680076e30dbcb1730865cce42fd87",
+  "schema": "coherent_canary_v12_e01_treatment_postrun_audit_v1_sha256_v1"
+}
