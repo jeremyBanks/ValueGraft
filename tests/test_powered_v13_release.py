@@ -190,7 +190,8 @@ def test_manifest_pins_real_v13_preregistration_and_status_transition(
         "COHERENT-STATE-POWERED-SUCCESSOR-V13-PREREGISTRATION.md"
     )
     assert STAGE_A_OLD_STATUS_LINE == (
-        b"**Status:** **DRAFT \xe2\x80\x94 NO PAID WORK OR PRIMARY TREATMENT AUTHORIZED**\n"
+        b"**Status:** **TECHNICAL_CANARY_AUTHORIZED \xe2\x80\x94 "
+        b"E01/LONG ONLY; SEMANTIC N=0**\n"
     )
     assert STAGE_A_NEW_STATUS_LINE == (
         b"**Status:** **STATIC_FROZEN_PHASE_A_AUTHORIZED \xe2\x80\x94 "
