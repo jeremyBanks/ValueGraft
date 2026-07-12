@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 from pathlib import Path
 import subprocess
@@ -97,3 +98,26 @@ def test_init_rejects_symlinked_bound_inputs(tmp_path):
     assert completed.returncode == 2
     assert "symlinked" in completed.stderr
     assert not record.exists()
+
+
+def test_watchdog_backend_uses_absolute_api_key_outside_repo_cwd(
+        tmp_path, monkeypatch):
+    spec = importlib.util.spec_from_file_location("stage_t_watchdog_cli", SCRIPT)
+    assert spec is not None and spec.loader is not None
+    cli = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(cli)
+    key = tmp_path / "runpod-key"
+    key.write_text("secret fixture\n")
+    other = tmp_path / "other-cwd"
+    other.mkdir()
+
+    class Pod:
+        KEY_PATH = Path(".runpod_key")
+
+    pod = Pod()
+    monkeypatch.setenv("SC_RUNPOD_KEY_PATH", str(key.resolve()))
+    monkeypatch.chdir(other)
+    monkeypatch.setattr(cli.importlib, "import_module", lambda _name: pod)
+    monkeypatch.setattr(cli.importlib, "reload", lambda module: module)
+    cli.RunPodBackend(tmp_path / "pod-state.json")
+    assert pod.KEY_PATH == key.resolve()

@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Narrow local helpers for the powered-v13 Stage-T provider lifecycle.
+"""Verify, launch, probe, harvest, and clean up powered-v13 Stage T.
 
-The allocation path is the injected ``StageTLifecycle`` API.  This CLI exposes
-only deterministic release binding, fixed job-probe exits, and post-pull
-harvest hashing; none of its subcommands can allocate a Pod.
+Only the explicit ``run`` subcommand can allocate.  Every other command is a
+deterministic release, probe, or harvest helper used by the OS-owned watchdog.
 """
 
 from __future__ import annotations
@@ -12,13 +11,26 @@ import argparse
 import json
 import os
 from pathlib import Path
+import shlex
+import subprocess
 import sys
+import time
 
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from powered_v13_lifecycle import (  # noqa: E402
+    ATTEMPT_DIRECTORY_TOKEN,
+    HARVEST_ROOTS,
+    LIFECYCLE_STATE_TOKEN,
+    LaunchdWatcherBackend,
+    OpenSshTransport,
+    POD_STATE_TOKEN,
+    REMOTE_ARTIFACTS,
+    RecoveringWatcherSupervisor,
+    RunPodProvider,
+    StageTLifecycle,
     V13LifecycleError,
     build_harvest_manifest,
     canonical_json_bytes,
@@ -94,6 +106,166 @@ def command_harvest(args: argparse.Namespace) -> None:
     }, sort_keys=True))
 
 
+def _endpoint(provider: RunPodProvider, pod_state: Path) -> tuple[str, int]:
+    state = _strict_object(pod_state, "Pod state")
+    pod_id = state.get("id")
+    if not isinstance(pod_id, str) or not pod_id:
+        raise V13LifecycleError("Pod state lacks an ID")
+    pod = provider.get_pod(pod_id)
+    host = pod.get("publicIp")
+    mappings = pod.get("portMappings")
+    port = mappings.get("22") if isinstance(mappings, dict) else None
+    if not isinstance(host, str) or not host or not str(port).isdigit():
+        raise V13LifecycleError("Pod has no exact SSH endpoint")
+    observed_port = int(port)
+    if not 1 <= observed_port <= 65535:
+        raise V13LifecycleError("Pod SSH port is invalid")
+    return host, observed_port
+
+
+def _ssh_transport(key: Path, endpoint: tuple[str, int]) -> list[str]:
+    return [
+        "ssh", "-i", str(key), "-p", str(endpoint[1]),
+        "-o", "StrictHostKeyChecking=accept-new",
+        "-o", "ConnectTimeout=20", "-o", "ServerAliveInterval=15",
+        "-o", "ServerAliveCountMax=4",
+    ]
+
+
+def command_watchdog_probe(args: argparse.Namespace) -> None:
+    lifecycle = _strict_object(args.lifecycle_state, "lifecycle state")
+    status = lifecycle.get("status")
+    if status != "JOB_STARTED":
+        raise SystemExit(job_probe_exit(
+            lifecycle_status=status, remote_state=None))
+    provider = RunPodProvider(state_path=args.pod_state)
+    endpoint = _endpoint(provider, args.pod_state)
+    command = [
+        *_ssh_transport(args.ssh_key, endpoint), "-n", f"root@{endpoint[0]}",
+        f"cat {shlex.quote(REMOTE_ARTIFACTS + '/partials/job-state.json')}",
+    ]
+    try:
+        observed = subprocess.run(
+            command, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+            check=False, timeout=45)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise V13LifecycleError("bounded remote job probe failed") from exc
+    if observed.returncode != 0:
+        raise V13LifecycleError("remote job probe is ambiguous")
+    try:
+        remote = json.loads(observed.stdout)
+    except json.JSONDecodeError as exc:
+        raise V13LifecycleError("remote job state is malformed") from exc
+    if not isinstance(remote, dict):
+        raise V13LifecycleError("remote job state root differs")
+    raise SystemExit(job_probe_exit(
+        lifecycle_status=status, remote_state=remote.get("state")))
+
+
+def command_watchdog_harvest(args: argparse.Namespace) -> None:
+    if args.destination.exists() or args.destination.is_symlink():
+        raise V13LifecycleError("bounded harvest destination already exists")
+    provider = RunPodProvider(state_path=args.pod_state)
+    endpoint = _endpoint(provider, args.pod_state)
+    temporary = args.destination.with_name(
+        f".{args.destination.name}.{os.getpid()}.partial")
+    if temporary.exists() or temporary.is_symlink():
+        raise V13LifecycleError("bounded harvest temporary path already exists")
+    temporary.mkdir(parents=True)
+    shell = shlex.join(_ssh_transport(args.ssh_key, endpoint))
+    try:
+        for category in HARVEST_ROOTS:
+            local = temporary / category
+            local.mkdir()
+            source = (
+                f"root@{endpoint[0]}:{REMOTE_ARTIFACTS}/{category}/")
+            result = subprocess.run([
+                "rsync", "-az", "--checksum", "--partial", "-e", shell,
+                source, f"{local}/",
+            ], text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                check=False, timeout=45)
+            if result.returncode != 0:
+                raise V13LifecycleError(
+                    f"bounded harvest failed for {category}")
+        manifest = build_harvest_manifest(temporary)
+        os.replace(temporary, args.destination)
+        _write_json_exclusive(args.output, manifest)
+    except (OSError, subprocess.TimeoutExpired) as exc:
+        raise V13LifecycleError("bounded remote harvest failed") from exc
+    print(json.dumps({
+        "status": "PASS", "file_count": manifest["file_count"],
+        "total_bytes": manifest["total_bytes"],
+        "manifest_sha256": manifest["manifest_sha256"],
+        "destination": str(args.destination), "output": str(args.output),
+    }, sort_keys=True))
+
+
+def command_run(args: argparse.Namespace) -> None:
+    release = verify_release_binding(
+        repo=args.repo,
+        expected_authorization_commit=args.authorization_commit,
+        manifest_path=args.manifest,
+        receipt_path=args.receipt,
+        expected_receipt_sha256=args.receipt_sha256,
+        import_report_path=args.import_report,
+        expected_import_report_sha256=args.import_report_sha256,
+        verify_checkout=verify_stage_t_checkout,
+    )
+    session = args.session_root.resolve()
+    transient_state = session.with_name(f"{session.name}.provider-state.json")
+    if transient_state.exists() or transient_state.is_symlink():
+        raise V13LifecycleError("unique provider-state path already exists")
+    print(json.dumps({
+        "status": "STARTING", "model": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+        "authorization_commit": release.authorization_commit,
+        "session_root": str(session), "provider_state": str(transient_state),
+    }, sort_keys=True), flush=True)
+    provider = RunPodProvider(state_path=transient_state)
+    transport = OpenSshTransport(
+        provider=provider, ssh_key=args.ssh_key, hf_token=args.hf_token,
+        authorization_commit=release.authorization_commit,
+        primary_batch_id=args.primary_batch_id,
+        manifest_path=release.manifest_path,
+        receipt_sha256=release.receipt_sha256,
+        import_report_path=release.import_report_path.relative_to(
+            args.repo.resolve()).as_posix(),
+        import_report_sha256=release.import_report_sha256,
+        repository_url=args.repository_url)
+    provider_key_path = Path(provider.module.KEY_PATH)
+    if not provider_key_path.is_absolute():
+        provider_key_path = args.repo.resolve() / provider_key_path
+    provider_key_path = provider_key_path.resolve(strict=True)
+    if not provider_key_path.is_file() or provider_key_path.is_symlink():
+        raise V13LifecycleError("RunPod API key path is absent or symlinked")
+    backend = LaunchdWatcherBackend(
+        repo=args.repo, runpod_key_path=provider_key_path)
+    supervisor = RecoveringWatcherSupervisor(backend)
+    python = str(Path(sys.executable).resolve())
+    helper = str(Path(__file__).resolve())
+    job_probe = [
+        python, helper, "watchdog-probe", "--lifecycle-state",
+        LIFECYCLE_STATE_TOKEN, "--pod-state", POD_STATE_TOKEN,
+        "--ssh-key", str(args.ssh_key.resolve()),
+    ]
+    harvest = [
+        python, helper, "watchdog-harvest", "--pod-state", POD_STATE_TOKEN,
+        "--ssh-key", str(args.ssh_key.resolve()), "--destination",
+        f"{ATTEMPT_DIRECTORY_TOKEN}/harvest", "--output",
+        f"{ATTEMPT_DIRECTORY_TOKEN}/harvest-manifest.json",
+    ]
+    lifecycle = StageTLifecycle(
+        repo=args.repo, session_root=session, release=release,
+        provider=provider, transport=transport, supervisor=supervisor,
+        clock=time.time, prior_stage_t_spend_usd=args.prior_stage_t_spend_usd,
+        job_probe_command=job_probe, harvest_command=harvest)
+    result = lifecycle.run()
+    print(json.dumps({
+        "status": result["status"], "session_root": str(session),
+        "observed_stage_t_spend_usd": result["observed_stage_t_spend_usd"],
+        "admitted_pod_id": result["admitted_pod_id"],
+    }, sort_keys=True))
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(description=__doc__)
     commands = result.add_subparsers(dest="command", required=True)
@@ -114,6 +286,34 @@ def parser() -> argparse.ArgumentParser:
     harvest.add_argument("--root", required=True, type=Path)
     harvest.add_argument("--output", required=True, type=Path)
     harvest.set_defaults(function=command_harvest)
+    probe_remote = commands.add_parser("watchdog-probe")
+    probe_remote.add_argument("--lifecycle-state", required=True, type=Path)
+    probe_remote.add_argument("--pod-state", required=True, type=Path)
+    probe_remote.add_argument("--ssh-key", required=True, type=Path)
+    probe_remote.set_defaults(function=command_watchdog_probe)
+    pull = commands.add_parser("watchdog-harvest")
+    pull.add_argument("--pod-state", required=True, type=Path)
+    pull.add_argument("--ssh-key", required=True, type=Path)
+    pull.add_argument("--destination", required=True, type=Path)
+    pull.add_argument("--output", required=True, type=Path)
+    pull.set_defaults(function=command_watchdog_harvest)
+    run = commands.add_parser("run")
+    run.add_argument("--repo", required=True, type=Path)
+    run.add_argument("--authorization-commit", required=True)
+    run.add_argument("--manifest", required=True)
+    run.add_argument("--receipt", required=True, type=Path)
+    run.add_argument("--receipt-sha256", required=True)
+    run.add_argument("--import-report", required=True, type=Path)
+    run.add_argument("--import-report-sha256", required=True)
+    run.add_argument("--session-root", required=True, type=Path)
+    run.add_argument("--prior-stage-t-spend-usd", required=True)
+    run.add_argument("--ssh-key", required=True, type=Path)
+    run.add_argument("--hf-token", required=True, type=Path)
+    run.add_argument("--primary-batch-id", required=True)
+    run.add_argument(
+        "--repository-url",
+        default="https://github.com/jeremyBanks/ValueGraft.git")
+    run.set_defaults(function=command_run)
     return result
 
 

@@ -37,6 +37,14 @@ class RunPodBackend:
             PROVIDER_API_TIMEOUT_SECONDS)
         module = importlib.import_module("pod")
         self._module = importlib.reload(module)
+        key_override = os.environ.get("SC_RUNPOD_KEY_PATH")
+        if key_override:
+            key_path = Path(key_override)
+            if (not key_path.is_absolute() or not key_path.is_file()
+                    or key_path.is_symlink()):
+                raise V13WatchdogError(
+                    "absolute RunPod API key path is absent or symlinked")
+            self._module.KEY_PATH = key_path
 
     def get_pod(self, pod_id: str) -> Mapping[str, Any]:
         value = self._module.api("GET", f"/pods/{pod_id}")

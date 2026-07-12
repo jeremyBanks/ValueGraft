@@ -96,6 +96,7 @@ class FakeTransport:
         return {
             "gpu_name": "NVIDIA A100 80GB PCIe", "memory_mib": 81920,
             "cuda_available": True, "gpu_count": 1,
+            "torch_gpu_name": "NVIDIA A100 80GB PCIe",
             "gpu_uuid": "GPU-fixed", "driver_version": "580.65.06",
         }
 
@@ -130,9 +131,10 @@ class FakeSupervisor:
         self.harvests = 0
         self.cleanup_requests = 0
 
-    def start(self, *, record_path, state_path):
+    def start(self, *, record_path, pod_state_path, lifecycle_state_path):
         assert record_path.is_file()
-        assert state_path.is_file()
+        assert pod_state_path.is_file()
+        assert lifecycle_state_path.is_file()
         self.log.append(("watcher_start", record_path.name))
         return {"record_path": record_path}
 
@@ -307,6 +309,17 @@ def test_job_death_and_harvest_failure_still_delete(tmp_path):
     assert provider.active == []
     assert result["events"][-1]["evidence"]["termination_reason"] == \
         "process_death"
+
+
+@pytest.mark.parametrize("reason", [
+    "deadline", "rate_increase", "provider_identity", "process_death",
+])
+def test_non_job_terminal_harvest_is_never_false_complete(tmp_path, reason):
+    runner, provider, _transport, _supervisor, _log = _run(
+        tmp_path, terminal_status="TERMINATED_HARVESTED", reason=reason)
+    result = runner.run()
+    assert result["status"] == "STOPPED"
+    assert provider.active == []
 
 
 def test_job_terminal_requires_dual_deletion(tmp_path):
@@ -497,6 +510,7 @@ def _valid_admission_evidence():
         "memory_mib": 81920,
         "cuda_available": True,
         "gpu_count": 1,
+        "torch_gpu_name": "NVIDIA A100 80GB PCIe",
         "gpu_uuid": "GPU-fixed",
         "driver_version": "580.159.03",
     }
@@ -577,8 +591,379 @@ def test_runpod_adapter_reuses_pod_api_and_classifies_capacity(tmp_path):
         state, create_error=urllib.error.HTTPError(
             "x", 500, "none", {}, None))
     provider = life.RunPodProvider(state_path=state, module=no_capacity)
+    provider.safe_snapshot()
     with pytest.raises(life.NoCapacity):
         provider.create_secure_a100()
+
+
+class AmbiguousCreatePodModule:
+    def __init__(self, *, lose_state=True, raise_after_create=False):
+        self.active = []
+        self.lose_state = lose_state
+        self.raise_after_create = raise_after_create
+        self.state_path = None
+        self.deleted = []
+
+    def gql(self, _query):
+        return {"data": {"myself": {"clientBalance": 57.12,
+                                     "spendLimit": 80}}}
+
+    def api(self, method, path):
+        if method == "GET" and path == "/pods":
+            return list(self.active)
+        pod_id = path.rsplit("/", 1)[-1]
+        match = next((pod for pod in self.active if pod["id"] == pod_id), None)
+        if method == "GET":
+            if match is None:
+                raise urllib.error.HTTPError("x", 404, "gone", {}, None)
+            return dict(match)
+        if method == "DELETE":
+            self.deleted.append(pod_id)
+            self.active = [pod for pod in self.active if pod["id"] != pod_id]
+            return {}
+        raise AssertionError((method, path))
+
+    def create(self, gpu):
+        assert gpu == "NVIDIA A100 80GB PCIe"
+        pod = {
+            "id": "pod_recovered", "name": os.environ["SC_POD_NAME"],
+            "costPerHr": "1.2", "cloudType": "SECURE", "gpuCount": 1,
+        }
+        self.active.append(pod)
+        if self.raise_after_create:
+            raise OSError("response lost after POST")
+        if not self.lose_state:
+            self.state_path.write_text(json.dumps(pod))
+        return dict(pod)
+
+
+@pytest.mark.parametrize("raise_after_create", [True, False])
+def test_runpod_adapter_reconciles_and_deletes_attributable_ambiguous_create(
+        tmp_path, raise_after_create):
+    state = tmp_path / "pod.json"
+    module = AmbiguousCreatePodModule(
+        lose_state=True, raise_after_create=raise_after_create)
+    module.state_path = state
+    provider = life.RunPodProvider(state_path=state, module=module)
+    assert provider.safe_snapshot()["active_pod_ids"] == []
+    with pytest.raises(life.AllocationAmbiguous, match="retry forbidden"):
+        provider.create_secure_a100()
+    assert module.deleted == ["pod_recovered"] and module.active == []
+    evidence_paths = list(tmp_path.glob("pod.json.attempt-*.json"))
+    assert len(evidence_paths) == 1
+    evidence = json.loads(evidence_paths[0].read_text())
+    assert evidence["status"] == "ATTRIBUTED_DELETED"
+    assert evidence["per_pod_404_observed"] is True
+    assert evidence["active_inventory_absent_observed"] is True
+
+
+def test_runpod_adapter_zero_new_pods_is_fatal_ambiguous_without_retry(tmp_path):
+    state = tmp_path / "pod.json"
+
+    class Module(AmbiguousCreatePodModule):
+        def create(self, _gpu):
+            raise OSError("connection lost")
+
+    module = Module()
+    now = [0.0]
+    provider = life.RunPodProvider(
+        state_path=state, module=module, reconcile_wait_seconds=3,
+        monotonic=lambda: now[0], sleep=lambda seconds: now.__setitem__(
+            0, now[0] + max(seconds, 1)))
+    provider.safe_snapshot()
+    with pytest.raises(life.AllocationAmbiguous, match="retry forbidden"):
+        provider.create_secure_a100()
+    assert module.deleted == []
+    evidence = json.loads(next(tmp_path.glob(
+        "pod.json.attempt-*.json")).read_text())
+    assert evidence["status"] == "NO_NEW_POD_AMBIGUOUS"
+
+
+def test_runpod_adapter_polls_eventual_inventory_then_deletes_nonce_match(tmp_path):
+    state = tmp_path / "pod.json"
+    module = AmbiguousCreatePodModule(raise_after_create=True)
+    module.state_path = state
+    now = [0.0]
+
+    def sleep(seconds):
+        now[0] += max(seconds, 1)
+        if not module.active:
+            module.active.append({
+                "id": "pod_eventual", "name": os.environ["SC_POD_NAME"],
+                "costPerHr": "1.2", "cloudType": "SECURE", "gpuCount": 1,
+            })
+
+    # The module's create adds immediately; override it to model eventual
+    # provider visibility after the POST-side exception.
+    module.create = lambda _gpu: (_ for _ in ()).throw(OSError("timeout"))
+    provider = life.RunPodProvider(
+        state_path=state, module=module, reconcile_wait_seconds=5,
+        monotonic=lambda: now[0], sleep=sleep)
+    provider.safe_snapshot()
+    with pytest.raises(life.AllocationAmbiguous, match="retry forbidden"):
+        provider.create_secure_a100()
+    assert module.deleted == ["pod_eventual"]
+    evidence = json.loads(next(tmp_path.glob(
+        "pod.json.attempt-*.json")).read_text())
+    assert evidence["inventory_poll_count"] >= 2
+    assert evidence["status"] == "ATTRIBUTED_DELETED"
+
+
+def test_runpod_adapter_deletes_all_nonce_matches_but_not_concurrent_pod(tmp_path):
+    state = tmp_path / "pod.json"
+    module = AmbiguousCreatePodModule(raise_after_create=True)
+
+    def create(_gpu):
+        name = os.environ["SC_POD_NAME"]
+        module.active.extend([
+            {"id": "pod_owned_1", "name": name, "costPerHr": "1.2",
+             "cloudType": "SECURE", "gpuCount": 1},
+            {"id": "pod_owned_2", "name": name, "costPerHr": "1.2",
+             "cloudType": "SECURE", "gpuCount": 1},
+            {"id": "pod_other", "name": "someone-else", "costPerHr": "1.2",
+             "cloudType": "SECURE", "gpuCount": 1},
+        ])
+        raise OSError("response lost")
+
+    module.create = create
+    provider = life.RunPodProvider(state_path=state, module=module)
+    provider.safe_snapshot()
+    with pytest.raises(life.AllocationAmbiguous, match="retry forbidden"):
+        provider.create_secure_a100()
+    assert module.deleted == ["pod_owned_1", "pod_owned_2"]
+    assert [pod["id"] for pod in module.active] == ["pod_other"]
+    evidence = json.loads(next(tmp_path.glob(
+        "pod.json.attempt-*.json")).read_text())
+    assert evidence["attributed_pod_ids"] == ["pod_owned_1", "pod_owned_2"]
+    assert evidence["status"] == "ATTRIBUTED_DELETED"
+
+
+def test_concrete_ssh_transport_admits_before_exact_sync_bootstrap_and_detach(
+        tmp_path):
+    key = tmp_path / "ssh-key"
+    token = tmp_path / "hf-token"
+    key.write_text("key\n")
+    token.write_text("token\n")
+    repo = tmp_path / "repo"
+    (repo / "scripts").mkdir(parents=True)
+    (repo / life.JOB_PATH).write_text("runner\n")
+    (repo / "contract.json").write_text("{}\n")
+    receipt = tmp_path / "receipt.json"
+    report = repo / "import-report.json"
+    receipt.write_text("{}\n")
+    report.write_text("{}\n")
+    commands = []
+
+    class Provider:
+        def get_pod(self, pod_id):
+            assert pod_id == "pod_stage_t_1"
+            return {"id": pod_id, "publicIp": "203.0.113.8",
+                    "portMappings": {"22": "2222"}}
+
+    def run(command, **kwargs):
+        commands.append((list(command), kwargs.get("cwd")))
+        text = command[-1] if command and command[0] == "ssh" else ""
+        if "nvidia-smi --query-gpu" in text:
+            stdout = (
+                "NVIDIA A100 80GB PCIe, GPU-fixed, 580.159.03, 81920\n")
+        elif "torch.cuda.is_available" in text:
+            stdout = "NVIDIA A100 80GB PCIe\n"
+        elif "verify-release" in text:
+            stdout = '{"status": "PASS"}\n'
+        elif "nohup /bin/bash" in text:
+            stdout = "4321\n"
+        elif "for i in $(seq 1 30)" in text:
+            stdout = "PASS\n"
+        else:
+            stdout = ""
+        return subprocess.CompletedProcess(command, 0, stdout, "")
+
+    transport = life.OpenSshTransport(
+        provider=Provider(), ssh_key=key, hf_token=token,
+        authorization_commit="a" * 40, primary_batch_id="stage-t-batch-1",
+        manifest_path="release/stage-t.json",
+        receipt_sha256=life.file_sha256(receipt),
+        import_report_path="import-report.json",
+        import_report_sha256=life.file_sha256(report),
+        run_command=run, sleep=lambda _seconds: None)
+    allocation = life.Allocation(response={
+        "id": "pod_stage_t_1", "costPerHr": "1.2",
+        "cloudType": "SECURE", "gpuCount": 1,
+    }, state_bytes=b"{}")
+    admission = transport.admit(allocation, timeout_seconds=420)
+    assert life.validate_admission(allocation.response, admission)[
+        "driver_components"] == [580, 159, 3]
+    assert not any("pip install" in " ".join(command)
+                   for command, _cwd in commands)
+    synced = transport.sync(
+        allocation, repo=repo,
+        relative_paths=("contract.json", "import-report.json", life.JOB_PATH),
+        external_files=(receipt, report), timeout_seconds=300)
+    assert synced["detached_head"] == "a" * 40
+    assert synced["model_download_auth_mode"] == "token_file"
+    launched = transport.launch_detached(
+        allocation, job_path=life.JOB_PATH,
+        authorization_commit="a" * 40, timeout_seconds=60)
+    assert launched["pipe_eof"] is launched["child_alive"] is True
+    launch_remote = next(
+        command[-1] for command, _cwd in commands
+        if command[0] == "ssh" and "nohup /bin/bash" in command[-1])
+    syntax = subprocess.run(
+        ["bash", "-n", "-c", launch_remote], text=True,
+        capture_output=True, check=False)
+    assert syntax.returncode == 0, syntax.stderr
+    rendered = "\n".join(" ".join(command) for command, _cwd in commands)
+    assert "git clone --quiet --filter=blob:none --no-checkout --sparse" in rendered
+    assert "uv==0.9.18" in rendered and "uv python install 3.12.11" in rendered
+    assert "torch==2.12.1" in rendered and "transformers==5.0.0" in rendered
+    assert "2.12.1+cu130" in rendered and "torch.version.cuda" in rendered
+    assert "huggingface-hub==1.22.0" in rendered
+    assert "--primary-batch-id stage-t-batch-1" in rendered
+    assert "--output-parent /workspace/powered-v13-stage-t/artifacts/results" in rendered
+    assert rendered.index("verify-release") < rendered.index("pip install")
+    assert rendered.index("snapshot_download") < rendered.index("nohup /bin/bash")
+    assert "RUN_COMPLETE.json" in rendered and "WORKER_EXITED_ZERO" in rendered
+    assert "/external/import-report.json" not in rendered
+    assert "/external/hf-token" in rendered
+    assert "powered_v13_recipe" not in rendered
+
+
+def test_concrete_ssh_transport_bounds_endpoint_wait_without_commands(tmp_path):
+    key = tmp_path / "ssh-key"
+    token = tmp_path / "hf-token"
+    key.write_text("key\n")
+    token.write_text("token\n")
+    now = [0.0]
+
+    class Provider:
+        def get_pod(self, pod_id):
+            return {"id": pod_id, "publicIp": None, "portMappings": {}}
+
+    transport = life.OpenSshTransport(
+        provider=Provider(), ssh_key=key, hf_token=token,
+        authorization_commit="a" * 40, primary_batch_id="batch",
+        manifest_path="release/stage-t.json", receipt_sha256="b" * 64,
+        import_report_path="import-report.json",
+        import_report_sha256="c" * 64,
+        run_command=lambda *_args, **_kwargs: pytest.fail("command ran"),
+        monotonic=lambda: now[0], sleep=lambda seconds: now.__setitem__(
+            0, now[0] + max(seconds, 1)))
+    allocation = life.Allocation(response={"id": "pod_stage_t_1"},
+                                 state_bytes=b"{}")
+    with pytest.raises(life.AdmissionRejected, match="endpoint wait"):
+        transport.admit(allocation, timeout_seconds=5)
+
+
+def test_concrete_ssh_admission_rejects_nvidia_smi_host_when_torch_cuda_fails(
+        tmp_path):
+    key = tmp_path / "ssh-key"
+    token = tmp_path / "hf-token"
+    key.write_text("key\n")
+    token.write_text("token\n")
+
+    class Provider:
+        def get_pod(self, pod_id):
+            return {"id": pod_id, "publicIp": "203.0.113.8",
+                    "portMappings": {"22": "2222"}}
+
+    def run(command, **_kwargs):
+        remote = command[-1]
+        if "nvidia-smi --query-gpu" in remote:
+            return subprocess.CompletedProcess(
+                command, 0,
+                "NVIDIA A100 80GB PCIe, GPU-fixed, 580.159.03, 81920\n", "")
+        assert "torch.cuda.is_available" in remote
+        return subprocess.CompletedProcess(command, 1, "", "CUDA unavailable")
+
+    transport = life.OpenSshTransport(
+        provider=Provider(), ssh_key=key, hf_token=token,
+        authorization_commit="a" * 40, primary_batch_id="batch",
+        manifest_path="release/stage-t.json", receipt_sha256="b" * 64,
+        import_report_path="import-report.json",
+        import_report_sha256="c" * 64, run_command=run)
+    allocation = life.Allocation(response={"id": "pod_stage_t_1"},
+                                 state_bytes=b"{}")
+    with pytest.raises(life.V13LifecycleError, match="bounded command failed"):
+        transport.admit(allocation, timeout_seconds=420)
+
+
+def _watchdog_fixture(tmp_path):
+    pod_state = tmp_path / "pod-state.json"
+    pod_state.write_bytes(b'{"costPerHr":"1","id":"pod_stage_t_1"}\n')
+    lifecycle = tmp_path / "lifecycle.json"
+    lifecycle.write_bytes(b'{"force_cleanup_reason":null,"status":"WATCHDOG_STARTED"}\n')
+    record_path = tmp_path / "watchdog.json"
+    record = life.build_record(
+        pod_id="pod_stage_t_1", created_cost_per_hr_usd="1",
+        prior_stage_t_spend_usd="0", provider_clock_started_epoch=1_000_000,
+        pod_state_sha256=life.file_sha256(pod_state),
+        create_response_sha256="a" * 64, job_sha256="b" * 64,
+        release_receipt_sha256="c" * 64,
+        job_probe_command=["probe"], harvest_command=["harvest"])
+    life.write_record_exclusive(record_path, record)
+    return record_path, pod_state, lifecycle
+
+
+def test_launchd_backend_submits_caffeinated_watch_and_verifies_running(tmp_path):
+    record, pod_state, lifecycle = _watchdog_fixture(tmp_path)
+    active = set()
+    commands = []
+
+    def run(command, **_kwargs):
+        commands.append(list(command))
+        if command[1] == "print":
+            label = command[2].split("/", 2)[-1]
+            if label in active:
+                return subprocess.CompletedProcess(
+                    command, 0, "    state = running\n", "")
+            return subprocess.CompletedProcess(command, 3, "", "absent")
+        if command[1] == "submit":
+            active.add(command[command.index("-l") + 1])
+            return subprocess.CompletedProcess(command, 0, "", "")
+        if command[1] == "bootout":
+            active.discard(command[2].split("/", 2)[-1])
+            return subprocess.CompletedProcess(command, 0, "", "")
+        return subprocess.CompletedProcess(command, 0, "", "")
+
+    backend = life.LaunchdWatcherBackend(
+        repo=ROOT, runpod_key_path=pod_state,
+        run_command=run, sleep=lambda _seconds: None)
+    handle = backend.start_watch(
+        record_path=record, pod_state_path=pod_state,
+        lifecycle_state_path=lifecycle)
+    submit = next(command for command in commands if command[1] == "submit")
+    assert "/usr/bin/caffeinate" in submit and "-dimsu" in submit
+    assert f"SC_RUNPOD_KEY_PATH={pod_state.resolve()}" in submit
+    assert "watch" in submit and str(pod_state.resolve()) in submit
+    assert handle["mode"] == "ordinary"
+    lifecycle.write_bytes(
+        b'{"force_cleanup_reason":"test","status":"FORCE_CLEANUP"}\n')
+    backend.request_cleanup(
+        lifecycle_state_path=lifecycle, reason="test")
+    emergency = backend.start_emergency(
+        record_path=record, pod_state_path=pod_state,
+        lifecycle_state_path=lifecycle)
+    emergency_submit = [command for command in commands
+                        if command[1] == "submit"][-1]
+    assert "emergency-cleanup" in emergency_submit
+    assert emergency["mode"] == "emergency"
+
+
+def test_launchd_backend_fails_closed_when_submit_does_not_run(tmp_path):
+    record, pod_state, lifecycle = _watchdog_fixture(tmp_path)
+
+    def run(command, **_kwargs):
+        if command[1] == "print":
+            return subprocess.CompletedProcess(command, 3, "", "absent")
+        return subprocess.CompletedProcess(command, 1, "", "failed")
+
+    backend = life.LaunchdWatcherBackend(
+        repo=ROOT, runpod_key_path=pod_state,
+        run_command=run, sleep=lambda _seconds: None)
+    with pytest.raises(life.V13LifecycleError, match="submission failed"):
+        backend.start_watch(
+            record_path=record, pod_state_path=pod_state,
+            lifecycle_state_path=lifecycle)
 
 
 def test_cli_probe_exits_and_harvest_manifest_are_machine_clean(tmp_path):
@@ -614,8 +999,10 @@ def test_concrete_supervisor_invokes_emergency_after_unexpected_watcher_death(
         tmp_path):
     record = tmp_path / "watchdog.json"
     state = tmp_path / "lifecycle.json"
+    pod_state = tmp_path / "pod-state.json"
     record.write_text("{}")
     state.write_text("{}")
+    pod_state.write_text("{}")
 
     class Processes:
         def __init__(self):
@@ -650,7 +1037,9 @@ def test_concrete_supervisor_invokes_emergency_after_unexpected_watcher_death(
 
     processes = Processes()
     supervisor = life.RecoveringWatcherSupervisor(processes)
-    handle = supervisor.start(record_path=record, state_path=state)
+    handle = supervisor.start(
+        record_path=record, pod_state_path=pod_state,
+        lifecycle_state_path=state)
     result = supervisor.wait_terminal(handle, timeout_seconds=100)
     assert result["status"] == "TERMINATED_HARVESTED"
     assert processes.calls == [
