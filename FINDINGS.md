@@ -6,6 +6,55 @@ INCIDENTS.md. THIS file is what the write-up is built from.*
 
 ---
 
+> ## ⚠ 2026-07-12 FINAL V12 STATUS — formal stop; one nonauthorizing diagnostic
+>
+> Formal coherent-state v12 stopped under the literal written path-control
+> rule. ULP 2 was the first count where both edits measurably changed the
+> readout, but the minus edit moved in the wrong direction. The sealed code
+> continued to ULP 4 and passed its directional interpretation; that observation
+> is retained as intervention/readout plumbing evidence only. It does not rescue
+> the formal branch.
+>
+> One unchanged e01 treatment was run only after the conflict had been recorded
+> and conservatively dispositioned, as a post-ambiguity diagnostic that cannot
+> authorize any later v12 case or phase. At the preselected N/R2 cell,
+> value-only state moved in the intended direction (`D_focal=+0.174545`,
+> `D_nonfocal=-0.000070`, `SEL=+0.174476`, `Hplus=+0.710260`,
+> `U=+0.181650`, `Uplus=+0.945986`). Full K+V did not: its untargeted movement
+> was larger than its focal movement and the correct target worsened
+> (`D_focal=+0.097237`, `D_nonfocal=+0.245486`, `SEL=-0.148249`,
+> `Hplus=-0.131035`).
+>
+> The value-only focal contrast collapsed from `+0.174545` under N to
+> `+0.021046` under P; full K+V fell from `+0.097237` to `+0.038895`. Neither
+> family satisfied the singleton descriptive component of the frozen 3x
+> schedule yardstick, and R1/R3 did not show a coherent value-only replication.
+> All three norm-matched placebo constructions were unavailable at bf16, so
+> available-placebo count was zero — missing evidence, not a null placebo.
+> Natural calibration was adverse.
+>
+> The best cell recovered only 0.81% of the 22.298-nat margin damage and 4.24%
+> of the 22.291-nat correct-target-logprob damage. Every primary cell generated
+> the same wrong/other focal and nonfocal answers. This is therefore a **weak,
+> uncontrolled, single-case mechanistic hint**: consistent with, but not
+> evidence for, a semantic channel. The fixture explicitly resolved and
+> repeated its answer; N was imported q=1 replay, not a native live-agent
+> trajectory. There is no efficacy, population, confirmation, or agent claim.
+>
+> Artifact integrity itself passed: treatment-fresh scores matched Phase A,
+> raw reconstruction was byte-exact, and pod/local harvests matched after only
+> allowlisted normalization. Evidence:
+> `results/coherent_canary_v12_harvest/coherent-canary-v12-harvest-e01-exact-subject-20260712T040158Z.json`,
+> `results/coherent_canary_v12_postrun_audit/coherent-canary-v12-postrun-audit-e01-exact-subject-20260712T0418Z.json`,
+> `results/coherent_canary_v12_budget/coherent_canary_v12_path_control_spec_conflict_disposition_20260712T0334Z.md`,
+> `results/coherent_canary_v12_budget/coherent_canary_v12_e01_treatment_lifecycle_and_cost_20260712T0419Z.md`,
+> `notes/2026071286-fable-e01-diagnostic-interpretation.md`, and
+> `notes/2026071287-sol-e01-diagnostic-final-interpretation.md`.
+>
+> The 2026-07-11 statement immediately below that the assay had “produced no
+> semantic outcome” is superseded in this narrow sense: it produced no **formal
+> semantic result**, but one later diagnostic treatment observation now exists.
+
 > ## ⚠ 2026-07-11 MECHANISTIC / APPARATUS CORRECTION — read before every finding below
 >
 > A new position-preserving coherent-summary-state assay has produced **no semantic
