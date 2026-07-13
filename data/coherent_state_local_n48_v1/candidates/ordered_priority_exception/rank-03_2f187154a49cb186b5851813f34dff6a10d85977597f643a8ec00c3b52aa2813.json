@@ -1,0 +1,364 @@
+{
+  "authoring_provenance": {
+    "compiler": "src/powered_v13_recipe.py",
+    "content_review_status": "PENDING",
+    "generator_version": "powered-v13-recipe-compiler-1",
+    "method": "deterministic parameterized human-readable templates",
+    "old_case_text_used": false,
+    "randomness_used": false,
+    "subject_model_used": false,
+    "tokenizer_geometry_status": "PENDING"
+  },
+  "canonical_tuple": {
+    "domain_skin_id": "community_kitchen",
+    "label_pair_id": "falcon_maple",
+    "logic_pack_id": "magnitude_3_c0_w1",
+    "nonfocal_tail_pack_id": "system_receipt_mark",
+    "resolution_mode_id": "unstated_resolution"
+  },
+  "carrier_forbidden_inventory": {
+    "changed_values": {
+      "C": {
+        "raw": "inactive",
+        "rendered": "inactive"
+      },
+      "W": {
+        "raw": "active",
+        "rendered": "active"
+      }
+    },
+    "contextual_names": {
+      "coordinator": "shift coordinator",
+      "distractor_a": "apron-mending queue",
+      "distractor_b": "delivery-bicycle service",
+      "ledger": "service worksheet",
+      "organization": "Community Kitchen",
+      "site": "courtyard pantry",
+      "subject": "pantry tote"
+    },
+    "exact_forbidden_forms": [
+      "active",
+      "apron-mending queue",
+      "Bramble Rest",
+      "Community Kitchen",
+      "courtyard pantry",
+      "delivery-bicycle service",
+      "Dovetail",
+      "Falcon",
+      "first applicable action unless named exception suppresses it",
+      "inactive",
+      "Maple",
+      "next-cycle",
+      "pantry tote",
+      "Pewter",
+      "same-day",
+      "service worksheet",
+      "shift coordinator"
+    ],
+    "focal_targets": {
+      "C": "Falcon",
+      "W": "Maple",
+      "label_0": "Falcon",
+      "label_1": "Maple"
+    },
+    "nonfocal": {
+      "countertarget": "Dovetail",
+      "fact_name": "receipt mark",
+      "target": "Pewter"
+    },
+    "rule_semantics": {
+      "category_and_alias_values": [
+        "Bramble Rest",
+        "active",
+        "first applicable action unless named exception suppresses it",
+        "inactive",
+        "next-cycle",
+        "same-day"
+      ],
+      "definition": {
+        "exception": "Bramble Rest",
+        "first_trigger": "same-day",
+        "second_trigger": "next-cycle"
+      },
+      "evaluated_evidence": {
+        "C": {
+          "exception_active": false,
+          "first_trigger_present": true,
+          "named_exception": "Bramble Rest",
+          "rule": "first applicable action unless named exception suppresses it",
+          "second_trigger_present": true
+        },
+        "W": {
+          "exception_active": true,
+          "first_trigger_present": true,
+          "named_exception": "Bramble Rest",
+          "rule": "first applicable action unless named exception suppresses it",
+          "second_trigger_present": true
+        }
+      },
+      "numeric_values": [],
+      "rendered_interval_forms": [],
+      "time_forms": []
+    },
+    "schema": "powered-v13-carrier-forbidden-inventory-v1",
+    "semantic_inventory_sha256": "a650673d4325c511f22787ff71a7298649e4731d00d39b345d5a128b3bb3c617",
+    "surface_expansion": {
+      "exact_semantic_values_and_names_enumerated": true,
+      "production_tokenizer_subsequence_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "punctuation_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "spelled_number_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "target_aware_semantic_review_required": true,
+      "unicode_normalization_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION"
+    },
+    "unicode_casefolded_exact_forms": [
+      "active",
+      "apron-mending queue",
+      "bramble rest",
+      "community kitchen",
+      "courtyard pantry",
+      "delivery-bicycle service",
+      "dovetail",
+      "falcon",
+      "first applicable action unless named exception suppresses it",
+      "inactive",
+      "maple",
+      "next-cycle",
+      "pantry tote",
+      "pewter",
+      "same-day",
+      "service worksheet",
+      "shift coordinator"
+    ]
+  },
+  "changed_input": {
+    "C_value": "inactive",
+    "W_value": "active",
+    "before_compaction_boundary": true,
+    "count": 1,
+    "message_index": 3,
+    "role": "user"
+  },
+  "changed_message_allowlist": [
+    3,
+    6
+  ],
+  "design_id": "coherent-state-powered-successor-v13",
+  "distractor_chains": [
+    {
+      "chain_id": "distractor_a",
+      "message_indices": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "topic": "apron-mending queue",
+      "why_irrelevant": "Inventory reconciliation is absent from the focal evaluator."
+    },
+    {
+      "chain_id": "distractor_b",
+      "message_indices": [
+        2,
+        4,
+        5,
+        6
+      ],
+      "topic": "delivery-bicycle service",
+      "why_irrelevant": "Appointment timing is absent from the focal evaluator."
+    }
+  ],
+  "domain_skin": {
+    "coordinator": "shift coordinator",
+    "distractor_a": "apron-mending queue",
+    "distractor_b": "delivery-bicycle service",
+    "id": "community_kitchen",
+    "ledger": "service worksheet",
+    "organization": "Community Kitchen",
+    "site": "courtyard pantry",
+    "subject": "pantry tote"
+  },
+  "execution_ready": false,
+  "focal": {
+    "C_target": "Falcon",
+    "W_target": "Maple",
+    "category": "derived_exact_decision",
+    "countertarget": "Maple",
+    "discourse_order": "named exception, ordered triggers, suppression, next applicable action",
+    "evidence_message_indices": [
+      1,
+      3,
+      6
+    ],
+    "probe": "What exact focal ledger word follows from the recorded rule?",
+    "production_tokenizer_status": "PENDING_1_TO_4_TOKEN_CHECK",
+    "rule_proof_C": {
+      "changed_value": "inactive",
+      "evidence": {
+        "exception_active": false,
+        "first_trigger_present": true,
+        "named_exception": "Bramble Rest",
+        "rule": "first applicable action unless named exception suppresses it",
+        "second_trigger_present": true
+      },
+      "outcome_index": 0,
+      "proof": "both triggers present; Bramble Rest is inactive",
+      "state_id": "state0",
+      "stratum_id": "ordered_priority_exception",
+      "variant": "C"
+    },
+    "rule_proof_W": {
+      "changed_value": "active",
+      "evidence": {
+        "exception_active": true,
+        "first_trigger_present": true,
+        "named_exception": "Bramble Rest",
+        "rule": "first applicable action unless named exception suppresses it",
+        "second_trigger_present": true
+      },
+      "outcome_index": 1,
+      "proof": "both triggers present; Bramble Rest is active, suppressing first",
+      "state_id": "state1",
+      "stratum_id": "ordered_priority_exception",
+      "variant": "W"
+    },
+    "target": "Falcon",
+    "target_strings_nonprefix": true
+  },
+  "generator_version": "powered-v13-recipe-compiler-1",
+  "length_design": {
+    "production_tokenizer_status": "PENDING_NOT_MEASURED_OR_CLAIMED",
+    "production_tokenizer_target": [
+      940,
+      1180
+    ],
+    "scope": "noncarrier messages through final retained-tail assistant",
+    "whitespace_word_count_C": 786,
+    "whitespace_word_count_W": 786
+  },
+  "literal_history_pair_sha256": "9fd9db174e5e10b196abcc7de6ac432ffc1c1320c8b65f45ce63fb8537da3b80",
+  "materialization_authorization": {
+    "candidate_id": "2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813",
+    "kind": "PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+    "literal_git_commit": "f4d54f46b85b4ada319c297b50dab23d829b0262",
+    "literal_permutation_sha256": "898816c9355a03a24eeae3b995ab4e1e84d66eea8974369d8a3cfb5f442004e4",
+    "permutation_rank": 3,
+    "seed_git_commit": "9a39fef83aae1ca3e8842f0c3fd5ae087fd73ae8",
+    "seed_manifest_sha256": "49b0e4c6859a53c3afb877cb2d32dfa72b0621d815e2ccf75453b23fa7c061a0",
+    "status": "PERMUTATION_COMMITTED_RANKED_CANDIDATE"
+  },
+  "middle_end_msg": 7,
+  "nonfocal_control": {
+    "byte_identical_between_variants": true,
+    "category": "visible_direct_fact",
+    "countertarget": "Dovetail",
+    "establishing_message_indices": [
+      0
+    ],
+    "location": "system",
+    "probe": "What is the standing receipt mark?",
+    "production_tokenizer_status": "PENDING_1_TO_4_TOKEN_CHECK",
+    "target": "Pewter",
+    "target_strings_nonprefix": true,
+    "visible_after_compaction": true,
+    "why_independent": "The direct administrative fact is not an input to any focal rule."
+  },
+  "pool_member": true,
+  "resolution_mode": "unstated_resolution",
+  "resolution_subtype": "unstated_final_evicted_outcome",
+  "retained_tail": {
+    "byte_identical_between_variants": true,
+    "ends_with_assistant": true,
+    "focal_neutrality_status": "PENDING_INDEPENDENT_CONTENT_REVIEW",
+    "start_message_index": 7,
+    "starts_with_user": true
+  },
+  "schema": "coherent-state-powered-successor-v13-fixture-draft-v1",
+  "stable_candidate_id": "2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813",
+  "status": "DRAFT_UNREVIEWED_NOT_EXECUTABLE",
+  "stratum_id": "ordered_priority_exception",
+  "stratum_title": "ordered priority with a named exception",
+  "template_version": "powered-v13-eight-family-template-v1",
+  "variants": {
+    "C": {
+      "messages": [
+        {
+          "content": "You maintain a careful internal record for the Community Kitchen. Preserve stated rules, distinguish verified evidence from commentary, and do not invent missing facts. A later handoff may summarize shared background, so the record must remain coherent even when an earlier decision is no longer quoted. Treat classification labels as exact ledger entries, not as suggestions or prose. Keep unrelated operational threads separate from the focal decision. The standing receipt mark is Pewter; this direct fact is unrelated to the earlier classification record.",
+          "role": "system"
+        },
+        {
+          "content": "We are reconciling the service worksheet at the courtyard pantry. The focal entry concerns one pantry tote, and the shift coordinator has asked us to apply a deterministic rule. Apply priorities in order. The same-day action comes first and maps to Falcon; the next-cycle action comes next and maps to Maple. The named Bramble Rest exception suppresses only the first action, after which evaluation continues to the second. Read the mapping literally and retain the exact capitalization of the two possible ledger words. The first unrelated thread concerns apron-mending queue: its count was copied from yesterday and will be checked separately. That inventory neither changes a predicate nor selects a classification label.",
+          "role": "user"
+        },
+        {
+          "content": "I have separated the classification rule from the apron-mending queue thread. The latter still needs a physical recount before anyone closes its worksheet, but it supplies no input to the focal rule. A second unrelated thread concerns delivery-bicycle service. Its appointment was moved to the following week, and the move affects staff availability only. I will preserve both threads as context without using either one as evidence for the focal answer. The operations margin also records who will perform each follow-up and which worksheet will receive the confirmation. Those notes make the conversation realistically interleaved, yet they do not add a criterion, change a comparison, or create an exception.",
+          "role": "assistant"
+        },
+        {
+          "content": "Here is the one revised focal input supplied by the shift coordinator. The Bramble Rest exception is verified inactive for this record. All other focal records and both unrelated threads remain as already stated. Use the revised input for the ledger decision, but do not treat the act of revision itself as an extra priority, tag, score, interval, capacity item, or alias edge.",
+          "role": "user"
+        },
+        {
+          "content": "The revised input is now attached to the focal worksheet. I am leaving the apron-mending queue recount open and keeping the delivery-bicycle service appointment in its own operations section. Neither thread changes the decision rule, the fixed records, or the label mapping. The audit trail distinguishes the submitted evidence from the calculation that follows, so a reviewer can reconstruct the result without relying on tone or order. The worksheet has separate boxes for source evidence, the deterministic transformation, and the final ledger entry. Only the source-evidence box receives the revision; the rule box stays fixed. This separation prevents an incidental scheduling remark from masquerading as focal data.",
+          "role": "assistant"
+        },
+        {
+          "content": "Before this portion of the discussion is compacted, make a final decision record. Confirm that the focal rule was applied only to its declared evidence. Also note that the first unrelated chain, apron-mending queue, remains pending a recount, while the second, delivery-bicycle service, has only a later appointment. Close both distractor chains explicitly as irrelevant. Do not turn either operational detail into a hidden exception.",
+          "role": "user"
+        },
+        {
+          "content": "Final evicted predicate record: both priority triggers present; Bramble Rest inactive. I preserved the evidence and the rule application but, under this subtype, deliberately withheld the resulting focal ledger word. The apron-mending queue recount and the delivery-bicycle service appointment are closed here as unrelated operational chains; neither was consulted in the derivation. A later answer must resolve the rule from this record rather than quote a written outcome.",
+          "role": "assistant"
+        },
+        {
+          "content": "We are now past the decision-record boundary. Continue with a neutral handoff check that does not restate, imply, revise, or challenge the earlier focal rule, its inputs, or its result. The remaining exchange concerns only direct administrative facts that stay visible after compaction.  Please acknowledge the direct fact and the separation of topics without summarizing any earlier option, number, condition, branch, referent, or label. This request intentionally leaves the prior decision opaque. It asks for no calculation and offers no substitute evidence; it only establishes what remains safe to discuss in the visible administrative tail.",
+          "role": "user"
+        },
+        {
+          "content": "Acknowledged. This retained exchange is administratively separate from the earlier decision and supplies no evidence about that decision. I will preserve the directly stated visible fact exactly and will not reconstruct or hint at the focal classification.  The retained tail therefore remains coherent on its own while leaving the earlier rule and outcome untouched. Nothing in this acknowledgement ranks candidates, evaluates eligibility, combines predicates, compares windows, performs arithmetic, checks categories, invokes an exception, or resolves a reference. It is a direct administrative acknowledgement only.",
+          "role": "assistant"
+        }
+      ]
+    },
+    "W": {
+      "messages": [
+        {
+          "content": "You maintain a careful internal record for the Community Kitchen. Preserve stated rules, distinguish verified evidence from commentary, and do not invent missing facts. A later handoff may summarize shared background, so the record must remain coherent even when an earlier decision is no longer quoted. Treat classification labels as exact ledger entries, not as suggestions or prose. Keep unrelated operational threads separate from the focal decision. The standing receipt mark is Pewter; this direct fact is unrelated to the earlier classification record.",
+          "role": "system"
+        },
+        {
+          "content": "We are reconciling the service worksheet at the courtyard pantry. The focal entry concerns one pantry tote, and the shift coordinator has asked us to apply a deterministic rule. Apply priorities in order. The same-day action comes first and maps to Falcon; the next-cycle action comes next and maps to Maple. The named Bramble Rest exception suppresses only the first action, after which evaluation continues to the second. Read the mapping literally and retain the exact capitalization of the two possible ledger words. The first unrelated thread concerns apron-mending queue: its count was copied from yesterday and will be checked separately. That inventory neither changes a predicate nor selects a classification label.",
+          "role": "user"
+        },
+        {
+          "content": "I have separated the classification rule from the apron-mending queue thread. The latter still needs a physical recount before anyone closes its worksheet, but it supplies no input to the focal rule. A second unrelated thread concerns delivery-bicycle service. Its appointment was moved to the following week, and the move affects staff availability only. I will preserve both threads as context without using either one as evidence for the focal answer. The operations margin also records who will perform each follow-up and which worksheet will receive the confirmation. Those notes make the conversation realistically interleaved, yet they do not add a criterion, change a comparison, or create an exception.",
+          "role": "assistant"
+        },
+        {
+          "content": "Here is the one revised focal input supplied by the shift coordinator. The Bramble Rest exception is verified active for this record. All other focal records and both unrelated threads remain as already stated. Use the revised input for the ledger decision, but do not treat the act of revision itself as an extra priority, tag, score, interval, capacity item, or alias edge.",
+          "role": "user"
+        },
+        {
+          "content": "The revised input is now attached to the focal worksheet. I am leaving the apron-mending queue recount open and keeping the delivery-bicycle service appointment in its own operations section. Neither thread changes the decision rule, the fixed records, or the label mapping. The audit trail distinguishes the submitted evidence from the calculation that follows, so a reviewer can reconstruct the result without relying on tone or order. The worksheet has separate boxes for source evidence, the deterministic transformation, and the final ledger entry. Only the source-evidence box receives the revision; the rule box stays fixed. This separation prevents an incidental scheduling remark from masquerading as focal data.",
+          "role": "assistant"
+        },
+        {
+          "content": "Before this portion of the discussion is compacted, make a final decision record. Confirm that the focal rule was applied only to its declared evidence. Also note that the first unrelated chain, apron-mending queue, remains pending a recount, while the second, delivery-bicycle service, has only a later appointment. Close both distractor chains explicitly as irrelevant. Do not turn either operational detail into a hidden exception.",
+          "role": "user"
+        },
+        {
+          "content": "Final evicted predicate record: both priority triggers present; Bramble Rest active. I preserved the evidence and the rule application but, under this subtype, deliberately withheld the resulting focal ledger word. The apron-mending queue recount and the delivery-bicycle service appointment are closed here as unrelated operational chains; neither was consulted in the derivation. A later answer must resolve the rule from this record rather than quote a written outcome.",
+          "role": "assistant"
+        },
+        {
+          "content": "We are now past the decision-record boundary. Continue with a neutral handoff check that does not restate, imply, revise, or challenge the earlier focal rule, its inputs, or its result. The remaining exchange concerns only direct administrative facts that stay visible after compaction.  Please acknowledge the direct fact and the separation of topics without summarizing any earlier option, number, condition, branch, referent, or label. This request intentionally leaves the prior decision opaque. It asks for no calculation and offers no substitute evidence; it only establishes what remains safe to discuss in the visible administrative tail.",
+          "role": "user"
+        },
+        {
+          "content": "Acknowledged. This retained exchange is administratively separate from the earlier decision and supplies no evidence about that decision. I will preserve the directly stated visible fact exactly and will not reconstruct or hint at the focal classification.  The retained tail therefore remains coherent on its own while leaving the earlier rule and outcome untouched. Nothing in this acknowledgement ranks candidates, evaluates eligibility, combines predicates, compares windows, performs arithmetic, checks categories, invokes an exception, or resolves a reference. It is a direct administrative acknowledgement only.",
+          "role": "assistant"
+        }
+      ]
+    }
+  },
+  "warning": "Draft compiler output only. It has not passed the production tokenizer, blind content review, Phase A, or treatment release."
+}

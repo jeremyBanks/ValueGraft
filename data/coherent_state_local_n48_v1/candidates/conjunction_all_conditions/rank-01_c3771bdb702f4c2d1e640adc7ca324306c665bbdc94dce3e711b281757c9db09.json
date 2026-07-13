@@ -1,0 +1,374 @@
+{
+  "authoring_provenance": {
+    "compiler": "src/powered_v13_recipe.py",
+    "content_review_status": "PENDING",
+    "generator_version": "powered-v13-recipe-compiler-1",
+    "method": "deterministic parameterized human-readable templates",
+    "old_case_text_used": false,
+    "randomness_used": false,
+    "subject_model_used": false,
+    "tokenizer_geometry_status": "PENDING"
+  },
+  "canonical_tuple": {
+    "domain_skin_id": "estuary_observers",
+    "label_pair_id": "garnet_mallow",
+    "logic_pack_id": "magnitude_1_c0_w1",
+    "nonfocal_tail_pack_id": "system_correspondence_word",
+    "resolution_mode_id": "explicit_resolution"
+  },
+  "carrier_forbidden_inventory": {
+    "changed_values": {
+      "C": {
+        "raw": 64,
+        "rendered": "64"
+      },
+      "W": {
+        "raw": 56,
+        "rendered": "56"
+      }
+    },
+    "contextual_names": {
+      "coordinator": "route facilitator",
+      "distractor_a": "sample-bottle count",
+      "distractor_b": "footbridge notice renewal",
+      "ledger": "inspection journal",
+      "organization": "Estuary Observers",
+      "site": "marsh outpost",
+      "subject": "monitoring case"
+    },
+    "exact_forbidden_forms": [
+      "10",
+      "56",
+      "60",
+      "64",
+      "8",
+      "active",
+      "Estuary Observers",
+      "footbridge notice renewal",
+      "Garnet",
+      "inactive",
+      "inspection journal",
+      "Mallow",
+      "marsh outpost",
+      "monitoring case",
+      "Morrow",
+      "route facilitator",
+      "sample-bottle count",
+      "Trellis"
+    ],
+    "focal_targets": {
+      "C": "Garnet",
+      "W": "Mallow",
+      "label_0": "Garnet",
+      "label_1": "Mallow"
+    },
+    "nonfocal": {
+      "countertarget": "Trellis",
+      "fact_name": "correspondence word",
+      "target": "Morrow"
+    },
+    "rule_semantics": {
+      "category_and_alias_values": [
+        "active",
+        "inactive"
+      ],
+      "definition": {
+        "minimum": 60,
+        "queue": 8,
+        "queue_max": 10,
+        "state0": 64,
+        "state1": 56
+      },
+      "evaluated_evidence": {
+        "C": {
+          "all_conditions": true,
+          "certification_active": true,
+          "inspection": 64,
+          "inspection_minimum": 60,
+          "queue": 8,
+          "queue_max": 10
+        },
+        "W": {
+          "all_conditions": false,
+          "certification_active": true,
+          "inspection": 56,
+          "inspection_minimum": 60,
+          "queue": 8,
+          "queue_max": 10
+        }
+      },
+      "numeric_values": [
+        8,
+        10,
+        56,
+        60,
+        64
+      ],
+      "rendered_interval_forms": [],
+      "time_forms": []
+    },
+    "schema": "powered-v13-carrier-forbidden-inventory-v1",
+    "semantic_inventory_sha256": "9096a415c4fbb7da5c83b6be7a8e76ffff899a74374e6ac212a2e6e861e8e205",
+    "surface_expansion": {
+      "exact_semantic_values_and_names_enumerated": true,
+      "production_tokenizer_subsequence_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "punctuation_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "spelled_number_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION",
+      "target_aware_semantic_review_required": true,
+      "unicode_normalization_variants_status": "PENDING_PRE_CARRIER_GATE_EXPANSION"
+    },
+    "unicode_casefolded_exact_forms": [
+      "10",
+      "56",
+      "60",
+      "64",
+      "8",
+      "active",
+      "estuary observers",
+      "footbridge notice renewal",
+      "garnet",
+      "inactive",
+      "inspection journal",
+      "mallow",
+      "marsh outpost",
+      "monitoring case",
+      "morrow",
+      "route facilitator",
+      "sample-bottle count",
+      "trellis"
+    ]
+  },
+  "changed_input": {
+    "C_value": 64,
+    "W_value": 56,
+    "before_compaction_boundary": true,
+    "count": 1,
+    "message_index": 3,
+    "role": "user"
+  },
+  "changed_message_allowlist": [
+    3,
+    6
+  ],
+  "design_id": "coherent-state-powered-successor-v13",
+  "distractor_chains": [
+    {
+      "chain_id": "distractor_a",
+      "message_indices": [
+        1,
+        2,
+        5,
+        6
+      ],
+      "topic": "sample-bottle count",
+      "why_irrelevant": "Inventory reconciliation is absent from the focal evaluator."
+    },
+    {
+      "chain_id": "distractor_b",
+      "message_indices": [
+        2,
+        4,
+        5,
+        6
+      ],
+      "topic": "footbridge notice renewal",
+      "why_irrelevant": "Appointment timing is absent from the focal evaluator."
+    }
+  ],
+  "domain_skin": {
+    "coordinator": "route facilitator",
+    "distractor_a": "sample-bottle count",
+    "distractor_b": "footbridge notice renewal",
+    "id": "estuary_observers",
+    "ledger": "inspection journal",
+    "organization": "Estuary Observers",
+    "site": "marsh outpost",
+    "subject": "monitoring case"
+  },
+  "execution_ready": false,
+  "focal": {
+    "C_target": "Garnet",
+    "W_target": "Mallow",
+    "category": "derived_exact_decision",
+    "countertarget": "Mallow",
+    "discourse_order": "three predicate records, changed third predicate, all-conditions rule",
+    "evidence_message_indices": [
+      1,
+      3,
+      6
+    ],
+    "probe": "What exact focal ledger word follows from the recorded rule?",
+    "production_tokenizer_status": "PENDING_1_TO_4_TOKEN_CHECK",
+    "rule_proof_C": {
+      "changed_value": 64,
+      "evidence": {
+        "all_conditions": true,
+        "certification_active": true,
+        "inspection": 64,
+        "inspection_minimum": 60,
+        "queue": 8,
+        "queue_max": 10
+      },
+      "outcome_index": 0,
+      "proof": "active=True, queue_ok=True, inspection_ok=True",
+      "state_id": "state0",
+      "stratum_id": "conjunction_all_conditions",
+      "variant": "C"
+    },
+    "rule_proof_W": {
+      "changed_value": 56,
+      "evidence": {
+        "all_conditions": false,
+        "certification_active": true,
+        "inspection": 56,
+        "inspection_minimum": 60,
+        "queue": 8,
+        "queue_max": 10
+      },
+      "outcome_index": 1,
+      "proof": "active=True, queue_ok=True, inspection_ok=False",
+      "state_id": "state1",
+      "stratum_id": "conjunction_all_conditions",
+      "variant": "W"
+    },
+    "target": "Garnet",
+    "target_strings_nonprefix": true
+  },
+  "generator_version": "powered-v13-recipe-compiler-1",
+  "length_design": {
+    "production_tokenizer_status": "PENDING_NOT_MEASURED_OR_CLAIMED",
+    "production_tokenizer_target": [
+      940,
+      1180
+    ],
+    "scope": "noncarrier messages through final retained-tail assistant",
+    "whitespace_word_count_C": 771,
+    "whitespace_word_count_W": 771
+  },
+  "literal_history_pair_sha256": "2fe64d9dc5e3a0d3e958929339b5b02385811b4222e06ff97590d1ae47ab8dfc",
+  "materialization_authorization": {
+    "candidate_id": "c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09",
+    "kind": "PERMUTATION_COMMITTED_RANKED_CANDIDATE",
+    "literal_git_commit": "f4d54f46b85b4ada319c297b50dab23d829b0262",
+    "literal_permutation_sha256": "898816c9355a03a24eeae3b995ab4e1e84d66eea8974369d8a3cfb5f442004e4",
+    "permutation_rank": 1,
+    "seed_git_commit": "9a39fef83aae1ca3e8842f0c3fd5ae087fd73ae8",
+    "seed_manifest_sha256": "49b0e4c6859a53c3afb877cb2d32dfa72b0621d815e2ccf75453b23fa7c061a0",
+    "status": "PERMUTATION_COMMITTED_RANKED_CANDIDATE"
+  },
+  "middle_end_msg": 7,
+  "nonfocal_control": {
+    "byte_identical_between_variants": true,
+    "category": "visible_direct_fact",
+    "countertarget": "Trellis",
+    "establishing_message_indices": [
+      0
+    ],
+    "location": "system",
+    "probe": "What is the standing correspondence word?",
+    "production_tokenizer_status": "PENDING_1_TO_4_TOKEN_CHECK",
+    "target": "Morrow",
+    "target_strings_nonprefix": true,
+    "visible_after_compaction": true,
+    "why_independent": "The direct administrative fact is not an input to any focal rule."
+  },
+  "pool_member": true,
+  "resolution_mode": "explicit_resolution",
+  "resolution_subtype": "explicit_final_evicted_outcome",
+  "retained_tail": {
+    "byte_identical_between_variants": true,
+    "ends_with_assistant": true,
+    "focal_neutrality_status": "PENDING_INDEPENDENT_CONTENT_REVIEW",
+    "start_message_index": 7,
+    "starts_with_user": true
+  },
+  "schema": "coherent-state-powered-successor-v13-fixture-draft-v1",
+  "stable_candidate_id": "c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09",
+  "status": "DRAFT_UNREVIEWED_NOT_EXECUTABLE",
+  "stratum_id": "conjunction_all_conditions",
+  "stratum_title": "conjunction of all three conditions",
+  "template_version": "powered-v13-eight-family-template-v1",
+  "variants": {
+    "C": {
+      "messages": [
+        {
+          "content": "You maintain a careful internal record for the Estuary Observers. Preserve stated rules, distinguish verified evidence from commentary, and do not invent missing facts. A later handoff may summarize shared background, so the record must remain coherent even when an earlier decision is no longer quoted. Treat classification labels as exact ledger entries, not as suggestions or prose. Keep unrelated operational threads separate from the focal decision. The standing correspondence word is Morrow; this direct fact is unrelated to the earlier classification record.",
+          "role": "system"
+        },
+        {
+          "content": "We are reconciling the inspection journal at the marsh outpost. The focal entry concerns one monitoring case, and the route facilitator has asked us to apply a deterministic rule. Award Garnet only when certification is active, the queue is no more than 10, and inspection is at least 60. If any one condition fails, award Mallow. Read the mapping literally and retain the exact capitalization of the two possible ledger words. The first unrelated thread concerns sample-bottle count: its count was copied from yesterday and will be checked separately. That inventory neither changes a predicate nor selects a classification label.",
+          "role": "user"
+        },
+        {
+          "content": "I have separated the classification rule from the sample-bottle count thread. The latter still needs a physical recount before anyone closes its worksheet, but it supplies no input to the focal rule. A second unrelated thread concerns footbridge notice renewal. Its appointment was moved to the following week, and the move affects staff availability only. I will preserve both threads as context without using either one as evidence for the focal answer. The operations margin also records who will perform each follow-up and which worksheet will receive the confirmation. Those notes make the conversation realistically interleaved, yet they do not add a criterion, change a comparison, or create an exception.",
+          "role": "assistant"
+        },
+        {
+          "content": "Here is the one revised focal input supplied by the route facilitator. The newly verified inspection reading for the monitoring case is 64. All other focal records and both unrelated threads remain as already stated. Use the revised input for the ledger decision, but do not treat the act of revision itself as an extra priority, tag, score, interval, capacity item, or alias edge.",
+          "role": "user"
+        },
+        {
+          "content": "The revised input is now attached to the focal worksheet. I am leaving the sample-bottle count recount open and keeping the footbridge notice renewal appointment in its own operations section. Neither thread changes the decision rule, the fixed records, or the label mapping. The audit trail distinguishes the submitted evidence from the calculation that follows, so a reviewer can reconstruct the result without relying on tone or order. The worksheet has separate boxes for source evidence, the deterministic transformation, and the final ledger entry. Only the source-evidence box receives the revision; the rule box stays fixed. This separation prevents an incidental scheduling remark from masquerading as focal data.",
+          "role": "assistant"
+        },
+        {
+          "content": "Before this portion of the discussion is compacted, make a final decision record. Confirm that the focal rule was applied only to its declared evidence. Also note that the first unrelated chain, sample-bottle count, remains pending a recount, while the second, footbridge notice renewal, has only a later appointment. Close both distractor chains explicitly as irrelevant. Do not turn either operational detail into a hidden exception.",
+          "role": "user"
+        },
+        {
+          "content": "Final evicted decision record: certification active; queue 8; inspection 64. The pure rule therefore yields the exact focal ledger word Garnet. The sample-bottle count recount and the footbridge notice renewal appointment are closed here as unrelated operational chains; neither was consulted in deriving the label. This entry names the outcome explicitly and preserves the evidence-to-rule path for review before the boundary.",
+          "role": "assistant"
+        },
+        {
+          "content": "We are now past the decision-record boundary. Continue with a neutral handoff check that does not restate, imply, revise, or challenge the earlier focal rule, its inputs, or its result. The remaining exchange concerns only direct administrative facts that stay visible after compaction.  Please acknowledge the direct fact and the separation of topics without summarizing any earlier option, number, condition, branch, referent, or label. This request intentionally leaves the prior decision opaque. It asks for no calculation and offers no substitute evidence; it only establishes what remains safe to discuss in the visible administrative tail.",
+          "role": "user"
+        },
+        {
+          "content": "Acknowledged. This retained exchange is administratively separate from the earlier decision and supplies no evidence about that decision. I will preserve the directly stated visible fact exactly and will not reconstruct or hint at the focal classification.  The retained tail therefore remains coherent on its own while leaving the earlier rule and outcome untouched. Nothing in this acknowledgement ranks candidates, evaluates eligibility, combines predicates, compares windows, performs arithmetic, checks categories, invokes an exception, or resolves a reference. It is a direct administrative acknowledgement only.",
+          "role": "assistant"
+        }
+      ]
+    },
+    "W": {
+      "messages": [
+        {
+          "content": "You maintain a careful internal record for the Estuary Observers. Preserve stated rules, distinguish verified evidence from commentary, and do not invent missing facts. A later handoff may summarize shared background, so the record must remain coherent even when an earlier decision is no longer quoted. Treat classification labels as exact ledger entries, not as suggestions or prose. Keep unrelated operational threads separate from the focal decision. The standing correspondence word is Morrow; this direct fact is unrelated to the earlier classification record.",
+          "role": "system"
+        },
+        {
+          "content": "We are reconciling the inspection journal at the marsh outpost. The focal entry concerns one monitoring case, and the route facilitator has asked us to apply a deterministic rule. Award Garnet only when certification is active, the queue is no more than 10, and inspection is at least 60. If any one condition fails, award Mallow. Read the mapping literally and retain the exact capitalization of the two possible ledger words. The first unrelated thread concerns sample-bottle count: its count was copied from yesterday and will be checked separately. That inventory neither changes a predicate nor selects a classification label.",
+          "role": "user"
+        },
+        {
+          "content": "I have separated the classification rule from the sample-bottle count thread. The latter still needs a physical recount before anyone closes its worksheet, but it supplies no input to the focal rule. A second unrelated thread concerns footbridge notice renewal. Its appointment was moved to the following week, and the move affects staff availability only. I will preserve both threads as context without using either one as evidence for the focal answer. The operations margin also records who will perform each follow-up and which worksheet will receive the confirmation. Those notes make the conversation realistically interleaved, yet they do not add a criterion, change a comparison, or create an exception.",
+          "role": "assistant"
+        },
+        {
+          "content": "Here is the one revised focal input supplied by the route facilitator. The newly verified inspection reading for the monitoring case is 56. All other focal records and both unrelated threads remain as already stated. Use the revised input for the ledger decision, but do not treat the act of revision itself as an extra priority, tag, score, interval, capacity item, or alias edge.",
+          "role": "user"
+        },
+        {
+          "content": "The revised input is now attached to the focal worksheet. I am leaving the sample-bottle count recount open and keeping the footbridge notice renewal appointment in its own operations section. Neither thread changes the decision rule, the fixed records, or the label mapping. The audit trail distinguishes the submitted evidence from the calculation that follows, so a reviewer can reconstruct the result without relying on tone or order. The worksheet has separate boxes for source evidence, the deterministic transformation, and the final ledger entry. Only the source-evidence box receives the revision; the rule box stays fixed. This separation prevents an incidental scheduling remark from masquerading as focal data.",
+          "role": "assistant"
+        },
+        {
+          "content": "Before this portion of the discussion is compacted, make a final decision record. Confirm that the focal rule was applied only to its declared evidence. Also note that the first unrelated chain, sample-bottle count, remains pending a recount, while the second, footbridge notice renewal, has only a later appointment. Close both distractor chains explicitly as irrelevant. Do not turn either operational detail into a hidden exception.",
+          "role": "user"
+        },
+        {
+          "content": "Final evicted decision record: certification active; queue 8; inspection 56. The pure rule therefore yields the exact focal ledger word Mallow. The sample-bottle count recount and the footbridge notice renewal appointment are closed here as unrelated operational chains; neither was consulted in deriving the label. This entry names the outcome explicitly and preserves the evidence-to-rule path for review before the boundary.",
+          "role": "assistant"
+        },
+        {
+          "content": "We are now past the decision-record boundary. Continue with a neutral handoff check that does not restate, imply, revise, or challenge the earlier focal rule, its inputs, or its result. The remaining exchange concerns only direct administrative facts that stay visible after compaction.  Please acknowledge the direct fact and the separation of topics without summarizing any earlier option, number, condition, branch, referent, or label. This request intentionally leaves the prior decision opaque. It asks for no calculation and offers no substitute evidence; it only establishes what remains safe to discuss in the visible administrative tail.",
+          "role": "user"
+        },
+        {
+          "content": "Acknowledged. This retained exchange is administratively separate from the earlier decision and supplies no evidence about that decision. I will preserve the directly stated visible fact exactly and will not reconstruct or hint at the focal classification.  The retained tail therefore remains coherent on its own while leaving the earlier rule and outcome untouched. Nothing in this acknowledgement ranks candidates, evaluates eligibility, combines predicates, compares windows, performs arithmetic, checks categories, invokes an exception, or resolves a reference. It is a direct administrative acknowledgement only.",
+          "role": "assistant"
+        }
+      ]
+    }
+  },
+  "warning": "Draft compiler output only. It has not passed the production tokenizer, blind content review, Phase A, or treatment release."
+}
