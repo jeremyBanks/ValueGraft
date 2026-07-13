@@ -1,0 +1,117 @@
+{
+  "design_id": "coherent-state-powered-successor-v13",
+  "entropy": {
+    "api": "secrets.token_bytes",
+    "bytes_per_request": 16,
+    "requests": 8,
+    "stratum_order": [
+      "threshold_eligibility",
+      "sequential_tiebreak",
+      "conjunction_all_conditions",
+      "interval_schedule_overlap",
+      "arithmetic_capacity_budget",
+      "categorical_set_membership",
+      "ordered_priority_exception",
+      "referent_alias_resolution"
+    ]
+  },
+  "input_inventory": [
+    {
+      "path": "COHERENT-STATE-POWERED-SUCCESSOR-V13-PREREGISTRATION.md",
+      "sha256": "2222e250f6d285aa9a09cd11a298a5e1f16063806c49c421807e5026ffddce33"
+    },
+    {
+      "path": "data/coherent_state_powered_v13/recipe-foundation-v1.json",
+      "sha256": "788d01ef024febb6de7381b86248405c19719b4453289bbc4b41cdc90901740a"
+    },
+    {
+      "path": "pyproject.toml",
+      "sha256": "b4e465c2714a5399904ed7d81f17d058fced6077a8f3f4de21ef9ee3adafe240"
+    },
+    {
+      "path": "scripts/write_powered_v13_literal_permutations.py",
+      "sha256": "bf098259719c1833236b526b6893a4f7337f689f9f086d066a9bf830c0cc86f9"
+    },
+    {
+      "path": "scripts/write_powered_v13_seed_manifest.py",
+      "sha256": "1d7bf230ad46f57577147684ba336ecbde2b8e95de57a55db6dc395161d16cc1"
+    },
+    {
+      "path": "src/powered_v13_permutation.py",
+      "sha256": "470daa8e794dd077cadb3487568af7bc4c8b68b822b871839a8c5abf87e3b8ce"
+    },
+    {
+      "path": "src/powered_v13_recipe.py",
+      "sha256": "94913b6800de0b17371c22d6c15083af8e2418f555cb074e7266836e6573c0cd"
+    },
+    {
+      "path": "src/powered_v13_schema.py",
+      "sha256": "0bc929aedf071cd3637bff742327c693cc84436737a80319b0dc95c74fc58eb0"
+    },
+    {
+      "path": "src/powered_v13_stimuli.py",
+      "sha256": "3a3e910f73f0dd636b8b5ce378b2433dbcb7fc12238afbfe8090ecda7d69e574"
+    },
+    {
+      "path": "src/powered_v13_tokens.py",
+      "sha256": "ed0d7e378134ae6bc9fad2dfe68a2e99b59131fa730dec4779f550b6f84e7bb0"
+    },
+    {
+      "path": "uv.lock",
+      "sha256": "09d18804c909ad24be39766f0bc58cc8e6f6d306e27ef9ea10a441c5f380e3fc"
+    }
+  ],
+  "numpy_constructor": "numpy.random.Generator(numpy.random.PCG64(seed_int))",
+  "numpy_version": "2.5.1",
+  "observed_utc": "2026-07-13T00:07:17Z",
+  "pool_binding": {
+    "generator_version": "powered-v13-recipe-compiler-1",
+    "ordered_candidate_ids_sha256": {
+      "arithmetic_capacity_budget": "490b531211aa27889570579eee076976c5bf33211bf45d6a74128f08ae3436f1",
+      "categorical_set_membership": "f166ea70b0d30358fe14898307f51f68758df0f9d7658b9da82fc61cf4badd98",
+      "conjunction_all_conditions": "7a1a1e70a8f2c4a92f4730dc19b079917e920512ebe8d1520a127cedd4ba6686",
+      "interval_schedule_overlap": "886c0e1d80626a5dabd5d5afe93dcd5a5a5164902b1d093ab2d15778422f77bf",
+      "ordered_priority_exception": "1664c70f4674294556f7ff12019a6e44fbc2d13cad6f8165de43eb4b3a61bdec",
+      "referent_alias_resolution": "bfc44d3609f2e8d54d0dd7324b1c134338f9bf0ba32df56a0b90575e60a9113c",
+      "sequential_tiebreak": "ad82ad6308f3694f94df8ef0f474411cb3fa3ef6383433d0a436849b2c5b931c",
+      "threshold_eligibility": "be87659352ce3cf7ed8dacb41db6b63d66ed0405211ca952854a5694ba7e2187"
+    },
+    "pool_size_per_stratum": 4096,
+    "template_version": "powered-v13-eight-family-template-v1"
+  },
+  "random_source": "eight independently requested 128-bit operating-system random values; literal values are recorded below",
+  "randomization_boundary": {
+    "compact_tuple_enumeration_only": true,
+    "execution_authorized": false,
+    "literal_permutation_created": false,
+    "ranked_conversation_text_materialized": false
+  },
+  "repository_boundary": {
+    "branch": "trunk",
+    "git_clean_before_write": true,
+    "preseed_git_commit": "7f0d385a04a795d1e57e67634c46fc13a95bd04d"
+  },
+  "schema": "coherent_state_powered_v13_permutation_seeds_v1",
+  "seed_encoding": "exactly 32 lowercase hex digits; int(seed_hex,16)",
+  "seeds": {
+    "arithmetic_capacity_budget": "e92247dacc486b4cca3b510a00f0174c",
+    "categorical_set_membership": "5f63cfbac4b6cc4d3517cf950cb1751f",
+    "conjunction_all_conditions": "a9a8150e5defb3f52d36ee9c41437b85",
+    "interval_schedule_overlap": "d5115afe45d817cb22316c3958f33636",
+    "ordered_priority_exception": "4e250ce70ccf175660d9aff4f74dac27",
+    "referent_alias_resolution": "b78f1906db437c7e5a07c9e674919a88",
+    "sequential_tiebreak": "71dbc4c507afef5be9cbe86b2b8011d7",
+    "threshold_eligibility": "da378cb8aee65e846bf0b7c2f35bf8cd"
+  },
+  "status": "SEEDS_FROZEN_NO_PERMUTATION_NO_TEXT",
+  "strata_order": [
+    "threshold_eligibility",
+    "sequential_tiebreak",
+    "conjunction_all_conditions",
+    "interval_schedule_overlap",
+    "arithmetic_capacity_budget",
+    "categorical_set_membership",
+    "ordered_priority_exception",
+    "referent_alias_resolution"
+  ]
+}
