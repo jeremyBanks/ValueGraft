@@ -1,0 +1,1688 @@
+{
+  "schema": "coherent_state_local_n48_v2_phase_a_roster_v1",
+  "design_id": "coherent-state-local-mlx-n48-v2",
+  "status": "OUTCOME_BLIND_PHASE_A_ROSTER_ONLY",
+  "purpose": "Outcome-blind Phase-A screening roster preserving every frozen rank 1-10 per stratum and skipping only base-history review FAIL records.",
+  "non_claims": [
+    "This roster contains no model outcomes or results.",
+    "Base-history review PASS is not a Phase-A eligibility claim.",
+    "Carrier review PASS is not a candidate eligibility claim.",
+    "No treatment or execution release is granted by this artifact."
+  ],
+  "selection_rule": "first six eligible in frozen rank order per stratum; no ranks beyond ten",
+  "frozen_strata_order": [
+    "threshold_eligibility",
+    "sequential_tiebreak",
+    "conjunction_all_conditions",
+    "interval_schedule_overlap",
+    "arithmetic_capacity_budget",
+    "categorical_set_membership",
+    "ordered_priority_exception",
+    "referent_alias_resolution"
+  ],
+  "frozen_ranks_per_stratum": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "source_bindings": {
+    "candidate_manifest": {
+      "path": "data/coherent_state_local_n48_v1/manifest.json",
+      "sha256": "23c7c72539bbfd9f10dd4a800a805b278291444ee45e18a8d9befb543ffe3cfa",
+      "schema": "coherent_state_local_n48_v1_materialized_candidates_v1",
+      "candidate_count": 80
+    },
+    "literal_permutation": {
+      "path": "data/coherent_state_powered_v13/literal-permutations-v1.json",
+      "sha256": "898816c9355a03a24eeae3b995ab4e1e84d66eea8974369d8a3cfb5f442004e4",
+      "schema": "coherent_state_powered_v13_literal_permutations_v1",
+      "global_ranked_candidate_ids_sha256": "a4397c0098616511f09dfe8dd4d1b9d22f4ed8a0d29e10a3abd20803cdaee0a5"
+    },
+    "base_history_reviews": [
+      {
+        "path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "covered_record_count": 30
+      },
+      {
+        "path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "covered_record_count": 30
+      },
+      {
+        "path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "covered_record_count": 20
+      }
+    ],
+    "fixed_carrier_bank": {
+      "path": "data/coherent_state_local_n48_v2/fixed-carriers-v1.json",
+      "sha256": "41f0d41c6ddb21d16aaf877195f3dbfd2571382aeb4716c579b0f6b5a605fb44"
+    },
+    "fixed_carrier_mechanical_validation": {
+      "path": "data/coherent_state_local_n48_v2/fixed-carrier-mechanical-validation-v1.json",
+      "sha256": "dbf5501e4c54855941b110eaebd94bccd2246f9875aaa9f390efc7371bcf8053"
+    },
+    "fixed_carrier_semantic_review": {
+      "path": "data/coherent_state_local_n48_v2/fixed-carrier-independent-review-v1.json",
+      "sha256": "ef42a4df692d75a84ab4cb58ebecddac482999e7715797659653f3a212648d6d"
+    }
+  },
+  "phase_a_screening_order_by_stratum": {
+    "threshold_eligibility": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "sequential_tiebreak": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "conjunction_all_conditions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "interval_schedule_overlap": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "arithmetic_capacity_budget": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "categorical_set_membership": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "ordered_priority_exception": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ],
+    "referent_alias_resolution": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10
+    ]
+  },
+  "first_six_base_review_pass_ranks_by_stratum": {
+    "threshold_eligibility": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "sequential_tiebreak": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "conjunction_all_conditions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "interval_schedule_overlap": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "arithmetic_capacity_budget": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "categorical_set_membership": [
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "ordered_priority_exception": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "referent_alias_resolution": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ]
+  },
+  "records": [
+    {
+      "frozen_manifest_record_order": 1,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 1,
+      "stable_candidate_id": "fdf03986f886a885efacb15e7207c404362e14a48fb609c0c8bfe000e7bd5fc8",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-01_fdf03986f886a885efacb15e7207c404362e14a48fb609c0c8bfe000e7bd5fc8.json",
+      "fixture_sha256": "ffbbf977e53b936b5985f6478cc1b9399bd68ee1076eff645649b93cf107bf0d",
+      "literal_history_pair_sha256": "6fe18daee3bc61e561ee9a80f489a44c7bbe90124939a753fab97c15b4be4007",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 72 rule entails C: 69 -> Violet and W: 74 -> Comet. Only messages 3 and 6 carry the revised score/dependent record; tail messages 7-8 are identical, Nimbus is neutral, and no focal label or number leaks into the visible tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 2,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 2,
+      "stable_candidate_id": "d45aec8c191994527fb9572c63b7dbeb2b4e0aa5b399659fbc77f4079957dfcc",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-02_d45aec8c191994527fb9572c63b7dbeb2b4e0aa5b399659fbc77f4079957dfcc.json",
+      "fixture_sha256": "35e83657cf1292819705bcfd383ba4434bd4dc86f7960219e94937958434450a",
+      "literal_history_pair_sha256": "51d67c43c7ad6f1465a42e937051ddd920595ce9fc3e5349ad8d17f975e75737",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 91 rule entails C: 83 -> Alder and W: 98 -> Juniper. Differences are confined to the revised score and dependent predicate record; the identical tail refers only to system-visible Morrow and contains no focal value or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 3,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 3,
+      "stable_candidate_id": "a2eef99d27558e45e1a5eb7484352e4006aee8a0752a4bda6373a664a35d25cd",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-03_a2eef99d27558e45e1a5eb7484352e4006aee8a0752a4bda6373a664a35d25cd.json",
+      "fixture_sha256": "c1252d8070dda3d15ee36cde3575f081055e1726ed33fcdebed891023b24cefc",
+      "literal_history_pair_sha256": "943cc503f73ab4043156d59dc446ab96414dfb2fd4f1383e8a6a05b8c94a45cc",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 84 rule entails C: 79 -> Otter and W: 88 -> Heron, and each explicit final record names the correct dependent target. Only messages 3 and 6 differ; the identical Morrow control tail is neutral and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 4,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 4,
+      "stable_candidate_id": "c5d2bd8f131cebc9bd61302e0617bc374f82ad57be4a3f4fd89b79096982c579",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-04_c5d2bd8f131cebc9bd61302e0617bc374f82ad57be4a3f4fd89b79096982c579.json",
+      "fixture_sha256": "6e133d7e7b40ef726d5cbe809dc1311852b7aeb68df2395d09032741fabc732e",
+      "literal_history_pair_sha256": "983542115c61ca3c527cfc030d7ddbaaf384fcb5c57a486a7e6d49a11b780002",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The boundary case is consistent: 59 < 60 entails Otter while 60 >= 60 entails Heron, and the explicit records match. C/W change only the score and its dependent record; the byte-identical Morrow tail exposes no focal material."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 5,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 5,
+      "stable_candidate_id": "917669ac09bef07096afbb5c715f76b535bbc062734919f13dfed69e8705ebcf",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-05_917669ac09bef07096afbb5c715f76b535bbc062734919f13dfed69e8705ebcf.json",
+      "fixture_sha256": "31f6ddd394ae992259d8fc26e8846abf6ada2586ff65b93f274477c807798f35",
+      "literal_history_pair_sha256": "1ad81cd3559720116fc57559c4a566e9a530ee2575bfbb8dc039b4a6670dc5f6",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 72 rule entails C: 69 -> Otter and W: 74 -> Heron. The only variant changes are the revised score and dependent evicted predicate record; the identical Pewter control tail is coherent, neutral, and contains no focal label/value."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 6,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 6,
+      "stable_candidate_id": "e8fc3f5d8bd3e6186c7ac7090b4c4dc0c6b32207da894dac790971cb7224c3ab",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-06_e8fc3f5d8bd3e6186c7ac7090b4c4dc0c6b32207da894dac790971cb7224c3ab.json",
+      "fixture_sha256": "a86e0980501af47f1d09c41f1448ad77dead67c10048d96da430f2d13efb5d57",
+      "literal_history_pair_sha256": "f4be09a3577648bd3de09480ea66edbd975dba1db96fe7026a4217938f03da31",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 91 rule entails C: 98 -> Riverstone and W: 83 -> Sunbeam. Messages 3 and 6 alone encode the score change and derived predicate record; the identical Russet tail is neutral and free of both focal targets and inputs."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 7,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 7,
+      "stable_candidate_id": "5cac107e3c683e092b53018f0363f2b44992fec3fc8bd1443fe14940bb55dd11",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-07_5cac107e3c683e092b53018f0363f2b44992fec3fc8bd1443fe14940bb55dd11.json",
+      "fixture_sha256": "8d8e490220e98eb909f342657863250ee9f8302a9c7b1f45e0267aaeb9e65a64",
+      "literal_history_pair_sha256": "5a3a32c07bf77557748ff31907516216956716c2dfa02a98ca8a069503d25eea",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 72 rule entails C: 74 -> Heron and W: 69 -> Otter, and the explicit outcome records agree. Only the source score/dependent record differ; the byte-identical Russet tail contains no focal clue or contradiction."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 8,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 8,
+      "stable_candidate_id": "39aa4e9014be3e0f6a251b16060adcf2cf3328e20d77a09eea3bc05193c7a925",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-08_39aa4e9014be3e0f6a251b16060adcf2cf3328e20d77a09eea3bc05193c7a925.json",
+      "fixture_sha256": "79ff5e703fea23cef962cbe6d30639d8e2680222205fd21eeb847dd77ea6e426",
+      "literal_history_pair_sha256": "928a7d3447b621975899ed4d41608c3c8f6299736067bdb932f43129bd9e6044",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "At the inclusive boundary, C: 60 -> Garnet and W: 59 -> Mallow are forced by the stated mapping. Only messages 3 and 6 change; the identical Russet control tail is neutral and omits the target pair, threshold, and scores."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 9,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 9,
+      "stable_candidate_id": "5337b3220fc5ca7304cee51e002aba4e65e55b7671722b845f901579726d5a41",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-09_5337b3220fc5ca7304cee51e002aba4e65e55b7671722b845f901579726d5a41.json",
+      "fixture_sha256": "f5ef04c2f09864076d9f416cc3c73f278c5094500733016852353bf8e7b38273",
+      "literal_history_pair_sha256": "b052230006e70148f2f18c006497a622689963bb338c530f95d6f7fc32c892bb",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive 72 rule entails C: 69 -> Mallow and W: 74 -> Garnet. The source score and dependent predicate record are the sole differences; the byte-identical Russet tail supplies only a separate direct fact and no focal leakage."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 10,
+      "stratum_id": "threshold_eligibility",
+      "permutation_rank": 10,
+      "stable_candidate_id": "471c5da45bd460e2b6992a5963e55fd652e973e176ec42ed8d3282a41a0d1053",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-10_471c5da45bd460e2b6992a5963e55fd652e973e176ec42ed8d3282a41a0d1053.json",
+      "fixture_sha256": "6ecc8a28353052620421d40fbfcdf7b39763acb9a006392c9e234e8f541bc7ea",
+      "literal_history_pair_sha256": "21f14dcb6f4c8f12225c220c61334075f07ad2618192eb55a8076e0c8e273889",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "The inclusive boundary yields C: 60 -> Comet and W: 59 -> Violet, and the explicit outcome records are consistent. Only the revised input/dependent record change; the identical Russet tail is focal-neutral and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 11,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 1,
+      "stable_candidate_id": "8a2a93810ed06bc6516f3d8051cc3c7755be3a9653fd369f52c2b0069f2f33b4",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-01_8a2a93810ed06bc6516f3d8051cc3c7755be3a9653fd369f52c2b0069f2f33b4.json",
+      "fixture_sha256": "4af625face4adfe4f1f7375f02ce03e19fd50ae44e3b8f1a2b08ff5ec8094607",
+      "literal_history_pair_sha256": "e187b61aeca82413acffefbc287a4978af3bbdb7f09d225a9dda0fdee204e19e",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 90 above 78; C second time 12:40 beats first 13:15 -> Flint, while W 13:50 loses -> Quartz. Only the second timestamp and dependent record change; the identical Nimbus tail has no focal time, score, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 12,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 2,
+      "stable_candidate_id": "e1c358ca49bdcdeb96a0168a649533e64a10e085c6450a798853448c4dc2556c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-02_e1c358ca49bdcdeb96a0168a649533e64a10e085c6450a798853448c4dc2556c.json",
+      "fixture_sha256": "fc4d35dae749e8cb84a3fc2c23d63ea2eee22be9330bd952cde47ccc3224f04b",
+      "literal_history_pair_sha256": "722322a8cd6d9b5dca0bafcf29794ffe5e83746214bf0133c13272c0d3a99510",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 94 above 82; C second time 14:25 is earlier than 15:10 -> Mallow, while W 15:55 is later -> Garnet. The sole semantic change is the second timestamp plus its derived record; the identical Morrow tail is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 13,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 3,
+      "stable_candidate_id": "c6fb9c5df851cf2155015d560e6963e0aa80e2d1e14434c3c781674a25d40819",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-03_c6fb9c5df851cf2155015d560e6963e0aa80e2d1e14434c3c781674a25d40819.json",
+      "fixture_sha256": "f5d938ca97f828882aa1d1107398173d0882dcda6f5e096ed7138c413a075595",
+      "literal_history_pair_sha256": "2988e5788d442b45ebf6ab61b703a96b6f5b31052a129d5d085d7237289511a9",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With tied scores 90 above 78, C second time 13:50 leaves first 13:15 earlier -> Quartz, while W 12:40 makes the second earlier -> Flint. Only timestamp/dependent record differ; the identical Pewter tail contains no focal evidence."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 14,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 4,
+      "stable_candidate_id": "aa37fcac1c3e795f62709b3fe2868b6a467d8f82b135478f0da2f70bfb246d0c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-04_aa37fcac1c3e795f62709b3fe2868b6a467d8f82b135478f0da2f70bfb246d0c.json",
+      "fixture_sha256": "c5d89a43aa379c8e75827c89aa697235f84f2a26ed723d8fdcb73b4852ff9e36",
+      "literal_history_pair_sha256": "52754778338fc431813656737969b1e7b9fe49b07298c62831a76d1969259eab",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With tied qualifying scores, C second time 13:50 makes first 13:15 win -> Garnet, whereas W 12:40 makes second win -> Mallow. C/W otherwise match, including the neutral byte-identical Morrow tail with no focal score/time/label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 15,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 5,
+      "stable_candidate_id": "5ddc30108e9b6bafda8a5c3502dba84872bce3abf785e5404cb9c317f8313c68",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-05_5ddc30108e9b6bafda8a5c3502dba84872bce3abf785e5404cb9c317f8313c68.json",
+      "fixture_sha256": "a0451524dff768d5deb1c9db3b7b1450b5ad94adc1c19d88894b963b7bc5e34c",
+      "literal_history_pair_sha256": "1e0d9e9c53cad23c41d0f282aef39e329ce8cce82255fcbb2c0332b4f5d653b7",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 94 above 82; C 14:25 makes the second earlier than 15:10 -> Mallow, while W 15:55 makes the first earlier -> Garnet. Only the revised timestamp and derived predicate record differ; the Pewter tail is identical and neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 16,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 6,
+      "stable_candidate_id": "554d30172e0c4d79fc4da3f8c061ae68cb98733d41fbfee4b25845ef5c6bbd21",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-06_554d30172e0c4d79fc4da3f8c061ae68cb98733d41fbfee4b25845ef5c6bbd21.json",
+      "fixture_sha256": "2878d6624cde15ff6cbeb0b3f99da0894cc477227d0d9bc1829c4c5ebc17d7e1",
+      "literal_history_pair_sha256": "1466d00e20e6227aabd990ed0511e49edaed07bec4ed41ee584f7ff19ca7da1c",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 86 above 74; C second time 11:45 leaves first 11:25 earlier -> Falcon, while W 11:05 makes second earlier -> Maple. Only timestamp/dependent record change, and the identical Russet tail leaks no focal content."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 17,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 7,
+      "stable_candidate_id": "356ff2f12a3edb4316ef17ad3cb6f3dfec211b48908aec1158f67347222833a9",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-07_356ff2f12a3edb4316ef17ad3cb6f3dfec211b48908aec1158f67347222833a9.json",
+      "fixture_sha256": "fb0e3ed6609cc882c0e1fa618d0454ead1f907c023712ffad4a3903fb451d73e",
+      "literal_history_pair_sha256": "9ba21118e1eb15295c3c3a60b6b3904e1415212c406a145fffc69aee530cee3b",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With tied qualifying scores, C 11:45 leaves first 11:25 earlier -> Juniper, while W 11:05 makes second earlier -> Alder. Only the revised timestamp/dependent record differ; the Morrow tail is byte-identical, neutral, and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 18,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 8,
+      "stable_candidate_id": "32a2c76dad6806144c1949ef2ec2ac8deb7cadefe69750fc373d18449a098740",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-08_32a2c76dad6806144c1949ef2ec2ac8deb7cadefe69750fc373d18449a098740.json",
+      "fixture_sha256": "32327d57c6e8983e676d4e8fee64b75549f37483767e2b59499f307f2e2019b6",
+      "literal_history_pair_sha256": "a78f80aba7858e532e8fe2430bb401b09917348b42dc9ea06f85e604e790cf33",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 82 above 70; C second time 10:40 makes first 10:30 earlier -> Falcon, and W 10:20 makes second earlier -> Maple. Differences are minimal and pre-boundary; the identical Russet tail has no target or focal input."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 19,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 9,
+      "stable_candidate_id": "337b23f56d0b3ee8312c47e3c58cf10b965ab21f3e4a3a8451e5b48a851bf1b1",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-09_337b23f56d0b3ee8312c47e3c58cf10b965ab21f3e4a3a8451e5b48a851bf1b1.json",
+      "fixture_sha256": "3e5a268ae4a8af31421b01d8addc7fdfba53926f0203a95b91f902b372481c4a",
+      "literal_history_pair_sha256": "e68eee0b68282491adabe9c9e70069c473a17b85cd35f366c93138a83133d545",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With tied scores 94 above 82, C 15:55 leaves first 15:10 earlier -> Willow, while W 14:25 makes second earlier -> Copper. Only the second timestamp/dependent record change; the identical Pewter tail is focal-neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 20,
+      "stratum_id": "sequential_tiebreak",
+      "permutation_rank": 10,
+      "stable_candidate_id": "d1e74c56817412805c2b2b7860a34612eab523c0e4b4dbef336d557b7c99eb80",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-10_d1e74c56817412805c2b2b7860a34612eab523c0e4b4dbef336d557b7c99eb80.json",
+      "fixture_sha256": "2ffefa95cf2837b213bf6036c1939b545ac5f925dbbe4c43401362cb6bc4b45a",
+      "literal_history_pair_sha256": "21ec56a43ed86e1de740ddf6878696a40b036f74db2b05eab13ccc17a886835f",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Both scores are 86 above 74; C second time 11:05 beats first 11:25 -> Maple, while W 11:45 leaves first earlier -> Falcon. Only the revised timestamp and its dependent explicit record differ; the Russet tail is identical and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 21,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 1,
+      "stable_candidate_id": "c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-01_c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09.json",
+      "fixture_sha256": "e02d7d40b4a0e440d69014c0405a2a70a55bc20d7ed3ff89acad4b926588bd4b",
+      "literal_history_pair_sha256": "2fe64d9dc5e3a0d3e958929339b5b02385811b4222e06ff97590d1ae47ab8dfc",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With certification active and queue 8 <= 10, C inspection 64 >= 60 satisfies all conditions -> Garnet; W 56 fails inspection -> Mallow. Only inspection/dependent record change; the Morrow tail is identical and has no focal input or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 22,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 2,
+      "stable_candidate_id": "4c53bb92cda0c8c7468baad3d19b2983d2630819e3a6ae037c8fc78ddd05b8b7",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-02_4c53bb92cda0c8c7468baad3d19b2983d2630819e3a6ae037c8fc78ddd05b8b7.json",
+      "fixture_sha256": "168b69929cb57f91c47957f9eab24fa8c9c60f8ecf1fb3603380ba536f134af2",
+      "literal_history_pair_sha256": "1bf9f5e51268e0ee69a0af05a89199f1479dad254db470ee328c30a807eca085",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Active certification and queue 17 <= 21 leave inspection decisive: C 99 >= 90 -> Willow, W 81 < 90 -> Copper. Only the inspection and dependent explicit record differ; the identical Russet tail contains no focal condition or target."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 23,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 3,
+      "stable_candidate_id": "9f5d5aa90f71fbb44d92f9f105183cd95bb17c141bbc5bf04c737676e25bc59b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-03_9f5d5aa90f71fbb44d92f9f105183cd95bb17c141bbc5bf04c737676e25bc59b.json",
+      "fixture_sha256": "c2e86670b20ff8e252aab0f00c123450b39f70148c86084fed9a4fa851f9b1e8",
+      "literal_history_pair_sha256": "8749880934221e99a600e0d4e62ebd81659779327f6dd5fa28fe16e064e71a24",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With active certification and queue 11 <= 13, C inspection 76 >= 70 entails Riverstone while W 64 fails and entails Sunbeam. Differences are limited to inspection/dependent record; the identical Russet tail is neutral and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 24,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 4,
+      "stable_candidate_id": "517e313ae73d3f8a0b95ab73f77fbcc40ae7b70403bf90b7ceb5f3ab13fdb2df",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-04_517e313ae73d3f8a0b95ab73f77fbcc40ae7b70403bf90b7ceb5f3ab13fdb2df.json",
+      "fixture_sha256": "ea5c2f79b9d9bcda7f1bb34ccd920d4d60d0a33d2619ed93c998312ce5dcff14",
+      "literal_history_pair_sha256": "ee8013f4ce7b6e7e3fff8cdb75b9299840f112a38f23143d2ed8f63d334bac40",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Certification is active and queue 17 <= 21; C inspection 99 satisfies the 90 floor -> Juniper, W 81 fails -> Alder. Only the revised inspection/dependent record change; the byte-identical Morrow tail carries no focal evidence."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 25,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 5,
+      "stable_candidate_id": "38b4dfaf8a160818ae95126163207b05f99384975ef19c397531939dbb3837af",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-05_38b4dfaf8a160818ae95126163207b05f99384975ef19c397531939dbb3837af.json",
+      "fixture_sha256": "f607dbf356ee818c91b27ada2ea1a45c594e34c529ad18fc5bb242408e4b0102",
+      "literal_history_pair_sha256": "93e25681e69ec003d221d332cf4e77929666bef89f319f033a6f5e0b01e8869d",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Active certification and queue 8 <= 10 make inspection decisive: C 64 >= 60 -> Juniper, W 56 < 60 -> Alder. Messages 3 and 6 alone differ; the identical Russet control tail omits all focal inputs and labels."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 26,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 6,
+      "stable_candidate_id": "afbf4cba7729c800e7d583a2fd72afc1d1ab7e899ec22d73c8a7da1ce8c1920b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-06_afbf4cba7729c800e7d583a2fd72afc1d1ab7e899ec22d73c8a7da1ce8c1920b.json",
+      "fixture_sha256": "f9b2b35a06a40de47d63da5fb20c1773bfd59a4aa7815e598d9a0f4d719bf4ed",
+      "literal_history_pair_sha256": "075c5760f8b3bf5869da9a743c9bedbfd1d3614902f078abfd3dc11835b672e5",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With active certification and queue 17 <= 21, C inspection 99 >= 90 entails Juniper and W 81 entails Alder. The inspection/dependent record are the only changes; the identical Russet tail is neutral and contains no focal evidence."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 27,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 7,
+      "stable_candidate_id": "3c87b300bb3f891a14938b52d42db8f9a10320d179ad0a151bc0f518f0cd32ec",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-07_3c87b300bb3f891a14938b52d42db8f9a10320d179ad0a151bc0f518f0cd32ec.json",
+      "fixture_sha256": "f1acd3679e15f60a4337778b26e43b11d90814a8d58072e4650613c3116093e5",
+      "literal_history_pair_sha256": "9aa6dd8251cbd8489f1c2ecd723c26b7e85cc440ebf6676b7a11a5bec19ca8ee",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Active certification and queue 17 <= 21 leave inspection decisive: C 99 -> Quartz and W 81 -> Flint under the 90 threshold. Only the revised inspection/dependent explicit record differ; the Morrow tail is identical and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 28,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 8,
+      "stable_candidate_id": "8bee63a807f4851b86f2b557f4cf0300ea879911e67189ffb406095e22b9d14c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-08_8bee63a807f4851b86f2b557f4cf0300ea879911e67189ffb406095e22b9d14c.json",
+      "fixture_sha256": "6c7cec65456fb45bf9f9251e8fae1ca4be98f21808cc86024836b5fcf3a19d53",
+      "literal_history_pair_sha256": "eaf1bc340bc36455731232a3e840c82f440576d7e6c9a1f7b9f04dcdc0e1d4c7",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Certification is active and queue 17 <= 21; C inspection 81 fails the 90 floor -> Otter, while W 99 satisfies all conditions -> Heron. Only inspection/dependent record change, and the identical Russet tail has no focal leakage."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 29,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 9,
+      "stable_candidate_id": "59ed6fab6010ebb34961e5c848da7111a344aca00280117ab81eed9b40d9c29e",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-09_59ed6fab6010ebb34961e5c848da7111a344aca00280117ab81eed9b40d9c29e.json",
+      "fixture_sha256": "1f201842dd4973a143671bf2277b83054b9717e0420176f93e9622b7221edaa2",
+      "literal_history_pair_sha256": "ea17950bfccad487400e34088b7c72f252dfc8423a7c046a79b010ba75c1b534",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "With active certification and queue 11 <= 13, C inspection 76 >= 70 entails Comet and W 64 entails Violet. Only the revised inspection and dependent record differ; the identical Pewter tail is coherent, neutral, and omits focal material."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 30,
+      "stratum_id": "conjunction_all_conditions",
+      "permutation_rank": 10,
+      "stable_candidate_id": "1d8b4e6ef8e12351f366686512853b2bf70011fdbf539d3cc0f4d0e68febb2e0",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-10_1d8b4e6ef8e12351f366686512853b2bf70011fdbf539d3cc0f4d0e68febb2e0.json",
+      "fixture_sha256": "611d29c92663acdb977f47476c40500e117d848b0004b8ab73dec29b4503451f",
+      "literal_history_pair_sha256": "2aa4a54e8200879261e2e99621a81bae50f3379cc055f3470a4d7d2b3eb2b476",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_a.json",
+        "artifact_sha256": "4ea3fd7c8fc8f0dd3b7ccb0e72030e466e39b68801d1e04da4b9152bca0b6cc8",
+        "verdict": "PASS",
+        "reason": "Certification is active and queue 14 <= 17; C inspection 72 fails the 80 floor -> Violet, while W 88 satisfies all conditions -> Comet. Only inspection/dependent explicit record change; the identical Nimbus tail is neutral and leak-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 31,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 1,
+      "stable_candidate_id": "dd9bc047eb2522546ab5765738b7758569e168925aa84ac97f3b41358164a01b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-01_dd9bc047eb2522546ab5765738b7758569e168925aa84ac97f3b41358164a01b.json",
+      "fixture_sha256": "57ae6772d66b49b92a22f4ca4d3d5387e5f22f692952b620475410785d19e2f1",
+      "literal_history_pair_sha256": "7df70c5abd216a6345206c8a16db6a5dfac46559666534b3cc59e246593d83e1",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C has 300 versus 240 minutes and entails Juniper; W has 300 versus 360 and entails Alder. Only the second window and its final record differ; the Russet tail is identical and focal-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 32,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 2,
+      "stable_candidate_id": "cdd41da2fefee3ff5dc1c6bbaf7813ff7a61874b775fc3e98101e5d3d5c9df01",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-02_cdd41da2fefee3ff5dc1c6bbaf7813ff7a61874b775fc3e98101e5d3d5c9df01.json",
+      "fixture_sha256": "5c1114d6f969a86c778cc83e8c2f7b75080dc6568b28c1cc93a551ee98e058ae",
+      "literal_history_pair_sha256": "b3b8a82da656f64837cf3d3d99d69d2b18368611d9749ee65770d971e8bc718a",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C has 330 versus 270 minutes and entails Willow; W has 330 versus 390 and entails Copper. The sole source update is propagated only into the final record; the Morrow visible fact and tail are neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 33,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 3,
+      "stable_candidate_id": "41aeea56e43d5df6ac9898b8ea198b29fc1c035f16deddda712a9dadbf4d4e79",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-03_41aeea56e43d5df6ac9898b8ea198b29fc1c035f16deddda712a9dadbf4d4e79.json",
+      "fixture_sha256": "2fd00598f2f650507c45791cf26490e0f7ee12dfac8902928783569e4ee26a05",
+      "literal_history_pair_sha256": "f392675e5242b261fdfcb53a3ffb05d434e9604e99ba756cc326cca675fe532c",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 330-minute first overlap beats 270 and entails Quartz; W's 390-minute second overlap entails Flint. Differences are confined to messages 3 and 6, and the Pewter direct fact leaks no focal content."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 34,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 4,
+      "stable_candidate_id": "5b84776d2e09493699a0b0628edb4bee10172c50fa5d58004cd21ed73f1c69ab",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-04_5b84776d2e09493699a0b0628edb4bee10172c50fa5d58004cd21ed73f1c69ab.json",
+      "fixture_sha256": "92653f789760c5405f8306257bd95c2cbec22602c4d838161be9ce6cfc603619",
+      "literal_history_pair_sha256": "25fd218a7e258b8aaea0b94844947caf481954af74e4c680300cb117a3822e09",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 300-minute first overlap beats 240 and entails Riverstone; W's 360-minute second overlap entails Sunbeam. Only the declared window/record pair changes, with a byte-identical Nimbus tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 35,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 5,
+      "stable_candidate_id": "5a695091d2a13a5d31576936778b68befe1be676417faf3ec1a85c4de2a5a52f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-05_5a695091d2a13a5d31576936778b68befe1be676417faf3ec1a85c4de2a5a52f.json",
+      "fixture_sha256": "fc745e9623927017c5dc280c64179d98d617af4d4c9a6151de9d2db1623e1df4",
+      "literal_history_pair_sha256": "3a9d132f979564e0ba6cc390392c7f371811e9c374600fffeb32f0f6ab95993e",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 360-minute second overlap entails Otter while W's 300-versus-240 comparison entails Heron. The reversed state assignment is internally consistent, and the Russet tail is identical and neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 36,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 6,
+      "stable_candidate_id": "eb484502115da3f0eb6100a29e95c9ded1a6d17ec4f1b64f833b355eb31c0f67",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-06_eb484502115da3f0eb6100a29e95c9ded1a6d17ec4f1b64f833b355eb31c0f67.json",
+      "fixture_sha256": "6b45a5c2a405b2a94f9406b75370ea1c637d8d21b73da9fbf66f1b1dc3743e4c",
+      "literal_history_pair_sha256": "d9141c9ca500f1ee46de3abb2f9761ba09c6ef870a95e255e83bc27318bcbd77",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 270-minute first overlap beats 210 and explicitly resolves Comet; W's 360-minute second overlap resolves Violet. The outcome propagation is the only dependent difference, and the Nimbus tail remains focal-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 37,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 7,
+      "stable_candidate_id": "79d2f04c6fadaa3dfc3f8f92adf361786a75f44446e01b394f126b215990ce9a",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-07_79d2f04c6fadaa3dfc3f8f92adf361786a75f44446e01b394f126b215990ce9a.json",
+      "fixture_sha256": "e25b206c9c50aa0181c2daa17ecde90722faf4a5c2ec2bef22f87619bb593ffb",
+      "literal_history_pair_sha256": "7fd3b0965d5de3dc528f3ff195caf59fbde230751c9a4e739aa7db1b325bc523",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 390-minute second overlap entails Flint; W's 330-minute first overlap beats 270 and entails Quartz. The pair differs only at the declared update and propagated record, with neutral Pewter context."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 38,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 8,
+      "stable_candidate_id": "b54de3d47aa45ec6c7cb1c786538b871c0b18afdf2f9b69b8b7e85ed86c34823",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-08_b54de3d47aa45ec6c7cb1c786538b871c0b18afdf2f9b69b8b7e85ed86c34823.json",
+      "fixture_sha256": "690c038122332125de7e3949b5a05f6962ef0d69179eae3a609959268be704c5",
+      "literal_history_pair_sha256": "196c1c8f99156d7a90623463a5625424ca8b3a69188c905baba7bae8b658b435",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 240-minute first overlap beats 180 and entails Garnet; W's 300-minute second overlap entails Mallow. Both qualify under 120 minutes, and only the second window/final record changes."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 39,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 9,
+      "stable_candidate_id": "d1c2c35fa7738575b75ddfeaca9981ed556b7753714159ab2a60bf1133d8335e",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-09_d1c2c35fa7738575b75ddfeaca9981ed556b7753714159ab2a60bf1133d8335e.json",
+      "fixture_sha256": "3a4209df67f29bcf3af9c84d791e6d82846c81705643cc2973082627056c2612",
+      "literal_history_pair_sha256": "7ab25d042c9c2fcf7becd67ead7a7b509e8dfae2d29b4f62692f5da25d301fea",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 360-minute second overlap entails Otter; W's 300-minute first overlap beats 240 and entails Heron. The state reversal, two allowed message differences, and neutral Pewter context are all consistent."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 40,
+      "stratum_id": "interval_schedule_overlap",
+      "permutation_rank": 10,
+      "stable_candidate_id": "72428a133c021df31c70a4b2bffe119dcc3b2b36a67776dbe60f5d418732ae7c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-10_72428a133c021df31c70a4b2bffe119dcc3b2b36a67776dbe60f5d418732ae7c.json",
+      "fixture_sha256": "2c4804ca4db54b9b2e810e779391c0fc1924d494cb0e4767b471cb924904150d",
+      "literal_history_pair_sha256": "628036423342cd3d65940af09379a2fa64a5ac43468fcaa835f7d838d9d6d573",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 360-minute second overlap explicitly resolves Mallow; W's 270-minute first overlap beats 210 and resolves Garnet. Only the source update and resulting final record differ; visible Pewter context is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 41,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 1,
+      "stable_candidate_id": "40863a11e9219da42ad5625ec3103def482b079b33ad1202ea15e81421f10fd3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-01_40863a11e9219da42ad5625ec3103def482b079b33ad1202ea15e81421f10fd3.json",
+      "fixture_sha256": "d0338397063a7e9aa7d7dd9a19116a104521fd0809ce6978f3b1ed62df006818",
+      "literal_history_pair_sha256": "fc4d8ad028de282a0bd8d34b2aa91343d68afb8e9ab65931d680aaaafa3c3d5f",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "With 13 usable slots, C needs 14 from 66 requests and entails Mallow; W needs 13 from 65 and entails Garnet. Only the count and propagated record differ; the Nimbus tail is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 42,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 2,
+      "stable_candidate_id": "00e79f8b8d535fd127c867ef35339b7ff0af89fc02d5d2c33027bfb244580ef3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-02_00e79f8b8d535fd127c867ef35339b7ff0af89fc02d5d2c33027bfb244580ef3.json",
+      "fixture_sha256": "7283efbff9e362254105c663ed0af19dcac6193a12bb5fcdbb24f37a91b55b38",
+      "literal_history_pair_sha256": "535b57219b9d1ccc973a041a2c2aa7c2595b19c14943368df81de18567ddbf24",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "With 10 usable slots, C needs 11 from 51 requests and entails Alder; W needs 10 from 50 and entails Juniper. The count/record pair is the only difference, and Pewter context is focal-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 43,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 3,
+      "stable_candidate_id": "4c54e77fa6eb32c133aa5c8e9d049eb3919938289608601b4b3843f3769db963",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-03_4c54e77fa6eb32c133aa5c8e9d049eb3919938289608601b4b3843f3769db963.json",
+      "fixture_sha256": "557577f99a407fec692abc44b50372aea9e8b0a1a4ccba320ae647a67c2058c6",
+      "literal_history_pair_sha256": "979b27f9e29315ee226c8513d08352b8319f29c7df1504034423dcb4e3879d55",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's ceil(66/5)=14 exceeds 13 and entails Alder; W's ceil(65/5)=13 fits and entails Juniper. The sole count change is propagated consistently, and the Nimbus tail is identical."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 44,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 4,
+      "stable_candidate_id": "b65050c8599fd337241541b456612b837daa16b9b7904b596183bcbf5947961d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-04_b65050c8599fd337241541b456612b837daa16b9b7904b596183bcbf5947961d.json",
+      "fixture_sha256": "8b537ad924712160172dcc5bd20fe4bf7791b806d8f0931654c6540930af2834",
+      "literal_history_pair_sha256": "04690b89945ef6cd80823f4d657ad6b500b325bd2dc517fe2ec7f6e0c46de902",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C needs 15 slots from 85, exceeding 14, and explicitly resolves Sunbeam; W needs 14 from 84 and resolves Riverstone. Only the request count and outcome record differ."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 45,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 5,
+      "stable_candidate_id": "c7b5045695a74338cbe23735eca4a1d4672a7d009ecd9c1f117968c21c55985f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-05_c7b5045695a74338cbe23735eca4a1d4672a7d009ecd9c1f117968c21c55985f.json",
+      "fixture_sha256": "94a0827a4098f47905d1b89071ccb2a017ff836300ec9dd828fd0341883a030c",
+      "literal_history_pair_sha256": "3987d25ed0bc6aac80ba449c2dba38935ac577796c74c49c1b3369e19d6def1d",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 84 requests require exactly 14 usable slots and entail Juniper; W's 85 require 15 and entail Alder. The minimal one-count change is preserved, with a neutral Russet tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 46,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 6,
+      "stable_candidate_id": "a79e23e98a1cbb99eb41b505929e408b679f6c58813afe1e14a64a63b472f319",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-06_a79e23e98a1cbb99eb41b505929e408b679f6c58813afe1e14a64a63b472f319.json",
+      "fixture_sha256": "e4101050f3512b3daf029cb3f3c504a07e8599f6ca31a0cad50416537068d182",
+      "literal_history_pair_sha256": "0fa9f59994a809dac330f03b5e589a3ba1220e3f9ae3f360321a773a048f7aa6",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 50 requests need 10 available slots and explicitly resolve Comet; W's 51 need 11 and resolve Violet. The count and its final resolution are the only changed content."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 47,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 7,
+      "stable_candidate_id": "79e276172c0bf2069e26dafcdb3cff7181c1d0762c206c4c654a753787fbaf7b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-07_79e276172c0bf2069e26dafcdb3cff7181c1d0762c206c4c654a753787fbaf7b.json",
+      "fixture_sha256": "129a57aa4effa695de943397add3a81efbc5ab5beeea30f2562f5767cfcd387c",
+      "literal_history_pair_sha256": "93c25839471de4a62b308ea48363aef2ddf6a91741d6f84cf3fd327e718bbe50",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 85 requests require 15 slots and entail Flint; W's 84 require 14 and entail Quartz. The one-unit threshold flip is coherent and the Russet retained context is identical."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 48,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 8,
+      "stable_candidate_id": "66fba4f6eb213ae2b37609804fdf8952c2d8060855a71d310ef5b19cb58adfc0",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-08_66fba4f6eb213ae2b37609804fdf8952c2d8060855a71d310ef5b19cb58adfc0.json",
+      "fixture_sha256": "86b1111b821da14da065d31b7795e41a047e97d0b80a8f33c72b1b843bd25d00",
+      "literal_history_pair_sha256": "e4f9d01a7cfee380facdc21528218ac9db5d21a459337b37ad6e6d7acc3b6e0a",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's ceil(66/5)=14 exceeds 13 and entails Flint; W's ceil(65/5)=13 fits and entails Quartz. Only messages 3 and 6 differ, and Morrow is a neutral direct fact."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 49,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 9,
+      "stable_candidate_id": "02f3fba3d336272a9abc2ee8424d4e0e5ce310de4ba776238c1ca74b1a274953",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-09_02f3fba3d336272a9abc2ee8424d4e0e5ce310de4ba776238c1ca74b1a274953.json",
+      "fixture_sha256": "2f886a89b63c083a60806b8fe18d0443a5831d8a587e45a852f488b104bcb32c",
+      "literal_history_pair_sha256": "26fb83598fe14bae701f30ae5eee7a99c21dac037bf91b0e6347a3c9a96f5511",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C needs 10 slots from 50 requests and explicitly resolves Willow; W needs 11 from 51 and resolves Copper. The single count flip and dependent record are exact, with neutral Pewter context."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 50,
+      "stratum_id": "arithmetic_capacity_budget",
+      "permutation_rank": 10,
+      "stable_candidate_id": "877fdb82383c6a68c3399c240c77f39e42a9a3e7165d082dbba588f28a93029b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-10_877fdb82383c6a68c3399c240c77f39e42a9a3e7165d082dbba588f28a93029b.json",
+      "fixture_sha256": "3909f15e3ca51924f7ed64136d9da005bc926e3f4a4b51f6e2e53e112ed3118e",
+      "literal_history_pair_sha256": "fdd1faacb12b8daf50d8fdc89dc13fc8c0464ded7ec172b7a5218ef001c4db4d",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "C's 85 requests need 15 slots and explicitly resolve Maple; W's 84 need 14 and resolve Falcon. Only the count and final record differ; the Morrow fact carries no focal input."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 51,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 1,
+      "stable_candidate_id": "fe8cab86fa193257beee00b80c09976c5f6ac3b9f1a4956369ada8a718bb31aa",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-01_fe8cab86fa193257beee00b80c09976c5f6ac3b9f1a4956369ada8a718bb31aa.json",
+      "fixture_sha256": "bec92275c8ef99798fca639e4d8ff10dc184e33685fd4c22cb058bbe159adb36",
+      "literal_history_pair_sha256": "efc46937a1900a21739b268e61460cf10b64e1ad0b451a01a4fc932cdc76f211",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "FAIL",
+        "reason": "The category logic itself is sound (calm/dry/verified entails Comet; calm/dry/restricted entails Violet), and only messages 3 and 6 differ. However, C's focal input word 'verified' already appears in the always-visible system text ('verified evidence'), violating focal-input absence despite its different grammatical use."
+      },
+      "screening_disposition": "SKIP_BASE_REVIEW_FAIL",
+      "screening_order_within_stratum": null
+    },
+    {
+      "frozen_manifest_record_order": 52,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 2,
+      "stable_candidate_id": "8b8e5b2f6946f6068844901d90a11999062ffa0751e26230f564d9828a163350",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-02_8b8e5b2f6946f6068844901d90a11999062ffa0751e26230f564d9828a163350.json",
+      "fixture_sha256": "7a295a8ccbf5085e7db6bb6c7b0ac0ab296da334d2795a7e8a90cb3df0ba43a2",
+      "literal_history_pair_sha256": "0e6ef4b3f77c72273e107fdc88fa3a552e4cdf9f7f417178b004bc5828a544e3",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Logged/sealed/local satisfies every required tag and entails Willow; replacing local with forbidden foreign entails Copper. The final-tag and propagated-record pair are the only differences; Nimbus is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 53,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 3,
+      "stable_candidate_id": "591ec601bff9514ce2c6552e0b15b3839c09c04d94291486ca9f4a32f8cace77",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-03_591ec601bff9514ce2c6552e0b15b3839c09c04d94291486ca9f4a32f8cace77.json",
+      "fixture_sha256": "2efbf6d17f89405fb7f2b02b0eb60a27fb025641c529bb69d0f1979c7970147c",
+      "literal_history_pair_sha256": "26e3b8bac644ed34e264515cd6c39df46aae8bad70b859e34ba280de26efd1b4",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Held is forbidden and omits cleared, so C entails Flint; cleared with marked/stable satisfies the rule and W entails Quartz. The one tag substitution propagates exactly, with an identical neutral tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 54,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 4,
+      "stable_candidate_id": "41e874fd355fa1e3b3ce3fe88365e28ba3d6f3793e2c1690ad41a437e8a6c8c5",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-04_41e874fd355fa1e3b3ce3fe88365e28ba3d6f3793e2c1690ad41a437e8a6c8c5.json",
+      "fixture_sha256": "84e64f9feaee7513c696a1acf836277c21262ae4fa4201a43a1ba5f59907705a",
+      "literal_history_pair_sha256": "a6b877bff03b16529bd8b9ef9ce9da28111900b2a4c2d8bd5121c7b72142079f",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Held forces the otherwise branch and explicitly resolves Alder; cleared completes the required set and resolves Juniper. Only the final tag and outcome record differ; Russet is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 55,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 5,
+      "stable_candidate_id": "30fe1686eab44a9f4710e746a4b98e05b458ecf4cd03d2094bd0f9800661e074",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-05_30fe1686eab44a9f4710e746a4b98e05b458ecf4cd03d2094bd0f9800661e074.json",
+      "fixture_sha256": "4194cd928e511e6162923d8259010bbf81c40c9dc7e8dbd02255f1f148768eec",
+      "literal_history_pair_sha256": "dd2647a2687d7972f3fa13ad65a93d080eb9a0fe0bba9be8112d7cef8b9aac0a",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Logged/sealed/local entails Quartz; substituting forbidden foreign entails Flint. The source and final record are the only differences, and the Morrow visible fact contains no focal form."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 56,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 6,
+      "stable_candidate_id": "758c8f34ded3641f07dab3046cf13441c715453d5368940324810d633fed057c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-06_758c8f34ded3641f07dab3046cf13441c715453d5368940324810d633fed057c.json",
+      "fixture_sha256": "d1ede7c4a85ba6d2ef2935b4ddaff88ad84239ee4e9500824fd09f524c55e48e",
+      "literal_history_pair_sha256": "1da3dddc41ef4e1f19cb715528a2de086718bbe6dfa05590d63e0c93b86caac9",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Local completes the required logged/sealed/local set and explicitly resolves Willow; foreign violates it and resolves Copper. The minimal tag flip is exact and the Russet tail remains focal-free."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 57,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 7,
+      "stable_candidate_id": "965d0cb4c3ac0d035e96be99bae7dc39abc04b0d650f3a1517377f4d978a8451",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-07_965d0cb4c3ac0d035e96be99bae7dc39abc04b0d650f3a1517377f4d978a8451.json",
+      "fixture_sha256": "d68a135101b626c0bc3517b6109a7f8f6ee5a0214f978fe85454bfad14978b4d",
+      "literal_history_pair_sha256": "9536e0008ccb60e587ab72c2a90ef2aa0cf6b047b0baeba9fa4945dd69b51833",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Local completes all requirements and explicitly resolves Falcon; foreign is forbidden and resolves Maple. Only the final observed tag and its propagated decision differ; Nimbus is neutral."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 58,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 8,
+      "stable_candidate_id": "96556e33634389e4c955a60a4ccf28e260e34d77d5541bfc31a9bd3d5238d2ae",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-08_96556e33634389e4c955a60a4ccf28e260e34d77d5541bfc31a9bd3d5238d2ae.json",
+      "fixture_sha256": "e1173299ef926b914273f123ddf94074a2e3e8bff2020a6d49c9b6c9402d2b67",
+      "literal_history_pair_sha256": "e97732c8237f32d1662e654b44e588b407875a6fa03bc8ff95893f38e4098e88",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Logged/sealed/local explicitly resolves Juniper, while replacing local with forbidden foreign resolves Alder. The pair has only the allowed two message differences and neutral Morrow context."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 59,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 9,
+      "stable_candidate_id": "37597f71b881de019bdae92197784073f74038b6b99b134c8001bf0870c8c966",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-09_37597f71b881de019bdae92197784073f74038b6b99b134c8001bf0870c8c966.json",
+      "fixture_sha256": "e586df363a6c8af36d742bd4954ebcc3ee8ae9047584ec7734ab5fa69bcd1f7f",
+      "literal_history_pair_sha256": "1e0f7012301bdd8f3ad76b19e55f47fd1dbef52bdb08800a96c3f927ce5fa904",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Foreign is forbidden and makes C entail Maple; local completes the required set and makes W entail Falcon. The reversed assignment is consistent, and only the tag plus final record differ."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 60,
+      "stratum_id": "categorical_set_membership",
+      "permutation_rank": 10,
+      "stable_candidate_id": "18af17427308499a4b30064b32824900da97596f9c8ea018cb3a6bdae6da874f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-10_18af17427308499a4b30064b32824900da97596f9c8ea018cb3a6bdae6da874f.json",
+      "fixture_sha256": "1311f82d3ecf6c383fc4c5dd5f612807d93cdae6108a5dd0641df1e350ac0049",
+      "literal_history_pair_sha256": "f57daec44cf71ea005ed9f849c57011fece26acec0b896310387ba598ee686cc",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_b.json",
+        "artifact_sha256": "615373897b30ec26d52f2f0a3abdd555a68e6344e655bd82788aa79231d38c57",
+        "verdict": "PASS",
+        "reason": "Covered/listed/quiet satisfies every requirement and entails Heron; noisy is forbidden and entails Otter. The single final-tag flip propagates exactly, with neutral Pewter context."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 61,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 1,
+      "stable_candidate_id": "700c3bb7e7dd3d548f4e9cffea9b20651d69e5e0e035a5a8eb34998742bff57c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-01_700c3bb7e7dd3d548f4e9cffea9b20651d69e5e0e035a5a8eb34998742bff57c.json",
+      "fixture_sha256": "eb9ccb143c72a5e1589a4ddcb0e599ee154678c7a7b9e9a039ce19fd2f4a2e42",
+      "literal_history_pair_sha256": "a316a5205f33b2de400278b63a9105657b3b6a10d135d3f5e45770fe4b96e184",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Inactive versus active Orchard Quiet correctly changes the ordered result from Juniper to Alder. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 62,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 2,
+      "stable_candidate_id": "ccec1f22907e1c7301e7ddf9437ef83c784263b19e722e15e6ee86c2aaadb2e5",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-02_ccec1f22907e1c7301e7ddf9437ef83c784263b19e722e15e6ee86c2aaadb2e5.json",
+      "fixture_sha256": "e68ac9adfd91c1e23f065036c0fa6e19b3ca2c7a83f3592ac9721be894093246",
+      "literal_history_pair_sha256": "139164692b65c488a2f466a3a84bad226a6b37f8aaaad1423a1f892bb1a2ec2c",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Sunbeam to Riverstone. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 63,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 3,
+      "stable_candidate_id": "2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-03_2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813.json",
+      "fixture_sha256": "e9673a318a3e08451e643b7f0164572a831b1360068b8dae1b00132ff12783d1",
+      "literal_history_pair_sha256": "9fd9db174e5e10b196abcc7de6ac432ffc1c1320c8b65f45ce63fb8537da3b80",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Falcon to Maple, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 64,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 4,
+      "stable_candidate_id": "601e9af09fe8db43af82d71356d0cc15fa5b948b6b01ed692d6755146461f697",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-04_601e9af09fe8db43af82d71356d0cc15fa5b948b6b01ed692d6755146461f697.json",
+      "fixture_sha256": "e00def3a68996519f3df0ebfd1c6701cf9f827f90f28a9c254d131cf66da17f8",
+      "literal_history_pair_sha256": "204283e01b6f409360fd22e6cfa51ca2d960e22cc369d08ec2e514aa1b7da850",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Otter to Heron, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 65,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 5,
+      "stable_candidate_id": "a2634b67cd7102e0fc5ff2110a8f72f5121d350c0e0c581466a648a30bf7ab33",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-05_a2634b67cd7102e0fc5ff2110a8f72f5121d350c0e0c581466a648a30bf7ab33.json",
+      "fixture_sha256": "2b11fd9f366f153c6295b505ea429d374bba35a4b103c09bd6368f5fe815f4dc",
+      "literal_history_pair_sha256": "118f86c40915e64224eca109aa7309f5bbf174af1568dcf3ebab4753435c1759",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Lantern Pause correctly changes the ordered result from Violet to Comet. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 66,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 6,
+      "stable_candidate_id": "9d312858043143f3fc312341eed7853d76fd0482b80457502d0c39f4f38721e3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-06_9d312858043143f3fc312341eed7853d76fd0482b80457502d0c39f4f38721e3.json",
+      "fixture_sha256": "695b6be3e083f564f33c2dc7de222722cda0e6cabc8da0d2cd04f021d8fd1146",
+      "literal_history_pair_sha256": "8d7e3382d6b237911ee3779d919d2a7708a9a70faf5208dc726d8a7411b54a2f",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Bramble Rest correctly changes the ordered result from Mallow to Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 67,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 7,
+      "stable_candidate_id": "29c26fcb5739c334d234bb581e2d24441a48b961fd538236b78057ee529dc425",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-07_29c26fcb5739c334d234bb581e2d24441a48b961fd538236b78057ee529dc425.json",
+      "fixture_sha256": "c2142cc12a7cd2ff40b210f827bc18ce91d85b2be2e4ce8335c09beec9aed7de",
+      "literal_history_pair_sha256": "056f67d892bf8837deb08340a8aba313f03317bdb03abc88ce3f595d0b93a390",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Meadow Hold correctly changes the ordered result from Maple to Falcon. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 68,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 8,
+      "stable_candidate_id": "99f758847c715c295a59fc0b81c0f5f44d6d612b27c4293536c53928d2dee4ff",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-08_99f758847c715c295a59fc0b81c0f5f44d6d612b27c4293536c53928d2dee4ff.json",
+      "fixture_sha256": "b24a2ad431b4afa33fab25cc9f46015a724978d2ff8e1c542713177c6c514dc1",
+      "literal_history_pair_sha256": "490f79bfa8ad72975819f56cb6ee6a472b5fcb5305f085baccdc61e73769a776",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Mallow to Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 69,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 9,
+      "stable_candidate_id": "669fea18d64d832f8f3a8a0930c614ac83da87e5bea58d0699b51d1d3020dcdb",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-09_669fea18d64d832f8f3a8a0930c614ac83da87e5bea58d0699b51d1d3020dcdb.json",
+      "fixture_sha256": "7342b51e957464e35c1504dd5ca7ea32103ec9d7e92b104dfbb6756e9e1f13e8",
+      "literal_history_pair_sha256": "6de14e25cea38a1123cff880b46e9874934b2f6f64e3663895e5cd0e4b833d09",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Riverstone to Sunbeam. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 70,
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 10,
+      "stable_candidate_id": "84576abd19551c140f505de7419f737eed6d6df8b7b0115f84fafbda5f32b8d3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-10_84576abd19551c140f505de7419f737eed6d6df8b7b0115f84fafbda5f32b8d3.json",
+      "fixture_sha256": "41ae7b1a6765dde28b778c72827ef384b1bdad3c17e1653bee2c55ac7b979793",
+      "literal_history_pair_sha256": "17ea586b1596fa9b76842992564333b05939551ae51b22da461f2e2a3e41268b",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Quartz to Flint. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    },
+    {
+      "frozen_manifest_record_order": 71,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 1,
+      "stable_candidate_id": "b56bf1685c5ef18d4dfde83a1ec66f55f252937f01fc96c65cdf0d5b83ee811b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-01_b56bf1685c5ef18d4dfde83a1ec66f55f252937f01fc96c65cdf0d5b83ee811b.json",
+      "fixture_sha256": "cf3e3da614e374f319fdf7cd15241b484dc557b3cbdb4ee65bbb11ed009ea8af",
+      "literal_history_pair_sha256": "8ad5d641bc5c7442fa45874558d75c5b24f9af313ad595ff020477432378ccd5",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The stone-cabinet and clay-cabinet chains correctly entail Riverstone and Sunbeam, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 1
+    },
+    {
+      "frozen_manifest_record_order": 72,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 2,
+      "stable_candidate_id": "b0f1cbc637d3c9f441f99d6a3c9fd1b6bdafed8d424ba74acc2414f604204fe6",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-02_b0f1cbc637d3c9f441f99d6a3c9fd1b6bdafed8d424ba74acc2414f604204fe6.json",
+      "fixture_sha256": "738ed1d238dc138a881eed4732fae9d0819d1cc84a5e4d24962c7e6e5a307571",
+      "literal_history_pair_sha256": "45d72737fbc6989f27c9f64a323e2228fd737131c9a8dcd71e81950c343e24c6",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The evening-drawer and morning-drawer chains correctly entail Otter and Heron. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 2
+    },
+    {
+      "frozen_manifest_record_order": 73,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 3,
+      "stable_candidate_id": "3320e92232b9ccedb1e8d7c895a3381812e58315929f657cdd62a463e5ed796d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-03_3320e92232b9ccedb1e8d7c895a3381812e58315929f657cdd62a463e5ed796d.json",
+      "fixture_sha256": "e40aa11440aa7d18cb1fcc9128a3d7de8dd3ca5de1b73ef87dfab1c742669cef",
+      "literal_history_pair_sha256": "2f8b186603b4e43f97f689e5fd6723afc68374e2c53f2ba8b658613db916f5ab",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The upper-bay and lower-bay chains correctly entail Garnet and Mallow, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 3
+    },
+    {
+      "frozen_manifest_record_order": 74,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 4,
+      "stable_candidate_id": "26f754ec5130fab7bdcba552fe4951dd77d5c88c49e8108c993609272b95e1c4",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-04_26f754ec5130fab7bdcba552fe4951dd77d5c88c49e8108c993609272b95e1c4.json",
+      "fixture_sha256": "0baad3dc023574e3c80c38fa0fa53e956d31e5ea8043785fb62fb1e53d9163a5",
+      "literal_history_pair_sha256": "a430626de9cd34c19f7a8fc794726fb5e747e2bec806a927dc2a4c16ebfefc2f",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The east-alcove and west-alcove chains correctly entail Copper and Willow. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 4
+    },
+    {
+      "frozen_manifest_record_order": 75,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 5,
+      "stable_candidate_id": "80223f14f2d7667157ddaff8308a359313a6501b17218ff24775eebbceea3934",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-05_80223f14f2d7667157ddaff8308a359313a6501b17218ff24775eebbceea3934.json",
+      "fixture_sha256": "1db298d4eecc7052cb2c01c193523f6709c134e2243f6175c0d4c115c2879a5e",
+      "literal_history_pair_sha256": "9f16d9c0af69dbb9403075dba85304e796e7647a74c77d74e31d025decae8142",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The evening-drawer and morning-drawer chains correctly entail Copper and Willow, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 5
+    },
+    {
+      "frozen_manifest_record_order": 76,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 6,
+      "stable_candidate_id": "1c2005472dd6e22d3bd1f806cd9b50f6a3ff01f22347a768407a948ef7ef905d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-06_1c2005472dd6e22d3bd1f806cd9b50f6a3ff01f22347a768407a948ef7ef905d.json",
+      "fixture_sha256": "f6828bfefacd6d449b27fe03232a69e4c3cd15944600c57896628bc20563933a",
+      "literal_history_pair_sha256": "d15642b50c25f98f2ace045b602897bc83d33f1837beafd79d26a24d3b5abc5a",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The east-alcove and west-alcove chains correctly entail Sunbeam and Riverstone. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 6
+    },
+    {
+      "frozen_manifest_record_order": 77,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 7,
+      "stable_candidate_id": "d05634992d94da336536c7fb2e73968af05b0eedd52640d42c2f41d79cd5e1f7",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-07_d05634992d94da336536c7fb2e73968af05b0eedd52640d42c2f41d79cd5e1f7.json",
+      "fixture_sha256": "5164ac87fbe01e9dfd57498bd14163c4c35cd0e85f87b6c6eecd17ed3f6f5d60",
+      "literal_history_pair_sha256": "65c0b93cd5f1b25f9b1febbd3e2919cbdcd45f42b489f12c465ead935b5264e8",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The morning-drawer and evening-drawer chains correctly entail Quartz and Flint. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 7
+    },
+    {
+      "frozen_manifest_record_order": 78,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 8,
+      "stable_candidate_id": "eaf74e01cf2c511f8e3282cb40e9f17a3cddc6728a33aa17af6b026b8b5e6bc8",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-08_eaf74e01cf2c511f8e3282cb40e9f17a3cddc6728a33aa17af6b026b8b5e6bc8.json",
+      "fixture_sha256": "e09dcab5c291c04be9d8cc3319c9c301f4e5db777f5f645ed91713b0bd80e850",
+      "literal_history_pair_sha256": "6ce0bb2da8652f3e627adda4d0c66e4b27d5222ec28777c6ae4f1cc3a238d47b",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The evening-drawer and morning-drawer chains correctly entail Mallow and Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 8
+    },
+    {
+      "frozen_manifest_record_order": 79,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 9,
+      "stable_candidate_id": "a5d1dfd82815c492d09cd47746031b176a5cae992ad5c36b97ddc3fc7573797d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-09_a5d1dfd82815c492d09cd47746031b176a5cae992ad5c36b97ddc3fc7573797d.json",
+      "fixture_sha256": "968ce82eeaeb723e9619246b1b78b07312f66304019b4487f03723fbaff9fd04",
+      "literal_history_pair_sha256": "4d219769e256af2c98ad5c4d6ab6732838624ed12f2cc2be61a308f5015e3346",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The clay-cabinet and stone-cabinet chains correctly entail Maple and Falcon. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 9
+    },
+    {
+      "frozen_manifest_record_order": 80,
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 10,
+      "stable_candidate_id": "9b00407c9f30d336885056a859d7c5600120a2c85c3d1e03c0983d76d35ab8b9",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-10_9b00407c9f30d336885056a859d7c5600120a2c85c3d1e03c0983d76d35ab8b9.json",
+      "fixture_sha256": "4ef764bfe9115f7d6f56253690cd363657271622069b26a378e7877787b3ba0e",
+      "literal_history_pair_sha256": "102291a8e300b31a0208a4a1dd021936c3e4b414e74dc842511e27a6de50a610",
+      "base_history_review": {
+        "artifact_path": "data/coherent_state_local_n48_v1/reviews/blind_review_strata_c.json",
+        "artifact_sha256": "cac96c93b7c7a9b55e84835ecd7b1411e187c0ef13472ac77e0ad666ec1bb34e",
+        "verdict": "PASS",
+        "reason": "The clay-cabinet and stone-cabinet chains correctly entail Mallow and Garnet. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal alias, terminal, or label."
+      },
+      "screening_disposition": "SCREEN_IN_FROZEN_RANK_ORDER",
+      "screening_order_within_stratum": 10
+    }
+  ],
+  "summary": {
+    "record_count": 80,
+    "stratum_count": 8,
+    "base_history_review_pass_count": 79,
+    "base_history_review_fail_count": 1,
+    "phase_a_screening_record_count": 79,
+    "skipped_base_review_fail_count": 1,
+    "first_six_base_review_pass_ranks_by_stratum": {
+      "threshold_eligibility": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sequential_tiebreak": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "conjunction_all_conditions": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "interval_schedule_overlap": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "arithmetic_capacity_budget": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "categorical_set_membership": [
+        2,
+        3,
+        4,
+        5,
+        6,
+        7
+      ],
+      "ordered_priority_exception": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "referent_alias_resolution": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ]
+    }
+  },
+  "assertions": {
+    "exactly_80_records": true,
+    "exactly_8_strata": true,
+    "exactly_ranks_1_through_10_per_stratum": true,
+    "unique_candidate_ids": true,
+    "complete_base_review_coverage": true,
+    "manifest_first_ten_match_literal_permutation": true,
+    "screening_skips_only_base_review_fails": true,
+    "no_model_outcomes_or_results_used": true,
+    "no_eligibility_claims_made": true
+  }
+}
