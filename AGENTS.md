@@ -8,13 +8,16 @@ text freshly encoded loses, and whether controlled transplantation recovers it.
 
 Start every session in this order:
 
-1. `STATE.md` — authoritative live work and gap.
-2. `DECISIONS.md` — current governing decisions only.
-3. `FINDINGS.md` — current observed facts and unknowns only.
-4. `LOCAL-COHERENT-STATE-N48-V2.md` — frozen active study.
-5. The `notes/` slug `20260712-handoff-to-new-ultra-agent`.
-6. The `notes/` slug `gap-analysis-asked-vs-did-and-upper-bound`.
-7. `RELIABILITY.md` and `INCIDENTS.md` for the compact current hazard index.
+1. If `.disk-space-alert.json` exists, stop new model/download work and free
+   disk before continuing. The launchd monitor warns below 30 GiB and clears
+   only above 35 GiB.
+2. `STATE.md` — authoritative live work and gap.
+3. `DECISIONS.md` — current governing decisions only.
+4. `FINDINGS.md` — current observed facts and unknowns only.
+5. `LOCAL-COHERENT-STATE-N48-V2.md` — frozen active study.
+6. The `notes/` slug `20260712-handoff-to-new-ultra-agent`.
+7. The `notes/` slug `gap-analysis-asked-vs-did-and-upper-bound`.
+8. `RELIABILITY.md` and `INCIDENTS.md` for the compact current hazard index.
 
 The mandate is to use the already-authorized remaining GPU budget to reach a
 statistically and scientifically robust conclusion. Compute the gap every

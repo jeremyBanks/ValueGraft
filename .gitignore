@@ -3,6 +3,7 @@ __pycache__/
 *.pyc
 .DS_Store
 .env
+.disk-space-alert.json
 .env.*
 !.env.example
 notes/.env
