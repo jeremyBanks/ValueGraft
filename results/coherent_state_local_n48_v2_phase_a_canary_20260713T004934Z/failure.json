@@ -1,0 +1,13 @@
+{
+  "schema": "coherent_state_local_n48_v2_phase_a_failure_v1",
+  "observed_utc": "2026-07-13T00:49:55Z",
+  "status": "FAILED_BEFORE_MODEL_FORWARD",
+  "semantic_n": 0,
+  "treatment_outcomes_computed": false,
+  "candidate_results_written": 0,
+  "exception_type": "TypeError",
+  "exception": "'TokenizerWrapper' object is not callable",
+  "failing_boundary": "build_value_alignment_pairs -> build_role_native_plan -> render_hf",
+  "cause": "The frozen tokenizer planner requires the callable Hugging Face tokenizer, while mlx_lm.load returns a non-callable TokenizerWrapper that exposes that exact tokenizer as _tokenizer.",
+  "repair_scope": "Unwrap only non-callable MLX wrappers; leave callable Hugging Face tokenizers unchanged. No tokens, fixtures, selection, threshold, arm, or outcome changed."
+}

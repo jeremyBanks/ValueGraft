@@ -1,0 +1,302 @@
+{
+ "manifest_schema": 1,
+ "harness": "src/local_n48_phase_a.py",
+ "model": {
+  "repo_id": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+  "repo_id_requested": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+  "resolved_revision": "e9675aa3ca5f900ccef55267914466d55ab325fa",
+  "architecture": "qwen3_moe",
+  "snapshot_path": "/Users/jeb/.cache/huggingface/hub/models--mlx-community--Qwen3-30B-A3B-Instruct-2507-4bit/snapshots/e9675aa3ca5f900ccef55267914466d55ab325fa",
+  "config_sha256": "e1caf81b25b71686af871f1147290a81cbcb81283b638f98957293990e031417",
+  "tokenizer_config_sha256": "355f2b4e5bad7b01f11ef6cb68ebc176f61b95c3276092ea225b1bea0e01e95c",
+  "tokenizer_json_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+  "chat_template_sha256": "40c21f34cf67d8c760ef72f8ad3ae5afad514299d4b06e91dd9a8d705af7b541",
+  "artifact_files": [
+   {
+    "path": "model-00001-of-00004.safetensors",
+    "bytes": 5321473414,
+    "cache_blob_sha256": "70919a0f0b7d86c3100e30dfc2c72eb29909b841f9414b9c5ae3e8673ec9ff8c"
+   },
+   {
+    "path": "model-00002-of-00004.safetensors",
+    "bytes": 5366644780,
+    "cache_blob_sha256": "1a0387973b19b0bac1201358d1f56989deaf595da34f307ec29777fa6f8469b8"
+   },
+   {
+    "path": "model-00003-of-00004.safetensors",
+    "bytes": 5276887419,
+    "cache_blob_sha256": "d1a627729b2791dba7db5cda5dd0d24ea4c44c5131981c258598d5d0c80e0df3"
+   },
+   {
+    "path": "model-00004-of-00004.safetensors",
+    "bytes": 1216066381,
+    "cache_blob_sha256": "b02f0e9f626bd2f5bb41e057216c9d6f594ddeac91cc3f2161cc935d050a12c6"
+   }
+  ]
+ },
+ "load": {
+  "dtype": "mlx.core.uint32",
+  "parameter_dtype_inventory": {
+   "mlx.core.uint32": 386,
+   "mlx.core.bfloat16": 965
+  },
+  "dtype_env_requested": null,
+  "config_dtype": "bfloat16",
+  "quantization": {
+   "group_size": 64,
+   "bits": 4,
+   "model.layers.0.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.1.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.2.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.3.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.4.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.5.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.6.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.7.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.8.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.9.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.10.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.11.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.12.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.13.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.14.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.15.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.16.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.17.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.18.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.19.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.20.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.21.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.22.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.23.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.24.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.25.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.26.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.27.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.28.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.29.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.30.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.31.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.32.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.33.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.34.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.35.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.36.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.37.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.38.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.39.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.40.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.41.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.42.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.43.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.44.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.45.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.46.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   },
+   "model.layers.47.mlp.gate": {
+    "group_size": 64,
+    "bits": 8
+   }
+  },
+  "kv_geometry": {
+   "num_attention_heads": 32,
+   "num_key_value_heads": 4,
+   "head_dim": 128,
+   "num_hidden_layers": 48,
+   "rope_theta": 10000000
+  },
+  "dtype_matches_request": null
+ },
+ "intervention": {
+  "arm": "A_C,A_W,B and B-sham identity only",
+  "graft_type": null,
+  "alpha": null,
+  "alignment": "exact visible-token twins; no treatment constructed"
+ },
+ "metric": {
+  "definition": "Phase-A teacher-forced C/W exact-target logprob, margin, greedy validity, and nonfocal control",
+  "is_proxy": false,
+  "resolve_rate_measured": false
+ },
+ "condition": {
+  "summary_kind": "two fixed external carrier conditions",
+  "summary_request_sha256": null,
+  "summary_source": "fixed external; q1 forced under C/W/fresh"
+ },
+ "corpus": {
+  "name": "local N48 frozen phase-A roster",
+  "split": "treatment-blind eligibility",
+  "n": 0,
+  "instance_ids": [
+   "rank-01_fdf03986f886a885efacb15e7207c404362e14a48fb609c0c8bfe000e7bd5fc8"
+  ]
+ },
+ "code": {
+  "git_commit": "8ef4de4b84c51f561a45877b0e7ba9df037f5e46",
+  "git_dirty": false
+ },
+ "run": {
+  "timestamp_utc": "2026-07-13T00:49:49Z",
+  "gpu_name": null,
+  "hostname": "matte",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "python_version": "3.12.11",
+  "torch_version": "2.12.1",
+  "transformers_version": "5.0.0",
+  "package_versions": {
+   "mlx": "0.31.2",
+   "mlx-lm": "0.31.3",
+   "huggingface-hub": "1.22.0"
+  }
+ },
+ "extra": {
+  "design_id": "coherent-state-local-mlx-n48-v2",
+  "roster_path": "data/coherent_state_local_n48_v2/phase-a-roster-v1.json",
+  "roster_sha256": "55538d9890578944c9c4423be8da61647d5671c00415ad0889f3b0a5fdc0d93e",
+  "carrier_bank_path": "data/coherent_state_local_n48_v2/fixed-carriers-v1.json",
+  "carrier_bank_sha256": "41f0d41c6ddb21d16aaf877195f3dbfd2571382aeb4716c579b0f6b5a605fb44",
+  "treatment_outcomes_computed": false,
+  "damage_min": 5.0,
+  "greedy_cap": 16
+ }
+}

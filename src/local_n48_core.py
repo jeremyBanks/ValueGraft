@@ -75,6 +75,23 @@ def _plain_ids(values: object, label: str, *, allow_empty: bool = False) \
     return result
 
 
+def _planning_tokenizer(tokenizer):
+    """Return the callable HF tokenizer inside an MLX TokenizerWrapper.
+
+    MLX deliberately exposes encode/decode/template methods through a thin
+    non-callable wrapper, while the frozen v13 token planners also use the HF
+    batch-call API. Unwrapping does not change tokenizer bytes or behavior.
+    """
+    # HF tokenizers are already callable and may themselves expose a private
+    # non-callable Rust backend named ``_tokenizer``. Only unwrap when the
+    # outer object is not callable (the MLX wrapper case).
+    candidate = tokenizer if callable(tokenizer) else getattr(
+        tokenizer, "_tokenizer", None)
+    _require(callable(candidate),
+             "tokenizer is neither callable nor an MLX wrapper with _tokenizer")
+    return candidate
+
+
 def _fixture_history(
     fixture: Mapping[str, Any], variant: str,
 ) -> tuple[list[dict[str, str]], int]:
@@ -329,9 +346,10 @@ def replay_source(
 ) -> ReplayResult:
     """Execute a C or W role-native plan with its literal event schedule."""
 
+    planner = _planning_tokenizer(tokenizer)
     history, middle = _fixture_history(fixture, variant)
     plan = build_role_native_plan(
-        tokenizer,
+        planner,
         history,
         middle_end_msg=middle,
         carrier_content=carrier_text,
@@ -387,7 +405,7 @@ def replay_source(
         carrier_content=carrier_text,
     )
     canonical = _plain_ids(
-        canonical_ids_any(tokenizer, messages, render_hf),
+        canonical_ids_any(planner, messages, render_hf),
         "source complete-message render",
     )
     _require(canonical == plan.token_ids, "source complete-message IDs differ")
@@ -414,9 +432,10 @@ def replay_fresh(
 ) -> ReplayResult:
     """Execute the packed fresh plan while retaining source logical positions."""
 
+    planner = _planning_tokenizer(tokenizer)
     history, middle = _fixture_history(fixture, variant)
     plan = build_fresh_destination_plan(
-        tokenizer,
+        planner,
         history,
         middle_end_msg=middle,
         carrier_content=carrier_text,
@@ -495,7 +514,7 @@ def replay_fresh(
     )
     compact_messages = deepcopy(full_messages[:1]) + deepcopy(full_messages[middle:])
     canonical = _plain_ids(
-        canonical_ids_any(tokenizer, compact_messages, render_hf),
+        canonical_ids_any(planner, compact_messages, render_hf),
         "fresh compact-message render",
     )
     _require(canonical == plan.token_ids, "fresh compact-message IDs differ")
@@ -549,30 +568,31 @@ def build_value_alignment_pairs(
 ) -> ValueAlignment:
     """Build exact non-system, non-special visible-row twins for C and W."""
 
+    planner = _planning_tokenizer(tokenizer)
     correct_history, correct_middle = _fixture_history(fixture, "C")
     wrong_history, wrong_middle = _fixture_history(fixture, "W")
     _require(correct_middle == wrong_middle, "C/W compaction boundaries differ")
     correct = build_role_native_plan(
-        tokenizer,
+        planner,
         correct_history,
         middle_end_msg=correct_middle,
         carrier_content=carrier_text,
     ).validate()
     wrong = build_role_native_plan(
-        tokenizer,
+        planner,
         wrong_history,
         middle_end_msg=wrong_middle,
         carrier_content=carrier_text,
     ).validate()
     require_matching_geometry(correct, wrong)
     fresh_correct = build_fresh_destination_plan(
-        tokenizer,
+        planner,
         correct_history,
         middle_end_msg=correct_middle,
         carrier_content=carrier_text,
     ).validate()
     fresh_wrong = build_fresh_destination_plan(
-        tokenizer,
+        planner,
         wrong_history,
         middle_end_msg=wrong_middle,
         carrier_content=carrier_text,
@@ -582,7 +602,7 @@ def build_value_alignment_pairs(
         "C/W packed fresh plans differ",
     )
 
-    special_ids = _special_ids(tokenizer)
+    special_ids = _special_ids(planner)
     content_start, content_end = fresh_correct.physical_regions.content_start, \
         fresh_correct.physical_regions.content_end
     correct_pairs: list[AlignmentPair] = []
@@ -743,6 +763,7 @@ def score_probe(
 ) -> dict[str, Any]:
     """Teacher-force exact focal alternatives and greedily decode one fork."""
 
+    planner = _planning_tokenizer(tokenizer)
     _require(
         isinstance(context_messages, list) and bool(context_messages)
         and context_messages[-1].get("role") == "assistant",
@@ -760,7 +781,7 @@ def score_probe(
         "greedy_cap lies outside 1..64",
     )
     context_ids = _plain_ids(
-        canonical_ids_any(tokenizer, context_messages, render_hf),
+        canonical_ids_any(planner, context_messages, render_hf),
         "probe context IDs",
     )
     physical_context_end, logical_context_end = _validate_snapshot(
@@ -770,7 +791,7 @@ def score_probe(
         "probe snapshot physical rows differ from context IDs",
     )
     generation_prefix = build_probe_generation_prefix(
-        tokenizer, context_messages, probe)
+        planner, context_messages, probe)
     _require(
         generation_prefix[:len(context_ids)] == context_ids
         and len(generation_prefix) > len(context_ids),
@@ -789,9 +810,9 @@ def score_probe(
     )
 
     target_ids = probe_target_ids(
-        tokenizer, context_messages, probe, target)
+        planner, context_messages, probe, target)
     countertarget_ids = probe_target_ids(
-        tokenizer, context_messages, probe, countertarget)
+        planner, context_messages, probe, countertarget)
     _require(target_ids != countertarget_ids, "target token sequences are equal")
     correct = _score_target_from_prefix(
         model, prefix_snapshot, prefix_logits, target_ids, target)
@@ -801,7 +822,7 @@ def score_probe(
         model,
         prefix_snapshot,
         prefix_logits,
-        _eos_ids(tokenizer),
+        _eos_ids(planner),
         greedy_cap,
     )
     return {

@@ -127,6 +127,19 @@ def test_value_alignment_records_packed_and_source_geometry(
                for row, pair in zip(alignment.rows, alignment.correct_pairs))
 
 
+def test_alignment_accepts_real_mlx_wrapper_shape(
+        tokenizer, fixture, carrier_text):
+    class Wrapper:
+        def __init__(self, inner):
+            self._tokenizer = inner
+
+    direct = build_value_alignment_pairs(tokenizer, fixture, carrier_text)
+    wrapped = build_value_alignment_pairs(Wrapper(tokenizer), fixture,
+                                           carrier_text)
+    assert wrapped.correct_pairs == direct.correct_pairs
+    assert wrapped.destination_token_ids == direct.destination_token_ids
+
+
 def _snapshot(value: float, *, offset: int = 1):
     keys = mx.array([[[[value]]]], dtype=mx.float32)
     values = mx.array([[[[2.0]]]], dtype=mx.float32)
