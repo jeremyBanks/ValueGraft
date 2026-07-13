@@ -1,0 +1,34 @@
+{
+  "schema": "coherent_state_local_n48_v2_fixed_carriers_v1",
+  "design_id": "coherent-state-local-mlx-n48-v2",
+  "status": "FROZEN_BEFORE_ANY_V2_FORWARD_PASS",
+  "frozen_utc": "2026-07-13T00:20:39Z",
+  "carrier_factor": "two fixed externally authored levels; not random renders",
+  "collapse_rule": "arithmetic mean of both carrier-condition effects within conversation before inference",
+  "authorship": {
+    "subject_model_used": false,
+    "carrier_1": "pre-existing development-only neutral carrier from the independently authored powered-v13 tokenizer fixture, frozen before local v2",
+    "carrier_2": "OpenAI Codex main research agent, authored before any v2 model score",
+    "selection_used_model_outcomes": false
+  },
+  "carriers": [
+    {
+      "carrier_id": "fixed_a",
+      "text": "The earlier exchange established shared operating context and confirmed that decision criteria were recorded. This handoff preserves continuity for the next assistant while withholding the criteria themselves and every settled detail. Continue from the visible conversation, using the available context for any later request.",
+      "word_count": 44,
+      "utf8_sha256": "0445afb832b2cb0e99968182378b4d18ac2e801fbf6fa7add4663e88d09151c5"
+    },
+    {
+      "carrier_id": "fixed_b",
+      "text": "Earlier discussion provided general background and established that a decision process exists. This transfer deliberately omits every specific input, rule, label, and conclusion. The next assistant should continue from the remaining visible exchange, treating all prior particulars as unavailable unless they are explicitly introduced again.",
+      "word_count": 45,
+      "utf8_sha256": "58613646eb20452b19e2bb533bcf3c16de3ef2ae914908611187a8431b347564"
+    }
+  ],
+  "required_pre_forward_checks": [
+    "40 to 60 whitespace words and 40 to 80 exact subject-tokenizer content tokens",
+    "no special token, digit, focal target, countertarget, changed value, rule branch, nonfocal fact, or candidate-declared forbidden surface for any of 80 frozen candidates",
+    "independent compatibility review against complete C and W histories",
+    "exact token-ID geometry across C, W, and packed fresh placement"
+  ]
+}

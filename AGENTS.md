@@ -11,10 +11,10 @@ Start every session in this order:
 1. `STATE.md` — authoritative live work and gap.
 2. `DECISIONS.md` — current governing decisions only.
 3. `FINDINGS.md` — current observed facts and unknowns only.
-4. The `notes/` slug `20260712-handoff-to-new-ultra-agent`.
-5. The `notes/` slug `gap-analysis-asked-vs-did-and-upper-bound`.
-6. `RELIABILITY.md` and `INCIDENTS.md` for the compact current hazard index
-   once their takeover cleanup lands.
+4. `LOCAL-COHERENT-STATE-N48-V2.md` — frozen active study.
+5. The `notes/` slug `20260712-handoff-to-new-ultra-agent`.
+6. The `notes/` slug `gap-analysis-asked-vs-did-and-upper-bound`.
+7. `RELIABILITY.md` and `INCIDENTS.md` for the compact current hazard index.
 
 The mandate is to use the already-authorized remaining GPU budget to reach a
 statistically and scientifically robust conclusion. Compute the gap every
@@ -25,6 +25,11 @@ Historical frozen protocols and runners remain an audit trail. They do not
 authorize the successor and may fail their old hash bindings at current HEAD;
 reproduce them from their recorded commits. The successor gets a new design ID,
 namespace, preregistration, and release path.
+
+The powered-v13 remote release/lifecycle route is retired. The active N48 study
+runs directly on the exact cached local MLX model named in `STATE.md`; reuse of
+v13 is limited to its outcome-blind CPU fixture frame and state-only placebo
+constructor. Do not allocate a pod or repair the old lifecycle for this study.
 
 ## Repository working surface and archive
 

@@ -1,0 +1,383 @@
+{
+  "schema": "coherent-state-local-n48-outcome-blind-review-v1",
+  "design_id": "coherent-state-powered-successor-v13",
+  "reviewed_at_utc": "2026-07-13T00:13:06Z",
+  "reviewer": {
+    "identity": "OpenAI Codex independent fixture reviewer",
+    "task_path": "/root/v13_stimuli_qa",
+    "outcome_blind": true,
+    "model_outcomes_or_results_inspected": false,
+    "review_source_scope": "Only complete C/W candidate histories, fixture proofs, and fixture metadata under data/coherent_state_local_n48_v1/candidates were reviewed."
+  },
+  "context_rule_disposition": "Under the v1 fresh-destination context rule, original system message 0 is explicitly retained after compaction. A nonfocal control declared with location=system, establishing_message_indices=[0], and visible_after_compaction=true is therefore visible by design and need not be repeated in retained-tail messages 7-8. Eight preliminary failures based only on treating message 0 as evicted were re-reviewed and corrected to PASS.",
+  "criteria": [
+    "Complete C and W histories are coherent to a human reader.",
+    "C and W logically entail their declared opposite focal targets.",
+    "The variants differ only by the declared minimal pre-boundary focal revision and its consistent derived decision record.",
+    "The retained tail is focal-neutral and byte-identical between C and W.",
+    "Focal targets, countertargets, and focal input values are absent from the retained tail and its direct visible fact.",
+    "No contradiction, garbage, clipping, padding, or invalidating repetition undermines the history or retained control."
+  ],
+  "records": [
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 1,
+      "stable_candidate_id": "700c3bb7e7dd3d548f4e9cffea9b20651d69e5e0e035a5a8eb34998742bff57c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-01_700c3bb7e7dd3d548f4e9cffea9b20651d69e5e0e035a5a8eb34998742bff57c.json",
+      "fixture_sha256": "eb9ccb143c72a5e1589a4ddcb0e599ee154678c7a7b9e9a039ce19fd2f4a2e42",
+      "verdict": "PASS",
+      "reason": "Inactive versus active Orchard Quiet correctly changes the ordered result from Juniper to Alder. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 2,
+      "stable_candidate_id": "ccec1f22907e1c7301e7ddf9437ef83c784263b19e722e15e6ee86c2aaadb2e5",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-02_ccec1f22907e1c7301e7ddf9437ef83c784263b19e722e15e6ee86c2aaadb2e5.json",
+      "fixture_sha256": "e68ac9adfd91c1e23f065036c0fa6e19b3ca2c7a83f3592ac9721be894093246",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Sunbeam to Riverstone. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 3,
+      "stable_candidate_id": "2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-03_2f187154a49cb186b5851813f34dff6a10d85977597f643a8ec00c3b52aa2813.json",
+      "fixture_sha256": "e9673a318a3e08451e643b7f0164572a831b1360068b8dae1b00132ff12783d1",
+      "verdict": "PASS",
+      "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Falcon to Maple, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 4,
+      "stable_candidate_id": "601e9af09fe8db43af82d71356d0cc15fa5b948b6b01ed692d6755146461f697",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-04_601e9af09fe8db43af82d71356d0cc15fa5b948b6b01ed692d6755146461f697.json",
+      "fixture_sha256": "e00def3a68996519f3df0ebfd1c6701cf9f827f90f28a9c254d131cf66da17f8",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Otter to Heron, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 5,
+      "stable_candidate_id": "a2634b67cd7102e0fc5ff2110a8f72f5121d350c0e0c581466a648a30bf7ab33",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-05_a2634b67cd7102e0fc5ff2110a8f72f5121d350c0e0c581466a648a30bf7ab33.json",
+      "fixture_sha256": "2b11fd9f366f153c6295b505ea429d374bba35a4b103c09bd6368f5fe815f4dc",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Lantern Pause correctly changes the ordered result from Violet to Comet. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 6,
+      "stable_candidate_id": "9d312858043143f3fc312341eed7853d76fd0482b80457502d0c39f4f38721e3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-06_9d312858043143f3fc312341eed7853d76fd0482b80457502d0c39f4f38721e3.json",
+      "fixture_sha256": "695b6be3e083f564f33c2dc7de222722cda0e6cabc8da0d2cd04f021d8fd1146",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Bramble Rest correctly changes the ordered result from Mallow to Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 7,
+      "stable_candidate_id": "29c26fcb5739c334d234bb581e2d24441a48b961fd538236b78057ee529dc425",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-07_29c26fcb5739c334d234bb581e2d24441a48b961fd538236b78057ee529dc425.json",
+      "fixture_sha256": "c2142cc12a7cd2ff40b210f827bc18ce91d85b2be2e4ce8335c09beec9aed7de",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Meadow Hold correctly changes the ordered result from Maple to Falcon. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 8,
+      "stable_candidate_id": "99f758847c715c295a59fc0b81c0f5f44d6d612b27c4293536c53928d2dee4ff",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-08_99f758847c715c295a59fc0b81c0f5f44d6d612b27c4293536c53928d2dee4ff.json",
+      "fixture_sha256": "b24a2ad431b4afa33fab25cc9f46015a724978d2ff8e1c542713177c6c514dc1",
+      "verdict": "PASS",
+      "reason": "Active versus inactive Orchard Quiet correctly changes the ordered result from Mallow to Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal evidence or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 9,
+      "stable_candidate_id": "669fea18d64d832f8f3a8a0930c614ac83da87e5bea58d0699b51d1d3020dcdb",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-09_669fea18d64d832f8f3a8a0930c614ac83da87e5bea58d0699b51d1d3020dcdb.json",
+      "fixture_sha256": "7342b51e957464e35c1504dd5ca7ea32103ec9d7e92b104dfbb6756e9e1f13e8",
+      "verdict": "PASS",
+      "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Riverstone to Sunbeam. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "ordered_priority_exception",
+      "permutation_rank": 10,
+      "stable_candidate_id": "84576abd19551c140f505de7419f737eed6d6df8b7b0115f84fafbda5f32b8d3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/ordered_priority_exception/rank-10_84576abd19551c140f505de7419f737eed6d6df8b7b0115f84fafbda5f32b8d3.json",
+      "fixture_sha256": "41ae7b1a6765dde28b778c72827ef384b1bdad3c17e1653bee2c55ac7b979793",
+      "verdict": "PASS",
+      "reason": "Inactive versus active Bramble Rest correctly changes the ordered result from Quartz to Flint. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal evidence or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 1,
+      "stable_candidate_id": "b56bf1685c5ef18d4dfde83a1ec66f55f252937f01fc96c65cdf0d5b83ee811b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-01_b56bf1685c5ef18d4dfde83a1ec66f55f252937f01fc96c65cdf0d5b83ee811b.json",
+      "fixture_sha256": "cf3e3da614e374f319fdf7cd15241b484dc557b3cbdb4ee65bbb11ed009ea8af",
+      "verdict": "PASS",
+      "reason": "The stone-cabinet and clay-cabinet chains correctly entail Riverstone and Sunbeam, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 2,
+      "stable_candidate_id": "b0f1cbc637d3c9f441f99d6a3c9fd1b6bdafed8d424ba74acc2414f604204fe6",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-02_b0f1cbc637d3c9f441f99d6a3c9fd1b6bdafed8d424ba74acc2414f604204fe6.json",
+      "fixture_sha256": "738ed1d238dc138a881eed4732fae9d0819d1cc84a5e4d24962c7e6e5a307571",
+      "verdict": "PASS",
+      "reason": "The evening-drawer and morning-drawer chains correctly entail Otter and Heron. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 3,
+      "stable_candidate_id": "3320e92232b9ccedb1e8d7c895a3381812e58315929f657cdd62a463e5ed796d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-03_3320e92232b9ccedb1e8d7c895a3381812e58315929f657cdd62a463e5ed796d.json",
+      "fixture_sha256": "e40aa11440aa7d18cb1fcc9128a3d7de8dd3ca5de1b73ef87dfab1c742669cef",
+      "verdict": "PASS",
+      "reason": "The upper-bay and lower-bay chains correctly entail Garnet and Mallow, and only messages 3 and 6 differ before boundary 7. The unrelated Morrow fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 4,
+      "stable_candidate_id": "26f754ec5130fab7bdcba552fe4951dd77d5c88c49e8108c993609272b95e1c4",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-04_26f754ec5130fab7bdcba552fe4951dd77d5c88c49e8108c993609272b95e1c4.json",
+      "fixture_sha256": "0baad3dc023574e3c80c38fa0fa53e956d31e5ea8043785fb62fb1e53d9163a5",
+      "verdict": "PASS",
+      "reason": "The east-alcove and west-alcove chains correctly entail Copper and Willow. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 5,
+      "stable_candidate_id": "80223f14f2d7667157ddaff8308a359313a6501b17218ff24775eebbceea3934",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-05_80223f14f2d7667157ddaff8308a359313a6501b17218ff24775eebbceea3934.json",
+      "fixture_sha256": "1db298d4eecc7052cb2c01c193523f6709c134e2243f6175c0d4c115c2879a5e",
+      "verdict": "PASS",
+      "reason": "The evening-drawer and morning-drawer chains correctly entail Copper and Willow, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 6,
+      "stable_candidate_id": "1c2005472dd6e22d3bd1f806cd9b50f6a3ff01f22347a768407a948ef7ef905d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-06_1c2005472dd6e22d3bd1f806cd9b50f6a3ff01f22347a768407a948ef7ef905d.json",
+      "fixture_sha256": "f6828bfefacd6d449b27fe03232a69e4c3cd15944600c57896628bc20563933a",
+      "verdict": "PASS",
+      "reason": "The east-alcove and west-alcove chains correctly entail Sunbeam and Riverstone. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 7,
+      "stable_candidate_id": "d05634992d94da336536c7fb2e73968af05b0eedd52640d42c2f41d79cd5e1f7",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-07_d05634992d94da336536c7fb2e73968af05b0eedd52640d42c2f41d79cd5e1f7.json",
+      "fixture_sha256": "5164ac87fbe01e9dfd57498bd14163c4c35cd0e85f87b6c6eecd17ed3f6f5d60",
+      "verdict": "PASS",
+      "reason": "The morning-drawer and evening-drawer chains correctly entail Quartz and Flint. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 8,
+      "stable_candidate_id": "eaf74e01cf2c511f8e3282cb40e9f17a3cddc6728a33aa17af6b026b8b5e6bc8",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-08_eaf74e01cf2c511f8e3282cb40e9f17a3cddc6728a33aa17af6b026b8b5e6bc8.json",
+      "fixture_sha256": "e09dcab5c291c04be9d8cc3319c9c301f4e5db777f5f645ed91713b0bd80e850",
+      "verdict": "PASS",
+      "reason": "The evening-drawer and morning-drawer chains correctly entail Mallow and Garnet, and only messages 3 and 6 differ before boundary 7. The unrelated Pewter fact is in original system message 0, which the v1 fresh destination explicitly retains; it remains visible without tail repetition, and no focal alias, terminal, or label enters the identical tail.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 9,
+      "stable_candidate_id": "a5d1dfd82815c492d09cd47746031b176a5cae992ad5c36b97ddc3fc7573797d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-09_a5d1dfd82815c492d09cd47746031b176a5cae992ad5c36b97ddc3fc7573797d.json",
+      "fixture_sha256": "968ce82eeaeb723e9619246b1b78b07312f66304019b4487f03723fbaff9fd04",
+      "verdict": "PASS",
+      "reason": "The clay-cabinet and stone-cabinet chains correctly entail Maple and Falcon. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Russet fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    },
+    {
+      "stratum_id": "referent_alias_resolution",
+      "permutation_rank": 10,
+      "stable_candidate_id": "9b00407c9f30d336885056a859d7c5600120a2c85c3d1e03c0983d76d35ab8b9",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/referent_alias_resolution/rank-10_9b00407c9f30d336885056a859d7c5600120a2c85c3d1e03c0983d76d35ab8b9.json",
+      "fixture_sha256": "4ef764bfe9115f7d6f56253690cd363657271622069b26a378e7877787b3ba0e",
+      "verdict": "PASS",
+      "reason": "The clay-cabinet and stone-cabinet chains correctly entail Mallow and Garnet. Only messages 3 and 6 differ before boundary 7; the identical retained tail states the unrelated Nimbus fact and contains no focal alias, terminal, or label.",
+      "criterion_results": {
+        "human_coherence": true,
+        "opposite_focal_targets_logically_entailed": true,
+        "declared_minimal_pre_boundary_change_only": true,
+        "retained_tail_neutral_and_byte_identical": true,
+        "focal_content_absent_from_retained_tail_and_direct_fact": true,
+        "no_invalidating_contradiction_garbage_or_repetition": true
+      }
+    }
+  ],
+  "summary": {
+    "reviewed": 20,
+    "passed": 20,
+    "failed": 0,
+    "by_stratum": {
+      "ordered_priority_exception": {
+        "reviewed": 10,
+        "passed": 10,
+        "failed": 0,
+        "failed_ranks": []
+      },
+      "referent_alias_resolution": {
+        "reviewed": 10,
+        "passed": 10,
+        "failed": 0,
+        "failed_ranks": []
+      }
+    },
+    "failure_note": "No candidate failed. Eight preliminary failures were corrected after applying the v1 rule that original system message 0 is retained at the fresh destination; their system-located nonfocal facts are therefore visible after compaction by design."
+  }
+}

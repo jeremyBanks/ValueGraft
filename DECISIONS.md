@@ -17,12 +17,16 @@ Historical decisions are archived in `notes/`, including the slug
 
 ## 2026-07-12 — primary design
 
-- New design ID: `coherent-state-local-mlx-n48-v1`.
+- Governing design ID: `coherent-state-local-mlx-n48-v2`. V1 closed before
+  treatment after its shared-background prompt and all-context-name filter
+  yielded 0/48 accepted rank-1 carrier attempts. No threshold or prompt was
+  repaired in place.
 - Primary unit: one paired C/W conversation fixture. Fixed N=48, six from each
   of eight logic strata, selected in a fresh outcome-blind order from the
   32,768-member recipe frame.
-- Each fixture has two independently sampled C-origin carrier renders. Their
-  measurements are averaged inside the fixture; they are not N.
+- Each fixture has two fixed externally authored carrier-text conditions. Their
+  measurements are averaged inside the fixture; they are not random renders or
+  N. Per-condition effects are reported as fixed-effect sensitivity evidence.
 - Primary outcome is correct-target mean-token-logprob movement from fresh
   compaction B to correct-history value graft E. Correct and wrong targets,
   margin, oracle damage, render difference, wrong-history specificity, sham,

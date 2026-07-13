@@ -1,0 +1,32 @@
+{
+  "schema": "coherent_state_local_n48_v1_stochastic_carrier_failure_v1",
+  "design_id": "coherent-state-local-mlx-n48-v1",
+  "status": "TERMINATED_PRE_TREATMENT",
+  "semantic_n": 0,
+  "treatment_outcomes_computed": false,
+  "scope": "all three frozen attempts for both renders of rank 1 in every one of eight strata",
+  "candidate_count": 8,
+  "render_count_per_candidate": 2,
+  "attempt_count_per_render": 3,
+  "attempt_count": 48,
+  "mechanical_pass_count": 0,
+  "mechanical_fail_count": 48,
+  "failure_reason_counts": {
+    "FORBIDDEN_SURFACE": 48,
+    "WORD_COUNT_65_OUTSIDE_40_60": 1
+  },
+  "top_forbidden_surface_occurrences": [
+    ["traveling collection", 23],
+    ["transfer docket", 21],
+    ["river branch", 21],
+    ["east lock", 12],
+    ["accession worksheet", 6],
+    ["inspection journal", 6],
+    ["marsh outpost", 6],
+    ["document carton", 5],
+    ["monitoring case", 5],
+    ["circulation planner", 4]
+  ],
+  "decision": "V1 closes without weakening the frozen filter or iterating the prompt. V2 uses two fixed external carrier conditions. The failure is a prompt/filter contradiction: the prompt requested shared background while the filter forbade scenario nouns that constitute that background; it is not evidence that the subject cannot generate summaries.",
+  "artifact_tree_shasum_of_shasums_before_this_summary": "4dad140d13fa806a1f46ff670e6799df2e16b2a41ee0571e4b63351ecc0ccb40"
+}

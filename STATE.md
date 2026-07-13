@@ -45,20 +45,24 @@ Observed direct-path gates:
 
 ## Immediate execution
 
-1. Freeze `LOCAL-COHERENT-STATE-N48-V1.md` and a fresh outcome-blind six-per-
-   stratum selection from the existing 32,768-candidate CPU recipe frame.
-2. Materialize ranks one through ten per stratum; run complete-history blind
-   review and target/minimality review without treatment outcomes.
-3. Generate and persist two independently sampled, target-neutral carrier
-   renders per candidate. Screen only oracle/fresh damage and validity; select
-   the first six eligible per stratum by frozen rank.
+1. Use frozen `LOCAL-COHERENT-STATE-N48-V2.md`. V1 terminated before treatment
+   after 0/48 stochastic carrier attempts passed its contradictory prompt/
+   filter; its protocol and attempts are archived intact.
+2. The outcome-blind frame, literal order, 80 ranked candidates, and complete-
+   history reviews are frozen. Validate the two fixed external v2 carrier
+   conditions mechanically and independently against all 80 fixtures before
+   any v2 forward pass.
+3. Force both exact carrier conditions under C/W and fresh B. Screen only
+   oracle/fresh damage and validity; select the first six eligible per stratum
+   by frozen rank.
 4. Run the five scientific states locally: fresh B, correct-history value
    graft, wrong-history value graft, applied displacement-matched V-row
    placebo, and oracle A; retain the sham identity gate. Teacher-force the
    declared C and W targets. Do not run the old 160-token answer probes.
 5. Checkpoint each conversation/render atomically and report valid N, elapsed
    wall time, and resource state every four completed conversations.
-6. Collapse renders within conversation and compute the frozen one-sided bound.
+6. Average the two fixed carrier conditions within conversation and compute the
+   frozen one-sided bound.
    Then run retained-tail followed by doubled-summary/second-copy-only surplus
    tests.
 

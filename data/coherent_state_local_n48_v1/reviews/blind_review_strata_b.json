@@ -1,0 +1,350 @@
+{
+  "schema": "coherent-state-local-n48-v1-blind-history-review-v1",
+  "reviewed_at_utc": "2026-07-13T00:11:54Z",
+  "reviewer_identity": {
+    "reviewer": "Codex subagent",
+    "task_path": "/root/blind_review_strata_b",
+    "model_family": "OpenAI GPT-5 Codex",
+    "independent_of_subject_model": true
+  },
+  "review_scope": {
+    "outcome_blind": true,
+    "results_inspected": false,
+    "materials_reviewed": "Complete C and W histories, embedded fixture proofs, declared change metadata, retained-tail boundaries, and literal candidate files.",
+    "strata": [
+      "interval_schedule_overlap",
+      "arithmetic_capacity_budget",
+      "categorical_set_membership"
+    ],
+    "ranks_per_stratum": [1, 10]
+  },
+  "criteria": {
+    "coherence": "Both complete histories are human-coherent.",
+    "entailment": "The declared C and W targets are opposite and logically follow from the respective history and fixture proof.",
+    "minimal_change": "C and W contain exactly the declared single source change plus its allowed propagated final record, with no other message differences.",
+    "tail_identity_neutrality": "The retained tail is byte-identical and neutral between variants.",
+    "visible_focal_absence": "Target, countertarget, and focal input values are absent from retained/directly visible context.",
+    "no_invalidating_defect": "No contradiction, garbage, clipping, or excessive repetition invalidates either history."
+  },
+  "records": [
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 1,
+      "candidate_id": "dd9bc047eb2522546ab5765738b7758569e168925aa84ac97f3b41358164a01b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-01_dd9bc047eb2522546ab5765738b7758569e168925aa84ac97f3b41358164a01b.json",
+      "fixture_sha256": "57ae6772d66b49b92a22f4ca4d3d5387e5f22f692952b620475410785d19e2f1",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C has 300 versus 240 minutes and entails Juniper; W has 300 versus 360 and entails Alder. Only the second window and its final record differ; the Russet tail is identical and focal-free."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 2,
+      "candidate_id": "cdd41da2fefee3ff5dc1c6bbaf7813ff7a61874b775fc3e98101e5d3d5c9df01",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-02_cdd41da2fefee3ff5dc1c6bbaf7813ff7a61874b775fc3e98101e5d3d5c9df01.json",
+      "fixture_sha256": "5c1114d6f969a86c778cc83e8c2f7b75080dc6568b28c1cc93a551ee98e058ae",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C has 330 versus 270 minutes and entails Willow; W has 330 versus 390 and entails Copper. The sole source update is propagated only into the final record; the Morrow visible fact and tail are neutral."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 3,
+      "candidate_id": "41aeea56e43d5df6ac9898b8ea198b29fc1c035f16deddda712a9dadbf4d4e79",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-03_41aeea56e43d5df6ac9898b8ea198b29fc1c035f16deddda712a9dadbf4d4e79.json",
+      "fixture_sha256": "2fd00598f2f650507c45791cf26490e0f7ee12dfac8902928783569e4ee26a05",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 330-minute first overlap beats 270 and entails Quartz; W's 390-minute second overlap entails Flint. Differences are confined to messages 3 and 6, and the Pewter direct fact leaks no focal content."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 4,
+      "candidate_id": "5b84776d2e09493699a0b0628edb4bee10172c50fa5d58004cd21ed73f1c69ab",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-04_5b84776d2e09493699a0b0628edb4bee10172c50fa5d58004cd21ed73f1c69ab.json",
+      "fixture_sha256": "92653f789760c5405f8306257bd95c2cbec22602c4d838161be9ce6cfc603619",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 300-minute first overlap beats 240 and entails Riverstone; W's 360-minute second overlap entails Sunbeam. Only the declared window/record pair changes, with a byte-identical Nimbus tail."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 5,
+      "candidate_id": "5a695091d2a13a5d31576936778b68befe1be676417faf3ec1a85c4de2a5a52f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-05_5a695091d2a13a5d31576936778b68befe1be676417faf3ec1a85c4de2a5a52f.json",
+      "fixture_sha256": "fc745e9623927017c5dc280c64179d98d617af4d4c9a6151de9d2db1623e1df4",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 360-minute second overlap entails Otter while W's 300-versus-240 comparison entails Heron. The reversed state assignment is internally consistent, and the Russet tail is identical and neutral."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 6,
+      "candidate_id": "eb484502115da3f0eb6100a29e95c9ded1a6d17ec4f1b64f833b355eb31c0f67",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-06_eb484502115da3f0eb6100a29e95c9ded1a6d17ec4f1b64f833b355eb31c0f67.json",
+      "fixture_sha256": "6b45a5c2a405b2a94f9406b75370ea1c637d8d21b73da9fbf66f1b1dc3743e4c",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 270-minute first overlap beats 210 and explicitly resolves Comet; W's 360-minute second overlap resolves Violet. The outcome propagation is the only dependent difference, and the Nimbus tail remains focal-free."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 7,
+      "candidate_id": "79d2f04c6fadaa3dfc3f8f92adf361786a75f44446e01b394f126b215990ce9a",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-07_79d2f04c6fadaa3dfc3f8f92adf361786a75f44446e01b394f126b215990ce9a.json",
+      "fixture_sha256": "e25b206c9c50aa0181c2daa17ecde90722faf4a5c2ec2bef22f87619bb593ffb",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 390-minute second overlap entails Flint; W's 330-minute first overlap beats 270 and entails Quartz. The pair differs only at the declared update and propagated record, with neutral Pewter context."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 8,
+      "candidate_id": "b54de3d47aa45ec6c7cb1c786538b871c0b18afdf2f9b69b8b7e85ed86c34823",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-08_b54de3d47aa45ec6c7cb1c786538b871c0b18afdf2f9b69b8b7e85ed86c34823.json",
+      "fixture_sha256": "690c038122332125de7e3949b5a05f6962ef0d69179eae3a609959268be704c5",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 240-minute first overlap beats 180 and entails Garnet; W's 300-minute second overlap entails Mallow. Both qualify under 120 minutes, and only the second window/final record changes."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 9,
+      "candidate_id": "d1c2c35fa7738575b75ddfeaca9981ed556b7753714159ab2a60bf1133d8335e",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-09_d1c2c35fa7738575b75ddfeaca9981ed556b7753714159ab2a60bf1133d8335e.json",
+      "fixture_sha256": "3a4209df67f29bcf3af9c84d791e6d82846c81705643cc2973082627056c2612",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 360-minute second overlap entails Otter; W's 300-minute first overlap beats 240 and entails Heron. The state reversal, two allowed message differences, and neutral Pewter context are all consistent."
+    },
+    {
+      "stratum_id": "interval_schedule_overlap",
+      "rank": 10,
+      "candidate_id": "72428a133c021df31c70a4b2bffe119dcc3b2b36a67776dbe60f5d418732ae7c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/interval_schedule_overlap/rank-10_72428a133c021df31c70a4b2bffe119dcc3b2b36a67776dbe60f5d418732ae7c.json",
+      "fixture_sha256": "2c4804ca4db54b9b2e810e779391c0fc1924d494cb0e4767b471cb924904150d",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 360-minute second overlap explicitly resolves Mallow; W's 270-minute first overlap beats 210 and resolves Garnet. Only the source update and resulting final record differ; visible Pewter context is neutral."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 1,
+      "candidate_id": "40863a11e9219da42ad5625ec3103def482b079b33ad1202ea15e81421f10fd3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-01_40863a11e9219da42ad5625ec3103def482b079b33ad1202ea15e81421f10fd3.json",
+      "fixture_sha256": "d0338397063a7e9aa7d7dd9a19116a104521fd0809ce6978f3b1ed62df006818",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "With 13 usable slots, C needs 14 from 66 requests and entails Mallow; W needs 13 from 65 and entails Garnet. Only the count and propagated record differ; the Nimbus tail is neutral."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 2,
+      "candidate_id": "00e79f8b8d535fd127c867ef35339b7ff0af89fc02d5d2c33027bfb244580ef3",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-02_00e79f8b8d535fd127c867ef35339b7ff0af89fc02d5d2c33027bfb244580ef3.json",
+      "fixture_sha256": "7283efbff9e362254105c663ed0af19dcac6193a12bb5fcdbb24f37a91b55b38",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "With 10 usable slots, C needs 11 from 51 requests and entails Alder; W needs 10 from 50 and entails Juniper. The count/record pair is the only difference, and Pewter context is focal-free."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 3,
+      "candidate_id": "4c54e77fa6eb32c133aa5c8e9d049eb3919938289608601b4b3843f3769db963",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-03_4c54e77fa6eb32c133aa5c8e9d049eb3919938289608601b4b3843f3769db963.json",
+      "fixture_sha256": "557577f99a407fec692abc44b50372aea9e8b0a1a4ccba320ae647a67c2058c6",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's ceil(66/5)=14 exceeds 13 and entails Alder; W's ceil(65/5)=13 fits and entails Juniper. The sole count change is propagated consistently, and the Nimbus tail is identical."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 4,
+      "candidate_id": "b65050c8599fd337241541b456612b837daa16b9b7904b596183bcbf5947961d",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-04_b65050c8599fd337241541b456612b837daa16b9b7904b596183bcbf5947961d.json",
+      "fixture_sha256": "8b537ad924712160172dcc5bd20fe4bf7791b806d8f0931654c6540930af2834",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C needs 15 slots from 85, exceeding 14, and explicitly resolves Sunbeam; W needs 14 from 84 and resolves Riverstone. Only the request count and outcome record differ."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 5,
+      "candidate_id": "c7b5045695a74338cbe23735eca4a1d4672a7d009ecd9c1f117968c21c55985f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-05_c7b5045695a74338cbe23735eca4a1d4672a7d009ecd9c1f117968c21c55985f.json",
+      "fixture_sha256": "94a0827a4098f47905d1b89071ccb2a017ff836300ec9dd828fd0341883a030c",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 84 requests require exactly 14 usable slots and entail Juniper; W's 85 require 15 and entail Alder. The minimal one-count change is preserved, with a neutral Russet tail."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 6,
+      "candidate_id": "a79e23e98a1cbb99eb41b505929e408b679f6c58813afe1e14a64a63b472f319",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-06_a79e23e98a1cbb99eb41b505929e408b679f6c58813afe1e14a64a63b472f319.json",
+      "fixture_sha256": "e4101050f3512b3daf029cb3f3c504a07e8599f6ca31a0cad50416537068d182",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 50 requests need 10 available slots and explicitly resolve Comet; W's 51 need 11 and resolve Violet. The count and its final resolution are the only changed content."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 7,
+      "candidate_id": "79e276172c0bf2069e26dafcdb3cff7181c1d0762c206c4c654a753787fbaf7b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-07_79e276172c0bf2069e26dafcdb3cff7181c1d0762c206c4c654a753787fbaf7b.json",
+      "fixture_sha256": "129a57aa4effa695de943397add3a81efbc5ab5beeea30f2562f5767cfcd387c",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 85 requests require 15 slots and entail Flint; W's 84 require 14 and entail Quartz. The one-unit threshold flip is coherent and the Russet retained context is identical."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 8,
+      "candidate_id": "66fba4f6eb213ae2b37609804fdf8952c2d8060855a71d310ef5b19cb58adfc0",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-08_66fba4f6eb213ae2b37609804fdf8952c2d8060855a71d310ef5b19cb58adfc0.json",
+      "fixture_sha256": "86b1111b821da14da065d31b7795e41a047e97d0b80a8f33c72b1b843bd25d00",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's ceil(66/5)=14 exceeds 13 and entails Flint; W's ceil(65/5)=13 fits and entails Quartz. Only messages 3 and 6 differ, and Morrow is a neutral direct fact."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 9,
+      "candidate_id": "02f3fba3d336272a9abc2ee8424d4e0e5ce310de4ba776238c1ca74b1a274953",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-09_02f3fba3d336272a9abc2ee8424d4e0e5ce310de4ba776238c1ca74b1a274953.json",
+      "fixture_sha256": "2f886a89b63c083a60806b8fe18d0443a5831d8a587e45a852f488b104bcb32c",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C needs 10 slots from 50 requests and explicitly resolves Willow; W needs 11 from 51 and resolves Copper. The single count flip and dependent record are exact, with neutral Pewter context."
+    },
+    {
+      "stratum_id": "arithmetic_capacity_budget",
+      "rank": 10,
+      "candidate_id": "877fdb82383c6a68c3399c240c77f39e42a9a3e7165d082dbba588f28a93029b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/arithmetic_capacity_budget/rank-10_877fdb82383c6a68c3399c240c77f39e42a9a3e7165d082dbba588f28a93029b.json",
+      "fixture_sha256": "3909f15e3ca51924f7ed64136d9da005bc926e3f4a4b51f6e2e53e112ed3118e",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "C's 85 requests need 15 slots and explicitly resolve Maple; W's 84 need 14 and resolve Falcon. Only the count and final record differ; the Morrow fact carries no focal input."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 1,
+      "candidate_id": "fe8cab86fa193257beee00b80c09976c5f6ac3b9f1a4956369ada8a718bb31aa",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-01_fe8cab86fa193257beee00b80c09976c5f6ac3b9f1a4956369ada8a718bb31aa.json",
+      "fixture_sha256": "bec92275c8ef99798fca639e4d8ff10dc184e33685fd4c22cb058bbe159adb36",
+      "verdict": "FAIL",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": false, "no_invalidating_defect": true},
+      "reason": "The category logic itself is sound (calm/dry/verified entails Comet; calm/dry/restricted entails Violet), and only messages 3 and 6 differ. However, C's focal input word 'verified' already appears in the always-visible system text ('verified evidence'), violating focal-input absence despite its different grammatical use."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 2,
+      "candidate_id": "8b8e5b2f6946f6068844901d90a11999062ffa0751e26230f564d9828a163350",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-02_8b8e5b2f6946f6068844901d90a11999062ffa0751e26230f564d9828a163350.json",
+      "fixture_sha256": "7a295a8ccbf5085e7db6bb6c7b0ac0ab296da334d2795a7e8a90cb3df0ba43a2",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Logged/sealed/local satisfies every required tag and entails Willow; replacing local with forbidden foreign entails Copper. The final-tag and propagated-record pair are the only differences; Nimbus is neutral."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 3,
+      "candidate_id": "591ec601bff9514ce2c6552e0b15b3839c09c04d94291486ca9f4a32f8cace77",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-03_591ec601bff9514ce2c6552e0b15b3839c09c04d94291486ca9f4a32f8cace77.json",
+      "fixture_sha256": "2efbf6d17f89405fb7f2b02b0eb60a27fb025641c529bb69d0f1979c7970147c",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Held is forbidden and omits cleared, so C entails Flint; cleared with marked/stable satisfies the rule and W entails Quartz. The one tag substitution propagates exactly, with an identical neutral tail."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 4,
+      "candidate_id": "41e874fd355fa1e3b3ce3fe88365e28ba3d6f3793e2c1690ad41a437e8a6c8c5",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-04_41e874fd355fa1e3b3ce3fe88365e28ba3d6f3793e2c1690ad41a437e8a6c8c5.json",
+      "fixture_sha256": "84e64f9feaee7513c696a1acf836277c21262ae4fa4201a43a1ba5f59907705a",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Held forces the otherwise branch and explicitly resolves Alder; cleared completes the required set and resolves Juniper. Only the final tag and outcome record differ; Russet is neutral."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 5,
+      "candidate_id": "30fe1686eab44a9f4710e746a4b98e05b458ecf4cd03d2094bd0f9800661e074",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-05_30fe1686eab44a9f4710e746a4b98e05b458ecf4cd03d2094bd0f9800661e074.json",
+      "fixture_sha256": "4194cd928e511e6162923d8259010bbf81c40c9dc7e8dbd02255f1f148768eec",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Logged/sealed/local entails Quartz; substituting forbidden foreign entails Flint. The source and final record are the only differences, and the Morrow visible fact contains no focal form."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 6,
+      "candidate_id": "758c8f34ded3641f07dab3046cf13441c715453d5368940324810d633fed057c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-06_758c8f34ded3641f07dab3046cf13441c715453d5368940324810d633fed057c.json",
+      "fixture_sha256": "d1ede7c4a85ba6d2ef2935b4ddaff88ad84239ee4e9500824fd09f524c55e48e",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Local completes the required logged/sealed/local set and explicitly resolves Willow; foreign violates it and resolves Copper. The minimal tag flip is exact and the Russet tail remains focal-free."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 7,
+      "candidate_id": "965d0cb4c3ac0d035e96be99bae7dc39abc04b0d650f3a1517377f4d978a8451",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-07_965d0cb4c3ac0d035e96be99bae7dc39abc04b0d650f3a1517377f4d978a8451.json",
+      "fixture_sha256": "d68a135101b626c0bc3517b6109a7f8f6ee5a0214f978fe85454bfad14978b4d",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Local completes all requirements and explicitly resolves Falcon; foreign is forbidden and resolves Maple. Only the final observed tag and its propagated decision differ; Nimbus is neutral."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 8,
+      "candidate_id": "96556e33634389e4c955a60a4ccf28e260e34d77d5541bfc31a9bd3d5238d2ae",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-08_96556e33634389e4c955a60a4ccf28e260e34d77d5541bfc31a9bd3d5238d2ae.json",
+      "fixture_sha256": "e1173299ef926b914273f123ddf94074a2e3e8bff2020a6d49c9b6c9402d2b67",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Logged/sealed/local explicitly resolves Juniper, while replacing local with forbidden foreign resolves Alder. The pair has only the allowed two message differences and neutral Morrow context."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 9,
+      "candidate_id": "37597f71b881de019bdae92197784073f74038b6b99b134c8001bf0870c8c966",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-09_37597f71b881de019bdae92197784073f74038b6b99b134c8001bf0870c8c966.json",
+      "fixture_sha256": "e586df363a6c8af36d742bd4954ebcc3ee8ae9047584ec7734ab5fa69bcd1f7f",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Foreign is forbidden and makes C entail Maple; local completes the required set and makes W entail Falcon. The reversed assignment is consistent, and only the tag plus final record differ."
+    },
+    {
+      "stratum_id": "categorical_set_membership",
+      "rank": 10,
+      "candidate_id": "18af17427308499a4b30064b32824900da97596f9c8ea018cb3a6bdae6da874f",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/categorical_set_membership/rank-10_18af17427308499a4b30064b32824900da97596f9c8ea018cb3a6bdae6da874f.json",
+      "fixture_sha256": "1311f82d3ecf6c383fc4c5dd5f612807d93cdae6108a5dd0641df1e350ac0049",
+      "verdict": "PASS",
+      "checks": {"coherence": true, "entailment": true, "minimal_change": true, "tail_identity_neutrality": true, "visible_focal_absence": true, "no_invalidating_defect": true},
+      "reason": "Covered/listed/quiet satisfies every requirement and entails Heron; noisy is forbidden and entails Otter. The single final-tag flip propagates exactly, with neutral Pewter context."
+    }
+  ],
+  "summary": {
+    "reviewed": 30,
+    "pass": 29,
+    "fail": 1,
+    "by_stratum": {
+      "interval_schedule_overlap": {"reviewed": 10, "pass": 10, "fail": 0},
+      "arithmetic_capacity_budget": {"reviewed": 10, "pass": 10, "fail": 0},
+      "categorical_set_membership": {"reviewed": 10, "pass": 9, "fail": 1}
+    },
+    "failed_candidates": [
+      {
+        "stratum_id": "categorical_set_membership",
+        "rank": 1,
+        "candidate_id": "fe8cab86fa193257beee00b80c09976c5f6ac3b9f1a4956369ada8a718bb31aa",
+        "failed_criterion": "visible_focal_absence",
+        "reason": "Focal input 'verified' occurs in always-visible system text."
+      }
+    ]
+  }
+}

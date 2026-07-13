@@ -1,0 +1,342 @@
+{
+  "schema": "coherent-state-local-n48-v1-blind-complete-history-review-v1",
+  "review_id": "blind-review-strata-a-20260713T001136Z",
+  "reviewed_at_utc": "2026-07-13T00:11:36Z",
+  "reviewer": {
+    "identity": "Codex subagent /root/blind_review_strata_a",
+    "model_family": "OpenAI GPT-5",
+    "independence": "No subject model was used as reviewer. The review read only the candidate fixture JSON files named below and did not inspect treatment outcomes or result artifacts."
+  },
+  "scope": {
+    "design_id": "coherent-state-local-mlx-n48-v1",
+    "strata": [
+      "threshold_eligibility",
+      "sequential_tiebreak",
+      "conjunction_all_conditions"
+    ],
+    "ranks_per_stratum": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+    "candidate_count": 30,
+    "outcome_blind": true
+  },
+  "criteria": {
+    "human_coherence": "Both complete histories read as coherent human-understandable records.",
+    "opposite_target_entailment": "The fixed rule and variant-specific evidence logically entail the declared, opposite C and W focal targets.",
+    "minimal_pre_boundary_change": "C and W differ only at the declared revised input and its dependent final pre-boundary record; no undeclared semantic input changes.",
+    "retained_tail_identity_and_neutrality": "The retained tail is byte-identical between variants and contains no focal evidence or implication.",
+    "no_visible_focal_leakage": "The focal targets, countertargets, and focal rule inputs are absent from the retained tail and any direct visible control fact.",
+    "no_invalidating_defect": "Neither history contains a contradiction, garbage, or repetition severe enough to invalidate the record."
+  },
+  "records": [
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 1,
+      "stable_candidate_id": "fdf03986f886a885efacb15e7207c404362e14a48fb609c0c8bfe000e7bd5fc8",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-01_fdf03986f886a885efacb15e7207c404362e14a48fb609c0c8bfe000e7bd5fc8.json",
+      "fixture_sha256": "ffbbf977e53b936b5985f6478cc1b9399bd68ee1076eff645649b93cf107bf0d",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 72 rule entails C: 69 -> Violet and W: 74 -> Comet. Only messages 3 and 6 carry the revised score/dependent record; tail messages 7-8 are identical, Nimbus is neutral, and no focal label or number leaks into the visible tail."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 2,
+      "stable_candidate_id": "d45aec8c191994527fb9572c63b7dbeb2b4e0aa5b399659fbc77f4079957dfcc",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-02_d45aec8c191994527fb9572c63b7dbeb2b4e0aa5b399659fbc77f4079957dfcc.json",
+      "fixture_sha256": "35e83657cf1292819705bcfd383ba4434bd4dc86f7960219e94937958434450a",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 91 rule entails C: 83 -> Alder and W: 98 -> Juniper. Differences are confined to the revised score and dependent predicate record; the identical tail refers only to system-visible Morrow and contains no focal value or label."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 3,
+      "stable_candidate_id": "a2eef99d27558e45e1a5eb7484352e4006aee8a0752a4bda6373a664a35d25cd",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-03_a2eef99d27558e45e1a5eb7484352e4006aee8a0752a4bda6373a664a35d25cd.json",
+      "fixture_sha256": "c1252d8070dda3d15ee36cde3575f081055e1726ed33fcdebed891023b24cefc",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 84 rule entails C: 79 -> Otter and W: 88 -> Heron, and each explicit final record names the correct dependent target. Only messages 3 and 6 differ; the identical Morrow control tail is neutral and leak-free."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 4,
+      "stable_candidate_id": "c5d2bd8f131cebc9bd61302e0617bc374f82ad57be4a3f4fd89b79096982c579",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-04_c5d2bd8f131cebc9bd61302e0617bc374f82ad57be4a3f4fd89b79096982c579.json",
+      "fixture_sha256": "6e133d7e7b40ef726d5cbe809dc1311852b7aeb68df2395d09032741fabc732e",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The boundary case is consistent: 59 < 60 entails Otter while 60 >= 60 entails Heron, and the explicit records match. C/W change only the score and its dependent record; the byte-identical Morrow tail exposes no focal material."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 5,
+      "stable_candidate_id": "917669ac09bef07096afbb5c715f76b535bbc062734919f13dfed69e8705ebcf",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-05_917669ac09bef07096afbb5c715f76b535bbc062734919f13dfed69e8705ebcf.json",
+      "fixture_sha256": "31f6ddd394ae992259d8fc26e8846abf6ada2586ff65b93f274477c807798f35",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 72 rule entails C: 69 -> Otter and W: 74 -> Heron. The only variant changes are the revised score and dependent evicted predicate record; the identical Pewter control tail is coherent, neutral, and contains no focal label/value."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 6,
+      "stable_candidate_id": "e8fc3f5d8bd3e6186c7ac7090b4c4dc0c6b32207da894dac790971cb7224c3ab",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-06_e8fc3f5d8bd3e6186c7ac7090b4c4dc0c6b32207da894dac790971cb7224c3ab.json",
+      "fixture_sha256": "a86e0980501af47f1d09c41f1448ad77dead67c10048d96da430f2d13efb5d57",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 91 rule entails C: 98 -> Riverstone and W: 83 -> Sunbeam. Messages 3 and 6 alone encode the score change and derived predicate record; the identical Russet tail is neutral and free of both focal targets and inputs."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 7,
+      "stable_candidate_id": "5cac107e3c683e092b53018f0363f2b44992fec3fc8bd1443fe14940bb55dd11",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-07_5cac107e3c683e092b53018f0363f2b44992fec3fc8bd1443fe14940bb55dd11.json",
+      "fixture_sha256": "8d8e490220e98eb909f342657863250ee9f8302a9c7b1f45e0267aaeb9e65a64",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 72 rule entails C: 74 -> Heron and W: 69 -> Otter, and the explicit outcome records agree. Only the source score/dependent record differ; the byte-identical Russet tail contains no focal clue or contradiction."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 8,
+      "stable_candidate_id": "39aa4e9014be3e0f6a251b16060adcf2cf3328e20d77a09eea3bc05193c7a925",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-08_39aa4e9014be3e0f6a251b16060adcf2cf3328e20d77a09eea3bc05193c7a925.json",
+      "fixture_sha256": "79ff5e703fea23cef962cbe6d30639d8e2680222205fd21eeb847dd77ea6e426",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "At the inclusive boundary, C: 60 -> Garnet and W: 59 -> Mallow are forced by the stated mapping. Only messages 3 and 6 change; the identical Russet control tail is neutral and omits the target pair, threshold, and scores."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 9,
+      "stable_candidate_id": "5337b3220fc5ca7304cee51e002aba4e65e55b7671722b845f901579726d5a41",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-09_5337b3220fc5ca7304cee51e002aba4e65e55b7671722b845f901579726d5a41.json",
+      "fixture_sha256": "f5ef04c2f09864076d9f416cc3c73f278c5094500733016852353bf8e7b38273",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive 72 rule entails C: 69 -> Mallow and W: 74 -> Garnet. The source score and dependent predicate record are the sole differences; the byte-identical Russet tail supplies only a separate direct fact and no focal leakage."
+    },
+    {
+      "stratum_id": "threshold_eligibility",
+      "rank": 10,
+      "stable_candidate_id": "471c5da45bd460e2b6992a5963e55fd652e973e176ec42ed8d3282a41a0d1053",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/threshold_eligibility/rank-10_471c5da45bd460e2b6992a5963e55fd652e973e176ec42ed8d3282a41a0d1053.json",
+      "fixture_sha256": "6ecc8a28353052620421d40fbfcdf7b39763acb9a006392c9e234e8f541bc7ea",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "The inclusive boundary yields C: 60 -> Comet and W: 59 -> Violet, and the explicit outcome records are consistent. Only the revised input/dependent record change; the identical Russet tail is focal-neutral and leak-free."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 1,
+      "stable_candidate_id": "8a2a93810ed06bc6516f3d8051cc3c7755be3a9653fd369f52c2b0069f2f33b4",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-01_8a2a93810ed06bc6516f3d8051cc3c7755be3a9653fd369f52c2b0069f2f33b4.json",
+      "fixture_sha256": "4af625face4adfe4f1f7375f02ce03e19fd50ae44e3b8f1a2b08ff5ec8094607",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 90 above 78; C second time 12:40 beats first 13:15 -> Flint, while W 13:50 loses -> Quartz. Only the second timestamp and dependent record change; the identical Nimbus tail has no focal time, score, or label."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 2,
+      "stable_candidate_id": "e1c358ca49bdcdeb96a0168a649533e64a10e085c6450a798853448c4dc2556c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-02_e1c358ca49bdcdeb96a0168a649533e64a10e085c6450a798853448c4dc2556c.json",
+      "fixture_sha256": "fc4d35dae749e8cb84a3fc2c23d63ea2eee22be9330bd952cde47ccc3224f04b",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 94 above 82; C second time 14:25 is earlier than 15:10 -> Mallow, while W 15:55 is later -> Garnet. The sole semantic change is the second timestamp plus its derived record; the identical Morrow tail is neutral."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 3,
+      "stable_candidate_id": "c6fb9c5df851cf2155015d560e6963e0aa80e2d1e14434c3c781674a25d40819",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-03_c6fb9c5df851cf2155015d560e6963e0aa80e2d1e14434c3c781674a25d40819.json",
+      "fixture_sha256": "f5d938ca97f828882aa1d1107398173d0882dcda6f5e096ed7138c413a075595",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With tied scores 90 above 78, C second time 13:50 leaves first 13:15 earlier -> Quartz, while W 12:40 makes the second earlier -> Flint. Only timestamp/dependent record differ; the identical Pewter tail contains no focal evidence."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 4,
+      "stable_candidate_id": "aa37fcac1c3e795f62709b3fe2868b6a467d8f82b135478f0da2f70bfb246d0c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-04_aa37fcac1c3e795f62709b3fe2868b6a467d8f82b135478f0da2f70bfb246d0c.json",
+      "fixture_sha256": "c5d89a43aa379c8e75827c89aa697235f84f2a26ed723d8fdcb73b4852ff9e36",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With tied qualifying scores, C second time 13:50 makes first 13:15 win -> Garnet, whereas W 12:40 makes second win -> Mallow. C/W otherwise match, including the neutral byte-identical Morrow tail with no focal score/time/label."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 5,
+      "stable_candidate_id": "5ddc30108e9b6bafda8a5c3502dba84872bce3abf785e5404cb9c317f8313c68",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-05_5ddc30108e9b6bafda8a5c3502dba84872bce3abf785e5404cb9c317f8313c68.json",
+      "fixture_sha256": "a0451524dff768d5deb1c9db3b7b1450b5ad94adc1c19d88894b963b7bc5e34c",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 94 above 82; C 14:25 makes the second earlier than 15:10 -> Mallow, while W 15:55 makes the first earlier -> Garnet. Only the revised timestamp and derived predicate record differ; the Pewter tail is identical and neutral."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 6,
+      "stable_candidate_id": "554d30172e0c4d79fc4da3f8c061ae68cb98733d41fbfee4b25845ef5c6bbd21",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-06_554d30172e0c4d79fc4da3f8c061ae68cb98733d41fbfee4b25845ef5c6bbd21.json",
+      "fixture_sha256": "2878d6624cde15ff6cbeb0b3f99da0894cc477227d0d9bc1829c4c5ebc17d7e1",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 86 above 74; C second time 11:45 leaves first 11:25 earlier -> Falcon, while W 11:05 makes second earlier -> Maple. Only timestamp/dependent record change, and the identical Russet tail leaks no focal content."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 7,
+      "stable_candidate_id": "356ff2f12a3edb4316ef17ad3cb6f3dfec211b48908aec1158f67347222833a9",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-07_356ff2f12a3edb4316ef17ad3cb6f3dfec211b48908aec1158f67347222833a9.json",
+      "fixture_sha256": "fb0e3ed6609cc882c0e1fa618d0454ead1f907c023712ffad4a3903fb451d73e",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With tied qualifying scores, C 11:45 leaves first 11:25 earlier -> Juniper, while W 11:05 makes second earlier -> Alder. Only the revised timestamp/dependent record differ; the Morrow tail is byte-identical, neutral, and leak-free."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 8,
+      "stable_candidate_id": "32a2c76dad6806144c1949ef2ec2ac8deb7cadefe69750fc373d18449a098740",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-08_32a2c76dad6806144c1949ef2ec2ac8deb7cadefe69750fc373d18449a098740.json",
+      "fixture_sha256": "32327d57c6e8983e676d4e8fee64b75549f37483767e2b59499f307f2e2019b6",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 82 above 70; C second time 10:40 makes first 10:30 earlier -> Falcon, and W 10:20 makes second earlier -> Maple. Differences are minimal and pre-boundary; the identical Russet tail has no target or focal input."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 9,
+      "stable_candidate_id": "337b23f56d0b3ee8312c47e3c58cf10b965ab21f3e4a3a8451e5b48a851bf1b1",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-09_337b23f56d0b3ee8312c47e3c58cf10b965ab21f3e4a3a8451e5b48a851bf1b1.json",
+      "fixture_sha256": "3e5a268ae4a8af31421b01d8addc7fdfba53926f0203a95b91f902b372481c4a",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With tied scores 94 above 82, C 15:55 leaves first 15:10 earlier -> Willow, while W 14:25 makes second earlier -> Copper. Only the second timestamp/dependent record change; the identical Pewter tail is focal-neutral."
+    },
+    {
+      "stratum_id": "sequential_tiebreak",
+      "rank": 10,
+      "stable_candidate_id": "d1e74c56817412805c2b2b7860a34612eab523c0e4b4dbef336d557b7c99eb80",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/sequential_tiebreak/rank-10_d1e74c56817412805c2b2b7860a34612eab523c0e4b4dbef336d557b7c99eb80.json",
+      "fixture_sha256": "2ffefa95cf2837b213bf6036c1939b545ac5f925dbbe4c43401362cb6bc4b45a",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Both scores are 86 above 74; C second time 11:05 beats first 11:25 -> Maple, while W 11:45 leaves first earlier -> Falcon. Only the revised timestamp and its dependent explicit record differ; the Russet tail is identical and leak-free."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 1,
+      "stable_candidate_id": "c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-01_c3771bdb702f4c2d1e640adc7ca324306c665bbdc94dce3e711b281757c9db09.json",
+      "fixture_sha256": "e02d7d40b4a0e440d69014c0405a2a70a55bc20d7ed3ff89acad4b926588bd4b",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With certification active and queue 8 <= 10, C inspection 64 >= 60 satisfies all conditions -> Garnet; W 56 fails inspection -> Mallow. Only inspection/dependent record change; the Morrow tail is identical and has no focal input or label."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 2,
+      "stable_candidate_id": "4c53bb92cda0c8c7468baad3d19b2983d2630819e3a6ae037c8fc78ddd05b8b7",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-02_4c53bb92cda0c8c7468baad3d19b2983d2630819e3a6ae037c8fc78ddd05b8b7.json",
+      "fixture_sha256": "168b69929cb57f91c47957f9eab24fa8c9c60f8ecf1fb3603380ba536f134af2",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Active certification and queue 17 <= 21 leave inspection decisive: C 99 >= 90 -> Willow, W 81 < 90 -> Copper. Only the inspection and dependent explicit record differ; the identical Russet tail contains no focal condition or target."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 3,
+      "stable_candidate_id": "9f5d5aa90f71fbb44d92f9f105183cd95bb17c141bbc5bf04c737676e25bc59b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-03_9f5d5aa90f71fbb44d92f9f105183cd95bb17c141bbc5bf04c737676e25bc59b.json",
+      "fixture_sha256": "c2e86670b20ff8e252aab0f00c123450b39f70148c86084fed9a4fa851f9b1e8",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With active certification and queue 11 <= 13, C inspection 76 >= 70 entails Riverstone while W 64 fails and entails Sunbeam. Differences are limited to inspection/dependent record; the identical Russet tail is neutral and leak-free."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 4,
+      "stable_candidate_id": "517e313ae73d3f8a0b95ab73f77fbcc40ae7b70403bf90b7ceb5f3ab13fdb2df",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-04_517e313ae73d3f8a0b95ab73f77fbcc40ae7b70403bf90b7ceb5f3ab13fdb2df.json",
+      "fixture_sha256": "ea5c2f79b9d9bcda7f1bb34ccd920d4d60d0a33d2619ed93c998312ce5dcff14",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Certification is active and queue 17 <= 21; C inspection 99 satisfies the 90 floor -> Juniper, W 81 fails -> Alder. Only the revised inspection/dependent record change; the byte-identical Morrow tail carries no focal evidence."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 5,
+      "stable_candidate_id": "38b4dfaf8a160818ae95126163207b05f99384975ef19c397531939dbb3837af",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-05_38b4dfaf8a160818ae95126163207b05f99384975ef19c397531939dbb3837af.json",
+      "fixture_sha256": "f607dbf356ee818c91b27ada2ea1a45c594e34c529ad18fc5bb242408e4b0102",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Active certification and queue 8 <= 10 make inspection decisive: C 64 >= 60 -> Juniper, W 56 < 60 -> Alder. Messages 3 and 6 alone differ; the identical Russet control tail omits all focal inputs and labels."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 6,
+      "stable_candidate_id": "afbf4cba7729c800e7d583a2fd72afc1d1ab7e899ec22d73c8a7da1ce8c1920b",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-06_afbf4cba7729c800e7d583a2fd72afc1d1ab7e899ec22d73c8a7da1ce8c1920b.json",
+      "fixture_sha256": "f9b2b35a06a40de47d63da5fb20c1773bfd59a4aa7815e598d9a0f4d719bf4ed",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With active certification and queue 17 <= 21, C inspection 99 >= 90 entails Juniper and W 81 entails Alder. The inspection/dependent record are the only changes; the identical Russet tail is neutral and contains no focal evidence."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 7,
+      "stable_candidate_id": "3c87b300bb3f891a14938b52d42db8f9a10320d179ad0a151bc0f518f0cd32ec",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-07_3c87b300bb3f891a14938b52d42db8f9a10320d179ad0a151bc0f518f0cd32ec.json",
+      "fixture_sha256": "f1acd3679e15f60a4337778b26e43b11d90814a8d58072e4650613c3116093e5",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Active certification and queue 17 <= 21 leave inspection decisive: C 99 -> Quartz and W 81 -> Flint under the 90 threshold. Only the revised inspection/dependent explicit record differ; the Morrow tail is identical and leak-free."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 8,
+      "stable_candidate_id": "8bee63a807f4851b86f2b557f4cf0300ea879911e67189ffb406095e22b9d14c",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-08_8bee63a807f4851b86f2b557f4cf0300ea879911e67189ffb406095e22b9d14c.json",
+      "fixture_sha256": "6c7cec65456fb45bf9f9251e8fae1ca4be98f21808cc86024836b5fcf3a19d53",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Certification is active and queue 17 <= 21; C inspection 81 fails the 90 floor -> Otter, while W 99 satisfies all conditions -> Heron. Only inspection/dependent record change, and the identical Russet tail has no focal leakage."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 9,
+      "stable_candidate_id": "59ed6fab6010ebb34961e5c848da7111a344aca00280117ab81eed9b40d9c29e",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-09_59ed6fab6010ebb34961e5c848da7111a344aca00280117ab81eed9b40d9c29e.json",
+      "fixture_sha256": "1f201842dd4973a143671bf2277b83054b9717e0420176f93e9622b7221edaa2",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "With active certification and queue 11 <= 13, C inspection 76 >= 70 entails Comet and W 64 entails Violet. Only the revised inspection and dependent record differ; the identical Pewter tail is coherent, neutral, and omits focal material."
+    },
+    {
+      "stratum_id": "conjunction_all_conditions",
+      "rank": 10,
+      "stable_candidate_id": "1d8b4e6ef8e12351f366686512853b2bf70011fdbf539d3cc0f4d0e68febb2e0",
+      "fixture_path": "data/coherent_state_local_n48_v1/candidates/conjunction_all_conditions/rank-10_1d8b4e6ef8e12351f366686512853b2bf70011fdbf539d3cc0f4d0e68febb2e0.json",
+      "fixture_sha256": "611d29c92663acdb977f47476c40500e117d848b0004b8ab73dec29b4503451f",
+      "verdict": "PASS",
+      "criterion_results": ["PASS", "PASS", "PASS", "PASS", "PASS", "PASS"],
+      "reason": "Certification is active and queue 14 <= 17; C inspection 72 fails the 80 floor -> Violet, while W 88 satisfies all conditions -> Comet. Only inspection/dependent explicit record change; the identical Nimbus tail is neutral and leak-free."
+    }
+  ],
+  "summary": {
+    "total": 30,
+    "pass": 30,
+    "fail": 0,
+    "by_stratum": {
+      "threshold_eligibility": {"total": 10, "pass": 10, "fail": 0},
+      "sequential_tiebreak": {"total": 10, "pass": 10, "fail": 0},
+      "conjunction_all_conditions": {"total": 10, "pass": 10, "fail": 0}
+    },
+    "notes": "All 30 reviewed pairs passed the complete-history content criteria. This artifact is a content review only; it does not authorize tokenizer geometry, carrier generation, treatment execution, or outcome claims."
+  }
+}
