@@ -1,0 +1,36 @@
+{
+  "schema": "coherent_state_local30b_identity_gate_transcript_v1",
+  "observed_utc": "2026-07-13T00:06:00Z",
+  "model": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+  "resolved_revision": "e9675aa3ca5f900ccef55267914466d55ab325fa",
+  "semantic_n": 0,
+  "commands": [
+    "SC_MODEL=mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit HF_HUB_OFFLINE=1 uv run python src/l0_identity.py",
+    "SC_MODEL=mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit HF_HUB_OFFLINE=1 uv run python src/l3_l4_identity.py"
+  ],
+  "l0": {
+    "status": "PASS",
+    "prompt_tokens": 90,
+    "token_identical_continuation": true,
+    "per_step_logits_max_abs_difference": 0.0,
+    "layer0_stored_vs_unrotated_max_abs_difference": 12.59375,
+    "layer0_stored_vs_rotated_max_abs_difference": 0.0
+  },
+  "l3_l4": {
+    "status": "PASS",
+    "canonical_conversation_tokens": 230,
+    "aligned_pairs": 861,
+    "tail_tokens": 94,
+    "tail_covered_excluding_specials": 86,
+    "summary_tokens": 775,
+    "alpha_zero_vs_fresh_max_logprob_difference": 0.0,
+    "alpha_one_old_reconstruction_vs_source_max_logprob_difference": 0.0,
+    "teacher_forced_mean_logprob": {
+      "A": -0.2325,
+      "B": -1.46,
+      "C": -1.7375,
+      "D": -2.0175,
+      "E_alpha_1": -1.0425
+    }
+  }
+}

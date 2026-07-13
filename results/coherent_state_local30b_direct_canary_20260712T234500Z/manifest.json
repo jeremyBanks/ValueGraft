@@ -1,0 +1,62 @@
+{
+ "manifest_schema": 1,
+ "harness": "src/run_arms.py",
+ "model": {
+  "repo_id": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+  "repo_id_requested": "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit",
+  "resolved_revision": null,
+  "architecture": null
+ },
+ "load": {
+  "dtype": "mlx.core.uint32",
+  "dtype_env_requested": "mlx (see quantization)",
+  "config_dtype": null,
+  "quantization": null,
+  "kv_geometry": null,
+  "dtype_matches_request": false
+ },
+ "intervention": {
+  "arm": "multi (A,B,C,D,H-gap,B-min,E-post,E-inter)",
+  "graft_type": "value",
+  "alpha": {
+   "E_post": [
+    1.0
+   ],
+   "E_inter": []
+  },
+  "champion_config_path": null,
+  "champion_config_sha256": null,
+  "champion_label": null,
+  "alignment": "difflib positional-within-region (tail+summary regions)",
+  "note": "LOCAL MLX driver; E-post/E-inter scalar-alpha graft arms."
+ },
+ "metric": {
+  "definition": "CONT/NAT: teacher-forced mean per-token logprob of the held-out continuation under each arm; PROBE: greedy answer text (judged offline)",
+  "is_proxy": true,
+  "resolve_rate_measured": false
+ },
+ "condition": {
+  "summary_kind": "prod",
+  "summary_request_sha256": null,
+  "summary_source": "self-gen (model summarizes its own conversation)"
+ },
+ "corpus": {
+  "name": "synthetic (c*) + natural (n*)",
+  "split": "all",
+  "n": null,
+  "instance_ids": null
+ },
+ "code": {
+  "git_commit": "112d4056c8727678b33cfab65795ab34cff15536",
+  "git_dirty": false
+ },
+ "run": {
+  "timestamp_utc": "2026-07-12T23:41:53Z",
+  "gpu_name": null,
+  "hostname": "matte",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "python_version": "3.12.11",
+  "torch_version": "2.12.1",
+  "transformers_version": "5.0.0"
+ }
+}

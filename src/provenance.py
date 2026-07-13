@@ -51,9 +51,11 @@ torch. Pure helpers (hashing, git, manifest assembly) have no heavy deps.
 from __future__ import annotations
 
 import hashlib
+import importlib.metadata
 import json
 import os
 import platform
+import re
 import socket
 import subprocess
 import time
@@ -169,8 +171,11 @@ def capture_mlx_provenance(model, model_id: str) -> dict:
     quantization config is read from the model's ``config``/``args`` when present.
     ``model_id`` is the repo the weights were loaded from (the runtime variable
     the caller passed to ``mlx_lm.load`` -- the id that actually loaded, not a dir
-    name). MLX has no HF ``_commit_hash`` so resolved_revision is None."""
+    name). The exact local Hugging Face snapshot supplies the resolved revision,
+    literal config/tokenizer/template hashes, and content-addressed weight-blob
+    identifiers even though the Python model has no ``_commit_hash``."""
     param_dtype = None
+    dtype_inventory = {}
     try:
         import mlx.core as mx  # noqa: PLC0415
         leaves = []
@@ -189,6 +194,13 @@ def capture_mlx_provenance(model, model_id: str) -> dict:
         except Exception:  # noqa: BLE001
             pass
         if leaves:
+            for leaf in leaves:
+                dtype = str(leaf.dtype)
+                dtype_inventory[dtype] = dtype_inventory.get(dtype, 0) + 1
+            # Quantized MLX weights legitimately include uint32 packed arrays;
+            # retain the historical field but make the complete inventory the
+            # authoritative description rather than pretending one leaf is a
+            # model-wide compute dtype.
             param_dtype = str(leaves[0].dtype)
     except Exception:  # noqa: BLE001
         pass
@@ -210,15 +222,85 @@ def capture_mlx_provenance(model, model_id: str) -> dict:
                 quant = {"repr": repr(q)}
             break
 
+    snapshot = None
+    config = {}
+    artifact_files = []
+    try:
+        candidate = Path(model_id).expanduser()
+        if candidate.exists():
+            snapshot = candidate.resolve()
+        else:
+            from huggingface_hub import snapshot_download  # noqa: PLC0415
+            snapshot = Path(snapshot_download(
+                repo_id=model_id, local_files_only=True)).resolve()
+        config_path = snapshot / "config.json"
+        if config_path.exists():
+            config = json.loads(config_path.read_text())
+        for path in sorted(snapshot.glob("*.safetensors")):
+            resolved = path.resolve()
+            blob_name = resolved.name
+            artifact_files.append({
+                "path": path.name,
+                "bytes": resolved.stat().st_size,
+                "cache_blob_sha256": (
+                    blob_name if re.fullmatch(r"[0-9a-f]{64}", blob_name)
+                    else None
+                ),
+            })
+    except Exception:  # noqa: BLE001
+        snapshot = None
+        config = {}
+        artifact_files = []
+
+    # MLX conversion repositories put their applied weight quantization in the
+    # literal config JSON even when the loaded Python object omits it.
+    if quant is None:
+        quant = config.get("quantization_config") or config.get("quantization")
+
+    revision = None
+    if snapshot is not None and re.fullmatch(r"[0-9a-f]{40}", snapshot.name):
+        revision = snapshot.name
+
+    def _cfg(name):
+        return config.get(name)
+
+    tokenizer_config = snapshot / "tokenizer_config.json" if snapshot else None
+    tokenizer_json = snapshot / "tokenizer.json" if snapshot else None
+    config_path = snapshot / "config.json" if snapshot else None
+    chat_template = None
+    if tokenizer_config and tokenizer_config.exists():
+        try:
+            chat_template = json.loads(tokenizer_config.read_text()).get(
+                "chat_template")
+        except Exception:  # noqa: BLE001
+            pass
+    if chat_template is None and snapshot:
+        template_path = snapshot / "chat_template.jinja"
+        if template_path.exists():
+            chat_template = template_path.read_text()
+
     return {
         "repo_id": model_id,
         "repo_id_requested": model_id,
-        "resolved_revision": None,      # MLX: no HF commit hash on the object
-        "config_dtype": None,
+        "resolved_revision": revision,
+        "snapshot_path": str(snapshot) if snapshot else None,
+        "config_sha256": sha256_file(config_path),
+        "tokenizer_config_sha256": sha256_file(tokenizer_config),
+        "tokenizer_json_sha256": sha256_file(tokenizer_json),
+        "chat_template_sha256": sha256_text(chat_template),
+        "artifact_files": artifact_files,
+        "config_dtype": str(_cfg("torch_dtype")) if config else None,
         "param_dtype": param_dtype,
+        "parameter_dtype_inventory": dtype_inventory,
         "quantization": quant,
-        "architecture": None,
-        "kv_geometry": None,
+        "architecture": _cfg("model_type"),
+        "kv_geometry": {
+            "num_attention_heads": _cfg("num_attention_heads"),
+            "num_key_value_heads": _cfg("num_key_value_heads"),
+            "head_dim": _cfg("head_dim"),
+            "num_hidden_layers": _cfg("num_hidden_layers"),
+            "rope_theta": _cfg("rope_theta"),
+        } if config else None,
     }
 
 
@@ -241,6 +323,12 @@ def runtime_env() -> dict:
         tf_v = transformers.__version__
     except Exception:  # noqa: BLE001
         pass
+    package_versions = {}
+    for package in ("mlx", "mlx-lm", "huggingface-hub"):
+        try:
+            package_versions[package] = importlib.metadata.version(package)
+        except importlib.metadata.PackageNotFoundError:
+            package_versions[package] = None
     return {
         "timestamp_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "gpu_name": gpu,
@@ -249,6 +337,7 @@ def runtime_env() -> dict:
         "python_version": platform.python_version(),
         "torch_version": torch_v,
         "transformers_version": tf_v,
+        "package_versions": package_versions,
     }
 
 
@@ -273,6 +362,8 @@ def build_manifest(*, model_provenance: dict, dtype_env: str | None,
     """
     load = {
         "dtype": model_provenance.get("param_dtype"),
+        "parameter_dtype_inventory": model_provenance.get(
+            "parameter_dtype_inventory"),
         "dtype_env_requested": dtype_env,
         "config_dtype": model_provenance.get("config_dtype"),
         "quantization": model_provenance.get("quantization"),
@@ -292,6 +383,15 @@ def build_manifest(*, model_provenance: dict, dtype_env: str | None,
             "repo_id_requested": model_provenance.get("repo_id_requested"),
             "resolved_revision": model_provenance.get("resolved_revision"),
             "architecture": model_provenance.get("architecture"),
+            "snapshot_path": model_provenance.get("snapshot_path"),
+            "config_sha256": model_provenance.get("config_sha256"),
+            "tokenizer_config_sha256": model_provenance.get(
+                "tokenizer_config_sha256"),
+            "tokenizer_json_sha256": model_provenance.get(
+                "tokenizer_json_sha256"),
+            "chat_template_sha256": model_provenance.get(
+                "chat_template_sha256"),
+            "artifact_files": model_provenance.get("artifact_files"),
         },
         "load": load,
         "intervention": intervention,

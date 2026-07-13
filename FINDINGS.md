@@ -54,3 +54,24 @@ that remain safe inputs to the powered successor.
 
 New findings enter this file only after their raw artifacts, sampling unit,
 controls, uncertainty, and claim boundary have been independently checked.
+
+## 2026-07-12 direct-local technical findings (semantic N=0)
+
+- The fully cached local MLX conversion resolved to
+  `mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit` revision
+  `e9675aa3ca5f900ccef55267914466d55ab325fa`. Its literal config records 48
+  layers, 32 attention heads, four KV heads, head dimension 128, default 4-bit
+  group-64 weights, and 8-bit group-64 MoE gate overrides. Runtime model leaves
+  included 386 uint32 packed arrays and 965 bf16 arrays.
+- L0 and L3 identity gates passed on that exact local model. The long c01
+  technical run completed without swap. The old seven continuation arms took
+  1--3 seconds each; 70 greedy probe generations dominated its 345-second wall
+  time.
+- The c01 correct value-graft movement was `+0.00671875` nat/token
+  (`-1.50890625 - -1.515625`), exactly repeating an existing old c01 result.
+  It is neither a new render nor a new conversation.
+- An applied fresh-value sham routed 1,973 rows through the exact graft path.
+  Across all 48 layers its cache was bit-exact to untouched fresh B and both
+  held-out scores were exactly `-1.515625`. This rules out a generic assignment-
+  path perturbation in that canary; it is an identity gate, not a nonsemantic
+  placebo.

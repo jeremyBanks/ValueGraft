@@ -1,145 +1,76 @@
-# STATE.md — live working state
+# STATE.md — direct-local successor
 
-**Updated 2026-07-12 by the incoming ultra agent. This file is authoritative for
-current execution. Historical state was archived to the note whose slug is
-`pre-ultra-live-state-archive`.**
+**Updated:** 2026-07-13T00:03:20Z. This is the authoritative live state. The
+powered-v13 cloud-era version is archived in `notes/` under the slug
+`powered-v13-pre-local-state`.
 
-## Mandate
+## Objective and live gap
 
-Carry the coherent-state / ValueGraft experiment to a statistically and
-scientifically robust conclusion, using the remaining authorized GPU budget
-well. The prior “paid collection closed” disposition is superseded. Old
-preregistrations, stop decisions, and apparatus reviews remain audit evidence;
-they do not forbid a new successor study.
+Produce a conversation-level, replicated, controlled upper confidence bound on
+history-specific write-time value grafting, then use surplus for the retained-
+tail and doubled-summary tests before writing the paper.
 
-The active handoff is the note whose slug is
-`20260712-handoff-to-new-ultra-agent`. The failure autopsy whose slug is
-`gap-analysis-asked-vs-did-and-upper-bound` is binding operating context.
+- Direct-local successor valid N: **0/48; gap 48**. The c01 run is technical
+  N=0. Historical e01 remains N=1 for the old bf16 study and does not enter this
+  successor.
+- Active goal elapsed at the route change: about **7.3 hours**.
+- Paid compute on the replacement path: **$0**. No RunPod is active. Last
+  verified post-cleanup balance was `$57.0272577933` against the existing `$80`
+  provider spend limit; no additional funding is assumed.
 
-## Opening gap
+## Working route
 
-- Distinct engineered semantic fixtures scored: **1** (`e01`). P01 and P02 are
-  repeated executions of the same fixture, not additional population units.
-- Statistical target: **run until a preregistered conversation-clustered
-  one-sided 95% upper confidence bound converges**; 12 conversations is only a
-  floor, and the existing c01--c24 corpus is a candidate source rather than an
-  assumed-valid sample.
-- Current statistical evidence: **no population CI, no p-value, no equivalence
-  result, and zero available matched placebos**. Existing values are descriptive
-  one-fixture observations only.
-- Canary-phase GPU allocation: approximately **$60 authorized**, with about
-  **$1--2 used**. A fresh provider read at `2026-07-12T14:39:21Z` observed
-  **$57.1287946692 balance**, an **$80 spend limit**, and **zero active pods**.
-  Project-wide historical provider accounting is a separate ledger and must
-  not be conflated with this phase.
+The remote powered-v13 release/lifecycle stack is retired. Do not repair or
+retry it. The successor runs directly on the local Apple MLX device with the
+fully cached model
+`mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit`, resolved revision
+`e9675aa3ca5f900ccef55267914466d55ab325fa`.
 
-## Current scientific truth
+Observed direct-path gates:
 
-On `e01`, compaction caused roughly 22--24 nats of focal damage. Full-K+V and
-value-only graft movements were small, schedule/precision-sensitive, and never
-changed the wrong greedy answer to the correct answer. All exact-bf16 placebo
-constructions were unavailable. The evidence is suggestive of a small/null
-summary-row effect in that fixture, but it does **not** provide a confident
-upper bound or a population claim.
+- L0 identity passed: token-identical continuation, zero logit difference, and
+  stored keys matched post-RoPE rather than unrotated keys.
+- L3 identities passed: alpha-zero graft equaled fresh and alpha-one old-state
+  reconstruction equaled the source.
+- The literal 8,736-token c01 canary completed all old arms and 70 probes in
+  345 seconds with no swap. Its relevant continuation arms took 1–3 seconds;
+  probe generation caused nearly all latency. Its E−B movement was
+  `+0.00671875` nat/token, exactly repeating an old result and adding no N.
+- L5 applied sham passed on 1,973 rows across all 48 layers: fresh B and B
+  routed through the exact value-assignment path had bit-exact caches and equal
+  mean logprob `-1.515625`.
+- Runtime provenance now records the exact revision, four weight-blob SHA-256s,
+  config/tokenizer/template hashes, 4-bit/8-bit mixed quantization, dtype
+  inventory, and 48-layer/4-KV-head/128-head-dimension geometry.
 
-The tested locus was narrow: generated-summary rows under fixed regions and
-schedules. Downstream/request/header/retained-tail aggregator loci, alpha and
-depth targeting, shorter contexts, fp32, true low-precision KV, other model
-families, and a clean MEMENTO-style restart contrast remain untested or
-insufficiently tested.
+## Immediate execution
 
-## Active work
+1. Freeze `LOCAL-COHERENT-STATE-N48-V1.md` and a fresh outcome-blind six-per-
+   stratum selection from the existing 32,768-candidate CPU recipe frame.
+2. Materialize ranks one through ten per stratum; run complete-history blind
+   review and target/minimality review without treatment outcomes.
+3. Generate and persist two independently sampled, target-neutral carrier
+   renders per candidate. Screen only oracle/fresh damage and validity; select
+   the first six eligible per stratum by frozen rank.
+4. Run the five scientific states locally: fresh B, correct-history value
+   graft, wrong-history value graft, applied displacement-matched V-row
+   placebo, and oracle A; retain the sham identity gate. Teacher-force the
+   declared C and W targets. Do not run the old 160-token answer probes.
+5. Checkpoint each conversation/render atomically and report valid N, elapsed
+   wall time, and resource state every four completed conversations.
+6. Collapse renders within conversation and compute the frozen one-sided bound.
+   Then run retained-tail followed by doubled-summary/second-copy-only surplus
+   tests.
 
-1. Refresh provider balance/pods immediately before launch and verify the
-   literal reusable artifacts.
-2. The diverse experiment menu is complete and archived under the slug
-   `powered-successor-experiment-menu`.
-3. The corrected fixed-N statistical design, independent recomputation, and
-   full 18-scenario/17-power-population 200,000-trial validation have passed
-   durable independent audit. The authoritative artifact is the
-   `powered-v13-finite-population-simulation_local_20260712T174743Z` result; the
-   prior `...165226Z` file remains preliminary partial evidence. The protocol
-   is still DRAFT and authorizes no paid work.
-4. The compact 32,768-tuple/eight-stratum pre-seed recipe foundation has passed
-   exhaustive audit without materializing any ranked history. The strict
-   seed/permutation implementation and its synthetic C0/C1 Git boundary are
-   committed; an exact-hash re-audit is running. The first tokenizer/carrier
-   layer failed independent audit before freeze and is being repaired in a
-   detached worktree. Do not request real entropy until that repair, the
-   Stage-A release completeness repair, and the remaining unpaid gates pass.
-   Then validate/review only the frozen first ten ranks per stratum. Re-verify
-   only the production apparatus paths the new design relies on,
-   including the required model/config build ladder and literal-input failure
-   tests; do not reopen an apparatus-validation spiral.
-5. After a dedicated static authorization, run capped treatment-blind Phase A;
-   only a later parent-rooted release may launch and checkpoint Goal A. Persist every render and raw
-   outcome under unique names, compute the gap after every cycle, and continue
-   through the fixed N=48 analysis.
-6. Spend the genuine surplus on the highest-value preregistered exploration,
-   with downstream-token locus and configuration/model diversity as leading
-   candidates.
-7. Only after collection is complete: terminate all pods, rewrite the paper
-   fresh from current facts, run the full review/provenance stack, publish to
-   `README.md`, commit, and push. External posting remains owner-only.
+## Hard boundaries
 
-## Operational status at takeover
-
-- Git branch was `trunk`, equal to `origin/trunk`, with a clean worktree before
-  this state cleanup.
-- No local MLX/coherent-state generation job was observed. An old local serving
-  shim and legacy Claude-side watcher processes were present and have not been
-  killed by inference.
-- A fresh RunPod API check at `2026-07-12T14:39:21Z` observed zero active pods
-  and balance `$57.1287946692`.
-
-## Latest cycle checkpoint
-
-The immutable checkpoint
-`results/coherent_state_powered_v13/cycle-checkpoint_local_20260712T224759Z.json`
-recorded, at `2026-07-12T22:47:59Z`:
-
-- active goal elapsed time `22334` seconds (`6.2039` hours), leaving about
-  `1.6719` hours before the Stage-T hour-`7.8758` stop clock;
-- provider balance `$57.1090060887`, spend limit `$80`, and zero active pods;
-- independent semantic progress `1/48`, leaving gap `47`;
-- observed Phase-A/Stage-T spend `$0.0197885805`; conservative future buckets
-  `$11.9802114195 + $30 + $4.50 + $8 = $54.4802114195`, leaving
-  `$2.6287946692` against the current balance;
-- the integration tree was clean and both budget inequalities passed; overall
-  status remained **HOLD** only because seven named execution/publication gates
-  remain. The first Stage-T authorization exhausted its two allocation attempts
-  before admission: both Pods were dual-confirmed deleted after a real RunPod
-  response omitted the fake-test top-level `cloudType` field. No model/setup or
-  technical arm ran. A corrected response schema and new explicit retry release
-  decision are required; the exhausted authorization must not be reused.
-
-The subsequent one-shot infrastructure retry positively admitted an exact
-secure A100 80GB host (driver `580.159.04`, CUDA available, 81,920 MiB) but
-failed after `HOST_ADMITTED` and before `SYNCED`; no job or technical arm
-started. The watchdog proved DELETE, direct 404, and empty inventory. The outer
-authority is consumed with no fallback. Conservative cumulative Stage-T usage
-is 106 provider seconds and `$0.04092777777777777777777777777`; a post-delete
-provider read still showed balance `$57.1090060887` and zero Pods. The exact
-setup subcause is unknown because only the generic `V13LifecycleError` type was
-retained. Further Stage-T apparatus work and paid retry are closed; write the
-measured N=48 feasibility rejection.
-
-Create another exclusive checkpoint at every static phase transition, before
-and after any allocation/pilot, after every Phase-A candidate, after every
-treatment durability block, and before provider deletion.
-
-## Non-negotiable boundaries
-
-- Integrate and push only additive reviewed history on `trunk`. Use detached
-  temporary worktrees for genuinely isolated parallel shards, review their
-  commits, then preserve the accepted work on `trunk` and remove the worktree.
-- Save and commit every render and every scored result, including contaminated
-  or void artifacts under quarantine paths.
-- Use exact model ID/revision/dtype/backend provenance and pass the build ladder
-  for every new model/config.
-- One GPU/MLX process at a time unless a later owner instruction explicitly
-  changes that rule.
-- Report only observed outcomes. Missing controls are missing evidence, never
-  null controls.
-- Compute and report the live gap each cycle: distinct N versus CI target and
-  canary spend versus the verified available allocation.
+- Conversations are N. Renders, targets, plants, layers, heads, arms, schedules,
+  and reruns never increase N.
+- No outcome-visible selection or replacement. Invalid candidates advance only
+  to the next already-frozen rank.
+- The local result is a scoped MLX 4-bit value-only result, not the abandoned
+  v13 bf16/full-KV result.
+- Missing or unavailable applied controls remain missing; they are never
+  relabeled null.
+- One local MLX model process at a time. Unique outputs; persist before the next
+  case. No provider allocation is needed for the active path.

@@ -323,7 +323,10 @@ def main():
     mp = prov.capture_mlx_provenance(model, MODEL)
     MANIFEST = prov.build_manifest(
         model_provenance=mp,
-        dtype_env="mlx (see quantization)",
+        # MLX has no requested torch-style load dtype here. The applied weight
+        # quantization and complete parameter dtype inventory are runtime-read
+        # above; a synthetic dtype request would create a false mismatch.
+        dtype_env=None,
         harness="src/run_arms.py",
         intervention={
             "arm": "multi (A,B,C,D,H-gap,B-min,E-post,E-inter)",
