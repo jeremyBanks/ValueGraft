@@ -45,9 +45,10 @@ Observed direct-path gates:
 
 ## Immediate execution
 
-1. Use frozen `LOCAL-COHERENT-STATE-N48-V2.md`. V1 terminated before treatment
-   after 0/48 stochastic carrier attempts passed its contradictory prompt/
-   filter; its protocol and attempts are archived intact.
+1. Use frozen `LOCAL-COHERENT-STATE-N48-V3.md`. V1 terminated on its carrier
+   prompt/filter. V2's single treatment-blind development canary exposed
+   inherited eligibility gates that mismatched the correct-target endpoint; it
+   is excluded from v3 and both earlier protocols remain archived intact.
 2. The outcome-blind frame, literal order, 80 ranked candidates, and complete-
    history reviews are frozen. Validate the two fixed external v2 carrier
    conditions mechanically and independently against all 80 fixtures before

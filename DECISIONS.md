@@ -17,10 +17,11 @@ Historical decisions are archived in `notes/`, including the slug
 
 ## 2026-07-12 — primary design
 
-- Governing design ID: `coherent-state-local-mlx-n48-v2`. V1 closed before
-  treatment after its shared-background prompt and all-context-name filter
-  yielded 0/48 accepted rank-1 carrier attempts. No threshold or prompt was
-  repaired in place.
+- Governing design ID: `coherent-state-local-mlx-n48-v3`. V1 closed before
+  treatment on its carrier prompt/filter. V2's only Phase-A candidate was
+  treatment-blind and is excluded unconditionally after revealing that
+  inherited Dmargin and nonfocal-prefix gates mismatched the absolute correct-
+  target endpoint. V3 was frozen before any further forward pass.
 - Primary unit: one paired C/W conversation fixture. Fixed N=48, six from each
   of eight logic strata, selected in a fresh outcome-blind order from the
   32,768-member recipe frame.

@@ -14,7 +14,7 @@ Start every session in this order:
 2. `STATE.md` — authoritative live work and gap.
 3. `DECISIONS.md` — current governing decisions only.
 4. `FINDINGS.md` — current observed facts and unknowns only.
-5. `LOCAL-COHERENT-STATE-N48-V2.md` — frozen active study.
+5. `LOCAL-COHERENT-STATE-N48-V3.md` — frozen active study.
 6. The `notes/` slug `20260712-handoff-to-new-ultra-agent`.
 7. The `notes/` slug `gap-analysis-asked-vs-did-and-upper-bound`.
 8. `RELIABILITY.md` and `INCIDENTS.md` for the compact current hazard index.

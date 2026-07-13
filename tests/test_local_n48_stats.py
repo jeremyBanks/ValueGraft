@@ -10,10 +10,17 @@ from local_n48_stats import (
     FINAL_N,
     STRATA,
     LocalN48StatsError,
-    analyze_treatment_records,
+    analyze_treatment_records as analyze_records,
     clopper_pearson_upper,
     recompute_hoeffding_stdlib,
 )
+
+
+def analyze_treatment_records(rows):
+    expected = sorted({row["candidate_id"] for row in rows
+                       if isinstance(row, dict)
+                       and isinstance(row.get("candidate_id"), str)})
+    return analyze_records(rows, expected_candidate_ids=expected)
 
 
 def treatment_rows(*, optional=False):
@@ -30,15 +37,18 @@ def treatment_rows(*, optional=False):
                     "stratum": stratum,
                     "carrier_id": carrier_id,
                     "l_c_b": -4.0,
+                    "l_w_b": -2.0,
                     "l_c_e_c": -4.0 + x,
+                    "l_w_e_c": -3.0,
+                    "l_c_e_w": -3.98,
+                    "l_w_e_w": -2.5,
+                    "l_c_a_c": 1.0,
+                    "l_w_a_c": -1.0,
                 }
                 if optional:
                     row.update({
-                        "l_c_e_w": -3.98,
                         "l_c_vp": -4.01,
-                        "l_c_a_c": 1.0,
-                        "l_w_a_c": -1.0,
-                        "l_w_b": -2.0,
+                        "l_w_vp": -2.01,
                     })
                 rows.append(row)
     return rows
@@ -106,6 +116,19 @@ def test_clipping_and_raw_tail_count_use_collapsed_conversations():
     assert 0.0 < result.raw_over_half.clopper_pearson_ucb < 1.0
 
 
+def test_clipping_occurs_after_fixed_carriers_are_averaged():
+    rows = treatment_rows()
+    candidate = rows[0]["candidate_id"]
+    candidate_rows = [row for row in rows if row["candidate_id"] == candidate]
+    candidate_rows[0]["l_c_e_c"] = candidate_rows[0]["l_c_b"] + 2.0
+    candidate_rows[1]["l_c_e_c"] = candidate_rows[1]["l_c_b"]
+    result = analyze_treatment_records(rows)
+    effect = next(row for row in result.conversation_effects
+                  if row.candidate_id == candidate)
+    assert effect.raw_x == 1.0
+    assert effect.clipped_z == 0.5
+
+
 def test_strict_tail_threshold_and_all_successes_special_case():
     rows = treatment_rows()
     for row in rows:
@@ -119,15 +142,26 @@ def test_strict_tail_threshold_and_all_successes_special_case():
     assert clopper_pearson_upper(FINAL_N, FINAL_N) == 1.0
 
 
-def test_optional_specificity_placebo_and_damage_companions():
+def test_mandatory_specificity_margin_damage_and_optional_placebo_companions():
     result = analyze_treatment_records(treatment_rows(optional=True))
     expected = {
+        "absolute_l_c_b",
+        "absolute_l_w_b",
+        "absolute_l_c_e_c",
+        "absolute_l_w_e_c",
+        "absolute_l_c_e_w",
+        "absolute_l_w_e_w",
+        "absolute_l_c_a_c",
+        "absolute_l_w_a_c",
         "specificity_correct_minus_wrong",
         "wrong_history_movement_from_fresh",
-        "placebo_movement_from_fresh",
-        "correct_minus_placebo",
         "correct_target_damage",
         "margin_damage",
+        "fresh_margin",
+        "correct_graft_margin",
+        "wrong_graft_margin",
+        "graft_margin_specificity",
+        "margin_recovery_from_fresh",
     }
     assert set(result.companion_metrics) == expected
     x_mean = result.primary_raw.mean
@@ -136,28 +170,71 @@ def test_optional_specificity_placebo_and_damage_companions():
     assert result.companion_metrics[
         "wrong_history_movement_from_fresh"].mean == pytest.approx(0.02)
     assert result.companion_metrics[
-        "placebo_movement_from_fresh"].mean == pytest.approx(-0.01)
-    assert result.companion_metrics[
-        "correct_minus_placebo"].mean == pytest.approx(x_mean + 0.01)
-    assert result.companion_metrics[
         "correct_target_damage"].mean == pytest.approx(5.0)
     assert result.companion_metrics["margin_damage"].mean == pytest.approx(4.0)
+    assert result.companion_metrics["absolute_l_c_b"].mean == -4.0
+    assert result.companion_metrics["absolute_l_w_b"].mean == -2.0
+    assert result.companion_metrics["absolute_l_w_e_c"].mean == -3.0
+    assert result.companion_metrics["absolute_l_c_e_w"].mean == -3.98
+    assert result.companion_metrics["absolute_l_w_e_w"].mean == -2.5
+    assert result.companion_metrics["absolute_l_c_a_c"].mean == 1.0
+    assert result.companion_metrics["absolute_l_w_a_c"].mean == -1.0
+    assert result.companion_metrics["fresh_margin"].mean == -2.0
+    assert result.companion_metrics[
+        "correct_graft_margin"].mean == pytest.approx(x_mean - 1.0)
+    assert result.companion_metrics[
+        "wrong_graft_margin"].mean == pytest.approx(-1.48)
+    assert result.companion_metrics[
+        "graft_margin_specificity"].mean == pytest.approx(x_mean + 0.48)
+    assert result.companion_metrics[
+        "margin_recovery_from_fresh"].mean == pytest.approx(x_mean + 1.0)
     assert all(summary.n_conversations == FINAL_N
                for summary in result.companion_metrics.values())
+    absolute = result.companion_metrics["absolute_l_c_e_c"]
+    expected_values = [-4.0 + effect.raw_x
+                       for effect in result.conversation_effects]
+    assert absolute.mean == pytest.approx(
+        math.fsum(expected_values) / FINAL_N)
+    assert absolute.sample_sd == pytest.approx(
+        math.sqrt(math.fsum(
+            (value - absolute.mean) ** 2 for value in expected_values
+        ) / (FINAL_N - 1)))
+    assert absolute.t_ci_95.lower < absolute.mean < absolute.t_ci_95.upper
+    assert set(result.applied_placebo_metrics) == {
+        "placebo_movement_from_fresh",
+        "correct_minus_placebo",
+        "placebo_margin",
+        "correct_minus_placebo_margin",
+    }
+    placebo = result.applied_placebo_metrics["placebo_movement_from_fresh"]
+    assert placebo.n_condition_rows_available == 96
+    assert placebo.n_condition_rows_missing == 0
+    assert placebo.n_complete_conversations == 48
+    assert placebo.complete_conversation_mean == pytest.approx(-0.01)
+    assert result.applied_placebo_metrics[
+        "correct_minus_placebo"].complete_conversation_mean == pytest.approx(
+            x_mean + 0.01)
 
 
-def test_partial_optional_companion_fails_closed():
-    rows = treatment_rows()
-    rows[0]["l_c_e_w"] = -4.0
-    with pytest.raises(LocalN48StatsError, match="present in 1/96"):
+def test_placebo_pair_fails_closed_within_row_but_allows_explicit_missingness():
+    rows = treatment_rows(optional=True)
+    del rows[0]["l_w_vp"]
+    with pytest.raises(LocalN48StatsError, match="incomplete C/W placebo"):
         analyze_treatment_records(rows)
 
-    rows = treatment_rows()
-    for row in rows:
-        row["l_w_a_c"] = -1.0
-        row["l_w_b"] = -2.0
-    with pytest.raises(LocalN48StatsError, match="requires l_c_a_c"):
-        analyze_treatment_records(rows)
+    rows = treatment_rows(optional=True)
+    for field in ("l_c_vp", "l_w_vp"):
+        del rows[0][field]
+        del rows[1][field]
+        del rows[2][field]
+    result = analyze_treatment_records(rows)
+    summary = result.applied_placebo_metrics["placebo_margin"]
+    assert summary.n_condition_rows_available == 93
+    assert summary.n_condition_rows_missing == 3
+    assert summary.n_complete_conversations == 46
+    assert summary.n_partial_conversations == 1
+    assert summary.n_unavailable_conversations == 1
+    assert summary.per_carrier_counts == {"fixed_a": 46, "fixed_b": 47}
 
 
 @pytest.mark.parametrize("mutation,match", [
@@ -190,11 +267,11 @@ def test_unbalanced_strata_and_inconsistent_candidate_stratum_fail_closed():
         analyze_treatment_records(rows)
 
 
-@pytest.mark.parametrize("field,value", [
-    ("l_c_e_c", float("nan")),
-    ("l_c_b", float("inf")),
-    ("l_c_e_c", True),
+@pytest.mark.parametrize("field", [
+    "l_c_e_c", "l_w_e_c", "l_c_e_w", "l_w_e_w",
+    "l_c_b", "l_w_b", "l_c_a_c", "l_w_a_c",
 ])
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), True])
 def test_nonfinite_or_boolean_required_values_fail_closed(field, value):
     rows = treatment_rows()
     rows[0][field] = value
@@ -203,15 +280,33 @@ def test_nonfinite_or_boolean_required_values_fail_closed(field, value):
 
 
 def test_missing_required_and_nonfinite_optional_values_fail_closed():
-    rows = treatment_rows()
-    del rows[0]["l_c_b"]
-    with pytest.raises(LocalN48StatsError, match="missing l_c_b"):
-        analyze_treatment_records(rows)
-
     rows = treatment_rows(optional=True)
     rows[0]["l_c_vp"] = float("nan")
     with pytest.raises(LocalN48StatsError, match="l_c_vp is nonfinite"):
         analyze_treatment_records(rows)
+
+
+@pytest.mark.parametrize("field", [
+    "l_c_e_c", "l_w_e_c", "l_c_e_w", "l_w_e_w",
+    "l_c_b", "l_w_b", "l_c_a_c", "l_w_a_c",
+])
+def test_every_required_arm_score_is_required(field):
+    rows = treatment_rows()
+    del rows[0][field]
+    with pytest.raises(LocalN48StatsError, match=f"missing {field}"):
+        analyze_treatment_records(rows)
+
+
+def test_exact_treatment_release_candidate_ids_are_required():
+    rows = treatment_rows()
+    expected = sorted({row["candidate_id"] for row in rows})
+    analyze_records(rows, expected_candidate_ids=expected)
+    wrong = list(expected)
+    wrong[0] = "not-the-frozen-candidate"
+    with pytest.raises(LocalN48StatsError, match="differ from treatment release"):
+        analyze_records(rows, expected_candidate_ids=wrong)
+    with pytest.raises(LocalN48StatsError, match="not 48 unique"):
+        analyze_records(rows, expected_candidate_ids=expected[:-1])
 
 
 def test_row_order_is_irrelevant_and_effect_order_is_frozen():

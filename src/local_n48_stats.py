@@ -1,14 +1,17 @@
-"""Pure frozen analysis core for local coherent-state N48 v2.
+"""Pure frozen analysis core for local coherent-state N48 v3.
 
 The independent sampling unit is a conversation (one ``candidate_id``).
 The two fixed carrier conditions are repeated measurements that are averaged
 inside a conversation; they never increase N.  This module performs no file
 discovery, model execution, selection, or outcome persistence.
 
-Required row fields are ``candidate_id``, ``stratum``, ``carrier_id``,
-``l_c_e_c``, and ``l_c_b``.  Optional arm-score fields are ``l_c_e_w``,
-``l_c_vp``, ``l_c_a_c``, ``l_w_a_c``, and ``l_w_b``.  An optional field must
-be present and finite in every row or absent from every row.
+Required row fields are ``candidate_id``, ``stratum``, ``carrier_id``, plus
+exact C/W answer scores for B, E_C, E_W, and A_C.  The VP C/W scores are the
+only optional fields because the frozen protocol permits a geometrically
+unavailable applied placebo; the C/W pair must be jointly present or absent in
+each candidate/carrier row. The caller must supply the exact 48 IDs from the
+hash-bound treatment release; this pure core deliberately performs no file
+discovery.
 """
 
 from __future__ import annotations
@@ -21,7 +24,7 @@ from typing import Callable, Iterable, Mapping, Sequence
 from scipy import stats
 
 
-DESIGN_ID = "coherent-state-local-mlx-n48-v2"
+DESIGN_ID = "coherent-state-local-mlx-n48-v3"
 STRATA = (
     "arithmetic_capacity_budget",
     "categorical_set_membership",
@@ -43,18 +46,21 @@ HOEFFDING_ALPHA = 0.04
 TAIL_ALPHA = 0.01
 T_CONFIDENCE = 0.95
 
-_REQUIRED_NUMERIC_FIELDS = ("l_c_e_c", "l_c_b")
-_OPTIONAL_NUMERIC_FIELDS = (
+_REQUIRED_NUMERIC_FIELDS = (
+    "l_c_e_c",
+    "l_w_e_c",
     "l_c_e_w",
-    "l_c_vp",
+    "l_w_e_w",
+    "l_c_b",
+    "l_w_b",
     "l_c_a_c",
     "l_w_a_c",
-    "l_w_b",
 )
+_VP_NUMERIC_FIELDS = ("l_c_vp", "l_w_vp")
 
 
 class LocalN48StatsError(ValueError):
-    """Input differs from the frozen local-v2 analysis contract."""
+    """Input differs from the frozen local-v3 analysis contract."""
 
 
 def _require(condition: bool, message: str) -> None:
@@ -88,6 +94,24 @@ class MetricSummary:
     t_critical: float
     t_ci_95: ConfidenceInterval
     per_carrier_means: Mapping[str, float]
+
+
+@dataclass(frozen=True)
+class AvailableCaseMetricSummary:
+    """Descriptive applied-placebo summary with explicit geometry missingness."""
+
+    n_condition_rows_available: int
+    n_condition_rows_missing: int
+    n_complete_conversations: int
+    n_partial_conversations: int
+    n_unavailable_conversations: int
+    complete_conversation_mean: float | None
+    complete_conversation_sample_sd: float | None
+    complete_conversation_standard_error: float | None
+    complete_conversation_t_ci_95: ConfidenceInterval | None
+    per_carrier_counts: Mapping[str, int]
+    per_carrier_means: Mapping[str, float | None]
+    complete_candidate_ids: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -132,6 +156,7 @@ class LocalN48Analysis:
     primary_hoeffding: HoeffdingBounds
     raw_over_half: TailPrevalenceBound
     companion_metrics: Mapping[str, MetricSummary]
+    applied_placebo_metrics: Mapping[str, AvailableCaseMetricSummary]
 
 
 def _validate_alpha(alpha: float, label: str) -> float:
@@ -261,33 +286,97 @@ def _metric_summary(
     )
 
 
-def _optional_presence(rows: Sequence[Mapping[str, object]]) -> set[str]:
-    present: set[str] = set()
-    for field in _OPTIONAL_NUMERIC_FIELDS:
-        count = sum(field in row for row in rows)
-        _require(count in (0, FINAL_ROW_COUNT),
-                 f"optional field {field} is present in {count}/96 rows")
-        if count == FINAL_ROW_COUNT:
-            present.add(field)
-    _require(("l_w_a_c" in present) == ("l_w_b" in present),
-             "margin companion fields l_w_a_c/l_w_b are incomplete")
-    if "l_w_a_c" in present:
-        _require("l_c_a_c" in present,
-                 "margin companion requires l_c_a_c")
-    return present
+def _available_case_summary(
+    effects: Sequence[ConversationEffect],
+    row_lookup: Mapping[tuple[str, str], Mapping[str, object]],
+    function: Callable[[Mapping[str, object]], float],
+) -> AvailableCaseMetricSummary:
+    per_carrier_values: dict[str, list[float]] = {
+        carrier_id: [] for carrier_id in CARRIER_IDS}
+    complete_values: list[float] = []
+    complete_ids: list[str] = []
+    partial = 0
+    unavailable = 0
+    for effect in effects:
+        pair_values: list[float] = []
+        for carrier_id in CARRIER_IDS:
+            row = row_lookup[(effect.candidate_id, carrier_id)]
+            if not all(field in row for field in _VP_NUMERIC_FIELDS):
+                continue
+            value = function(row)
+            _require(math.isfinite(value),
+                     f"{effect.candidate_id}:{carrier_id}:VP metric is nonfinite")
+            pair_values.append(value)
+            per_carrier_values[carrier_id].append(value)
+        if len(pair_values) == ROWS_PER_CONVERSATION:
+            complete_values.append(math.fsum(pair_values) / ROWS_PER_CONVERSATION)
+            complete_ids.append(effect.candidate_id)
+        elif pair_values:
+            partial += 1
+        else:
+            unavailable += 1
+
+    available = sum(len(values) for values in per_carrier_values.values())
+    n_complete = len(complete_values)
+    mean = (math.fsum(complete_values) / n_complete
+            if n_complete else None)
+    sample_sd: float | None = None
+    standard_error: float | None = None
+    interval: ConfidenceInterval | None = None
+    if n_complete >= 2:
+        sample_sd = statistics.stdev(complete_values)
+        standard_error = sample_sd / math.sqrt(n_complete)
+        critical = float(stats.t.ppf(0.975, n_complete - 1))
+        _require(math.isfinite(critical), "VP t critical value is nonfinite")
+        half_width = critical * standard_error
+        interval = ConfidenceInterval(
+            lower=float(mean) - half_width,
+            upper=float(mean) + half_width,
+            confidence=T_CONFIDENCE,
+        )
+    counts = {carrier_id: len(per_carrier_values[carrier_id])
+              for carrier_id in CARRIER_IDS}
+    carrier_means: dict[str, float | None] = {}
+    for carrier_id in CARRIER_IDS:
+        values = per_carrier_values[carrier_id]
+        carrier_means[carrier_id] = (
+            math.fsum(values) / len(values) if values else None)
+    return AvailableCaseMetricSummary(
+        n_condition_rows_available=available,
+        n_condition_rows_missing=FINAL_ROW_COUNT - available,
+        n_complete_conversations=n_complete,
+        n_partial_conversations=partial,
+        n_unavailable_conversations=unavailable,
+        complete_conversation_mean=mean,
+        complete_conversation_sample_sd=sample_sd,
+        complete_conversation_standard_error=standard_error,
+        complete_conversation_t_ci_95=interval,
+        per_carrier_counts=counts,
+        per_carrier_means=carrier_means,
+        complete_candidate_ids=tuple(complete_ids),
+    )
 
 
 def analyze_treatment_records(
     rows: Iterable[Mapping[str, object]],
+    *,
+    expected_candidate_ids: Sequence[str],
 ) -> LocalN48Analysis:
-    """Validate and analyze the frozen 8x6x2 local-v2 treatment records."""
+    """Validate and analyze the frozen 8x6x2 local-v3 treatment records."""
 
     materialized = list(rows)
     _require(len(materialized) == FINAL_ROW_COUNT,
              "expected exactly 96 rows (48 conversations x two carriers)")
     _require(all(isinstance(row, Mapping) for row in materialized),
              "treatment row is not a mapping")
-    optional = _optional_presence(materialized)
+    expected_ids = list(expected_candidate_ids)
+    _require(
+        len(expected_ids) == FINAL_N
+        and all(isinstance(candidate_id, str) and bool(candidate_id)
+                for candidate_id in expected_ids)
+        and len(set(expected_ids)) == FINAL_N,
+        "expected treatment-release candidate IDs are not 48 unique strings",
+    )
 
     normalized: list[dict[str, object]] = []
     seen_pairs: set[tuple[str, str]] = set()
@@ -310,9 +399,13 @@ def analyze_treatment_records(
             _require(field in row, f"row {index} is missing {field}")
             values[field] = _finite_number(
                 row[field], f"{candidate_id}:{carrier_id}:{field}")
-        for field in optional:
-            values[field] = _finite_number(
-                row[field], f"{candidate_id}:{carrier_id}:{field}")
+        vp_present = [field in row for field in _VP_NUMERIC_FIELDS]
+        _require(vp_present[0] == vp_present[1],
+                 f"row {index} has an incomplete C/W placebo score pair")
+        if all(vp_present):
+            for field in _VP_NUMERIC_FIELDS:
+                values[field] = _finite_number(
+                    row[field], f"{candidate_id}:{carrier_id}:{field}")
         normalized.append({
             "candidate_id": candidate_id,
             "stratum": stratum,
@@ -327,6 +420,8 @@ def analyze_treatment_records(
         grouped.setdefault(str(row["candidate_id"]), []).append(row)
     _require(len(grouped) == FINAL_N,
              "expected exactly 48 unique candidate IDs")
+    _require(set(grouped) == set(expected_ids),
+             "observed candidate IDs differ from treatment release")
     stratum_counts = {stratum: 0 for stratum in STRATA}
     ordered_groups: list[tuple[str, str, list[dict[str, object]]]] = []
     for candidate_id, candidate_rows in grouped.items():
@@ -410,36 +505,43 @@ def analyze_treatment_records(
             successes, FINAL_N, alpha=TAIL_ALPHA),
     )
 
-    metric_functions: list[tuple[str, set[str], Callable[[Mapping[str, object]], float]]] = []
-    if "l_c_e_w" in optional:
-        metric_functions.extend((
-            ("specificity_correct_minus_wrong", {"l_c_e_w"},
-             lambda row: float(row["l_c_e_c"]) - float(row["l_c_e_w"])),
-            ("wrong_history_movement_from_fresh", {"l_c_e_w"},
-             lambda row: float(row["l_c_e_w"]) - float(row["l_c_b"])),
-        ))
-    if "l_c_vp" in optional:
-        metric_functions.extend((
-            ("placebo_movement_from_fresh", {"l_c_vp"},
-             lambda row: float(row["l_c_vp"]) - float(row["l_c_b"])),
-            ("correct_minus_placebo", {"l_c_vp"},
-             lambda row: float(row["l_c_e_c"]) - float(row["l_c_vp"])),
-        ))
-    if "l_c_a_c" in optional:
-        metric_functions.append((
-            "correct_target_damage", {"l_c_a_c"},
-            lambda row: float(row["l_c_a_c"]) - float(row["l_c_b"])))
-    if {"l_w_a_c", "l_w_b"}.issubset(optional):
-        metric_functions.append((
-            "margin_damage", {"l_c_a_c", "l_w_a_c", "l_w_b"},
-            lambda row: (
-                float(row["l_c_a_c"]) - float(row["l_w_a_c"])
-                - float(row["l_c_b"]) + float(row["l_w_b"]))))
+    metric_functions: list[tuple[str, Callable[[Mapping[str, object]], float]]] = [
+        ("absolute_l_c_b", lambda row: float(row["l_c_b"])),
+        ("absolute_l_w_b", lambda row: float(row["l_w_b"])),
+        ("absolute_l_c_e_c", lambda row: float(row["l_c_e_c"])),
+        ("absolute_l_w_e_c", lambda row: float(row["l_w_e_c"])),
+        ("absolute_l_c_e_w", lambda row: float(row["l_c_e_w"])),
+        ("absolute_l_w_e_w", lambda row: float(row["l_w_e_w"])),
+        ("absolute_l_c_a_c", lambda row: float(row["l_c_a_c"])),
+        ("absolute_l_w_a_c", lambda row: float(row["l_w_a_c"])),
+        ("specificity_correct_minus_wrong",
+         lambda row: float(row["l_c_e_c"]) - float(row["l_c_e_w"])),
+        ("wrong_history_movement_from_fresh",
+         lambda row: float(row["l_c_e_w"]) - float(row["l_c_b"])),
+        ("correct_target_damage",
+         lambda row: float(row["l_c_a_c"]) - float(row["l_c_b"])),
+        ("margin_damage",
+         lambda row: (
+             float(row["l_c_a_c"]) - float(row["l_w_a_c"])
+             - float(row["l_c_b"]) + float(row["l_w_b"]))),
+        ("fresh_margin",
+         lambda row: float(row["l_c_b"]) - float(row["l_w_b"])),
+        ("correct_graft_margin",
+         lambda row: float(row["l_c_e_c"]) - float(row["l_w_e_c"])),
+        ("wrong_graft_margin",
+         lambda row: float(row["l_c_e_w"]) - float(row["l_w_e_w"])),
+        ("graft_margin_specificity",
+         lambda row: (
+             float(row["l_c_e_c"]) - float(row["l_w_e_c"])
+             - float(row["l_c_e_w"]) + float(row["l_w_e_w"]))),
+        ("margin_recovery_from_fresh",
+         lambda row: (
+             float(row["l_c_e_c"]) - float(row["l_w_e_c"])
+             - float(row["l_c_b"]) + float(row["l_w_b"]))),
+    ]
 
     companions: dict[str, MetricSummary] = {}
-    for name, required, function in metric_functions:
-        _require(required.issubset(optional),
-                 f"companion {name} fields are incomplete")
+    for name, function in metric_functions:
         conversation_values: list[float] = []
         by_carrier_values: dict[str, list[float]] = {
             carrier_id: [] for carrier_id in CARRIER_IDS}
@@ -458,6 +560,25 @@ def analyze_treatment_records(
         companions[name] = _metric_summary(
             conversation_values, by_carrier_values)
 
+    vp_functions: tuple[
+        tuple[str, Callable[[Mapping[str, object]], float]], ...
+    ] = (
+        ("placebo_movement_from_fresh",
+         lambda row: float(row["l_c_vp"]) - float(row["l_c_b"])),
+        ("correct_minus_placebo",
+         lambda row: float(row["l_c_e_c"]) - float(row["l_c_vp"])),
+        ("placebo_margin",
+         lambda row: float(row["l_c_vp"]) - float(row["l_w_vp"])),
+        ("correct_minus_placebo_margin",
+         lambda row: (
+             float(row["l_c_e_c"]) - float(row["l_w_e_c"])
+             - float(row["l_c_vp"]) + float(row["l_w_vp"]))),
+    )
+    placebo = {
+        name: _available_case_summary(effects, row_lookup, function)
+        for name, function in vp_functions
+    }
+
     return LocalN48Analysis(
         design_id=DESIGN_ID,
         n_input_rows=FINAL_ROW_COUNT,
@@ -469,10 +590,12 @@ def analyze_treatment_records(
         primary_hoeffding=primary_hoeffding,
         raw_over_half=tail,
         companion_metrics=companions,
+        applied_placebo_metrics=placebo,
     )
 
 
 __all__ = [
+    "AvailableCaseMetricSummary",
     "CARRIER_IDS",
     "CLIP_LOWER",
     "CLIP_UPPER",

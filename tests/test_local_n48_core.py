@@ -6,6 +6,7 @@ import pytest
 
 from local_n48_core import (
     LocalN48CoreError,
+    arrays_bit_exact,
     build_value_alignment_pairs,
     snapshots_bit_exact,
 )
@@ -158,6 +159,15 @@ def test_snapshot_comparison_uses_offsets_dtypes_shapes_and_raw_bits():
         1,
     )]
     assert not snapshots_bit_exact(_snapshot(0.0), bf16)
+
+
+def test_array_comparison_uses_dtypes_shapes_and_raw_bits():
+    assert arrays_bit_exact(mx.array([[0.0]], dtype=mx.float32),
+                            mx.array([[0.0]], dtype=mx.float32))
+    assert not arrays_bit_exact(mx.array([[0.0]], dtype=mx.float32),
+                                mx.array([[-0.0]], dtype=mx.float32))
+    assert not arrays_bit_exact(mx.array([[0.0]], dtype=mx.float32),
+                                mx.array([0.0], dtype=mx.float32))
 
 
 def test_snapshot_comparison_rejects_malformed_offsets():

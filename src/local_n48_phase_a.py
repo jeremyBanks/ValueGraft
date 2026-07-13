@@ -1,4 +1,4 @@
-"""Treatment-blind Phase-A screening for local coherent-state N48 v2.
+"""Treatment-blind Phase-A screening for local coherent-state N48 v3.
 
 This runner may replay full C/W histories, build fresh B, and score oracle/fresh
 validity. It never imports or constructs correct-history, wrong-history, or
@@ -19,10 +19,12 @@ from pathlib import Path
 
 import mlx.core as mx
 from mlx_lm import load
+import numpy as np
 
 sys.path.insert(0, "src")
 from arms import arm_e_snapshot  # noqa: E402
 from local_n48_core import (  # noqa: E402
+    arrays_bit_exact,
     build_value_alignment_pairs,
     replay_fresh,
     replay_source,
@@ -36,11 +38,18 @@ from provenance import (  # noqa: E402
 )
 
 
-DESIGN_ID = "coherent-state-local-mlx-n48-v2"
+DESIGN_ID = "coherent-state-local-mlx-n48-v3"
 MODEL_DEFAULT = "mlx-community/Qwen3-30B-A3B-Instruct-2507-4bit"
-ROSTER_DEFAULT = Path("data/coherent_state_local_n48_v2/phase-a-roster-v1.json")
+MODEL_REVISION = "e9675aa3ca5f900ccef55267914466d55ab325fa"
+ROSTER_DEFAULT = Path("data/coherent_state_local_n48_v3/phase-a-roster-v1.json")
+ROSTER_SHA256 = "f2432f5f2ef10aae4644732cb27117f90b0599e621136d450a282ad8e25e4b8b"
 CARRIER_BANK_DEFAULT = Path(
     "data/coherent_state_local_n48_v2/fixed-carriers-v1.json")
+CARRIER_BANK_SHA256 = (
+    "41f0d41c6ddb21d16aaf877195f3dbfd2571382aeb4716c579b0f6b5a605fb44")
+PROTOCOL_PATH = Path("LOCAL-COHERENT-STATE-N48-V3.md")
+PROTOCOL_SHA256 = (
+    "fd65c5c74bfda0b353c6b6d5e6262ea2c226537fea3420796e0b5ce742053492")
 DAMAGE_MIN = 5.0
 GREEDY_CAP = 16
 
@@ -60,6 +69,15 @@ def _write_exclusive(path: Path, value: dict) -> None:
         os.fsync(stream.fileno())
 
 
+def _array_record(value: mx.array) -> dict:
+    bits = np.asarray(mx.contiguous(value).view(mx.uint8)).tobytes()
+    return {
+        "shape": list(value.shape),
+        "dtype": str(value.dtype),
+        "raw_bits_sha256": hashlib.sha256(bits).hexdigest(),
+    }
+
+
 def _replay_record(result) -> dict:
     return {
         "mode": result.mode,
@@ -73,6 +91,7 @@ def _replay_record(result) -> dict:
             / len(result.carrier_token_logprobs)),
         "physical_end": result.physical_end,
         "logical_end": result.logical_end,
+        "terminal_next_logits": _array_record(result.terminal_next_logits),
     }
 
 
@@ -80,6 +99,61 @@ def _begins(score: dict, alternative: str) -> bool:
     wanted = score[alternative]["content_token_ids"]
     observed = score["greedy_content_token_ids"]
     return observed[:len(wanted)] == wanted
+
+
+def _contains_sequence(container: list[int], needle: list[int]) -> bool:
+    if not needle or len(needle) > len(container):
+        return False
+    return any(container[index:index + len(needle)] == needle
+               for index in range(len(container) - len(needle) + 1))
+
+
+def _nonfocal_valid(score: dict) -> tuple[bool, bool, bool]:
+    observed = score["greedy_content_token_ids"][:GREEDY_CAP]
+    target = score["target"]["content_token_ids"]
+    countertarget = score["countertarget"]["content_token_ids"]
+    return (
+        _contains_sequence(observed, target),
+        not _contains_sequence(observed, countertarget),
+        score["margin"] > 0.0,
+    )
+
+
+def _score_finite_complete(score: dict) -> bool:
+    try:
+        alternatives = [score["target"], score["countertarget"]]
+        if not isinstance(score["probe"], str) or not score["probe"].strip():
+            return False
+        for row in alternatives:
+            ids = row["content_token_ids"]
+            logprobs = row["token_logprobs"]
+            mean = row["mean_logprob"]
+            if (not isinstance(row["text"], str) or not row["text"].strip()
+                    or not isinstance(ids, list) or not ids
+                    or not all(type(token_id) is int and token_id >= 0
+                               for token_id in ids)
+                    or not isinstance(logprobs, list)
+                    or len(logprobs) != len(ids)
+                    or not all(type(value) in (int, float)
+                               and math.isfinite(float(value))
+                               for value in logprobs)
+                    or type(mean) not in (int, float)
+                    or not math.isfinite(float(mean))):
+                return False
+        return (
+            type(score["margin"]) in (int, float)
+            and math.isfinite(float(score["margin"]))
+            and isinstance(score["greedy_token_ids"], list)
+            and isinstance(score["greedy_content_token_ids"], list)
+            and all(type(token_id) is int and token_id >= 0
+                    for token_id in score["greedy_token_ids"])
+            and all(type(token_id) is int and token_id >= 0
+                    for token_id in score["greedy_content_token_ids"])
+            and score["greedy_cap"] == GREEDY_CAP
+            and score["greedy_stop_reason"] in ("eos", "cap")
+        )
+    except (KeyError, TypeError, ValueError):
+        return False
 
 
 def _score_record(score: dict) -> dict:
@@ -109,7 +183,10 @@ def screen_carrier(model, tokenizer, fixture: dict, carrier: dict) -> dict:
     fresh = replay_fresh(model, tokenizer, fixture, "C", text)
     fresh_repeat = replay_fresh(model, tokenizer, fixture, "C", text)
 
-    repeat_identity = snapshots_bit_exact(fresh.snapshot, fresh_repeat.snapshot)
+    repeat_cache_identity = snapshots_bit_exact(
+        fresh.snapshot, fresh_repeat.snapshot)
+    repeat_logits_identity = arrays_bit_exact(
+        fresh.terminal_next_logits, fresh_repeat.terminal_next_logits)
     identity_pairs = [(destination, destination)
                       for destination, _source in alignment.correct_pairs]
     sham_snapshot = arm_e_snapshot(
@@ -145,8 +222,19 @@ def screen_carrier(model, tokenizer, fixture: dict, carrier: dict) -> dict:
     dplus = (focal_a_c["target"]["mean_logprob"]
              - focal_b["target"]["mean_logprob"])
     dmargin = focal_a_c["margin"] - focal_b["margin"]
+    all_scores = (
+        focal_a_c, focal_a_w, focal_b,
+        nonfocal_a_c, nonfocal_a_w, nonfocal_b,
+    )
+    nonfocal_c_checks = _nonfocal_valid(nonfocal_a_c)
+    nonfocal_w_checks = _nonfocal_valid(nonfocal_a_w)
+    nonfocal_b_checks = _nonfocal_valid(nonfocal_b)
     checks = {
-        "fresh_repeat_bit_exact": repeat_identity,
+        "finite_complete_scores": (
+            all(_score_finite_complete(score) for score in all_scores)
+            and math.isfinite(dplus) and math.isfinite(dmargin)),
+        "fresh_repeat_cache_bit_exact": repeat_cache_identity,
+        "fresh_repeat_next_logits_bit_exact": repeat_logits_identity,
         "fresh_sham_graft_bit_exact": sham_identity,
         "oracle_C_greedy_begins_C_target": _begins(focal_a_c, "target"),
         "oracle_C_margin_positive": focal_a_c["margin"] > 0.0,
@@ -155,13 +243,15 @@ def screen_carrier(model, tokenizer, fixture: dict, carrier: dict) -> dict:
         "oracle_W_margin_negative": focal_a_w["margin"] < 0.0,
         "fresh_does_not_begin_C_target": not _begins(focal_b, "target"),
         "correct_target_damage_at_least_5": dplus >= DAMAGE_MIN,
-        "margin_damage_at_least_5": dmargin >= DAMAGE_MIN,
-        "nonfocal_oracle_C_begins_target": _begins(nonfocal_a_c, "target"),
-        "nonfocal_oracle_C_margin_positive": nonfocal_a_c["margin"] > 0.0,
-        "nonfocal_oracle_W_begins_target": _begins(nonfocal_a_w, "target"),
-        "nonfocal_oracle_W_margin_positive": nonfocal_a_w["margin"] > 0.0,
-        "nonfocal_fresh_begins_target": _begins(nonfocal_b, "target"),
-        "nonfocal_fresh_margin_positive": nonfocal_b["margin"] > 0.0,
+        "nonfocal_oracle_C_contains_exact_target": nonfocal_c_checks[0],
+        "nonfocal_oracle_C_excludes_countertarget": nonfocal_c_checks[1],
+        "nonfocal_oracle_C_margin_positive": nonfocal_c_checks[2],
+        "nonfocal_oracle_W_contains_exact_target": nonfocal_w_checks[0],
+        "nonfocal_oracle_W_excludes_countertarget": nonfocal_w_checks[1],
+        "nonfocal_oracle_W_margin_positive": nonfocal_w_checks[2],
+        "nonfocal_fresh_contains_exact_target": nonfocal_b_checks[0],
+        "nonfocal_fresh_excludes_countertarget": nonfocal_b_checks[1],
+        "nonfocal_fresh_margin_positive": nonfocal_b_checks[2],
     }
     result = {
         "carrier_id": carrier["carrier_id"],
@@ -214,7 +304,7 @@ def screen_fixture(model, tokenizer, fixture_path: Path,
             model, tokenizer, fixture, carrier))
     eligible = all(row["status"] == "ELIGIBLE" for row in carriers)
     return {
-        "schema": "coherent_state_local_n48_v2_phase_a_candidate_v1",
+        "schema": "coherent_state_local_n48_v3_phase_a_candidate_v1",
         "design_id": DESIGN_ID,
         "phase": "A_TREATMENT_BLIND",
         "treatment_outcomes_computed": False,
@@ -232,17 +322,48 @@ def screen_fixture(model, tokenizer, fixture_path: Path,
 
 def _selected_paths(roster: dict, fixture: Path | None,
                     max_rank: int) -> list[Path]:
-    if fixture is not None:
-        return [fixture]
     records = [row for row in roster["records"]
                if row["screening_disposition"] ==
-               "SCREEN_IN_FROZEN_RANK_ORDER"
-               and row["permutation_rank"] <= max_rank]
+               "SCREEN_IN_FROZEN_RANK_ORDER"]
+    if fixture is not None:
+        requested = fixture.resolve()
+        records = [row for row in records
+                   if Path(row["fixture_path"]).resolve() == requested]
+        if len(records) != 1:
+            raise ValueError(
+                "fixture override is not one permitted V3 roster record")
+        if _sha(fixture) != records[0]["fixture_sha256"]:
+            raise ValueError("fixture override bytes differ from frozen roster")
+        return [fixture]
+    records = [row for row in records
+               if row["permutation_rank"] <= max_rank]
     order = {name: index for index, name in enumerate(
         roster["frozen_strata_order"])}
     records.sort(key=lambda row: (
         order[row["stratum_id"]], row["screening_order_within_stratum"]))
-    return [Path(row["fixture_path"]) for row in records]
+    paths = [Path(row["fixture_path"]) for row in records]
+    for row, path in zip(records, paths):
+        if _sha(path) != row["fixture_sha256"]:
+            raise ValueError(f"fixture bytes differ from frozen roster: {path}")
+    return paths
+
+
+def _validate_frozen_inputs(args, roster: dict, carrier_bank: dict) -> None:
+    if args.model != MODEL_DEFAULT:
+        raise ValueError("model argument differs from frozen V3 model ID")
+    if _sha(args.roster) != ROSTER_SHA256:
+        raise ValueError("roster bytes differ from frozen V3 roster")
+    if (roster.get("schema") != "coherent_state_local_n48_v3_phase_a_roster_v1"
+            or roster.get("design_id") != DESIGN_ID
+            or roster.get("status") !=
+            "OUTCOME_BLIND_V3_PHASE_A_ROSTER_ONLY"):
+        raise ValueError("roster identity differs from frozen V3 contract")
+    if _sha(args.carrier_bank) != CARRIER_BANK_SHA256:
+        raise ValueError("carrier bank bytes differ from frozen V3 contract")
+    if _sha(PROTOCOL_PATH) != PROTOCOL_SHA256:
+        raise ValueError("protocol bytes differ from frozen V3 contract")
+    if carrier_bank.get("design_id") != "coherent-state-local-mlx-n48-v2":
+        raise ValueError("adopted fixed carrier bank identity differs")
 
 
 def main() -> None:
@@ -258,13 +379,16 @@ def main() -> None:
 
     if args.out.exists():
         raise FileExistsError(f"refusing to reuse output directory {args.out}")
-    args.out.mkdir(parents=True)
     roster = json.loads(args.roster.read_text())
     carrier_bank = json.loads(args.carrier_bank.read_text())
+    _validate_frozen_inputs(args, roster, carrier_bank)
     paths = _selected_paths(roster, args.fixture, args.max_rank)
 
     model, tokenizer = load(args.model)
     provenance = capture_mlx_provenance(model, args.model)
+    if provenance["resolved_revision"] != MODEL_REVISION:
+        raise ValueError("resolved model revision differs from frozen V3 revision")
+    args.out.mkdir(parents=True)
     manifest = build_manifest(
         model_provenance=provenance,
         dtype_env=None,
@@ -287,7 +411,7 @@ def main() -> None:
             "summary_source": "fixed external; q1 forced under C/W/fresh",
         },
         corpus={
-            "name": "local N48 frozen phase-A roster",
+            "name": "local N48 v3 frozen phase-A roster",
             "split": "treatment-blind eligibility",
             "n": 0,
             "instance_ids": [path.stem for path in paths],
@@ -298,6 +422,8 @@ def main() -> None:
             "roster_sha256": _sha(args.roster),
             "carrier_bank_path": str(args.carrier_bank),
             "carrier_bank_sha256": _sha(args.carrier_bank),
+            "protocol_path": str(PROTOCOL_PATH),
+            "protocol_sha256": _sha(PROTOCOL_PATH),
             "treatment_outcomes_computed": False,
             "damage_min": DAMAGE_MIN,
             "greedy_cap": GREEDY_CAP,

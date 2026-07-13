@@ -304,6 +304,7 @@ class ReplayResult:
     token_ids: list[int]
     context_messages: list[dict[str, str]]
     snapshot: Snapshot
+    terminal_next_logits: mx.array
     calls: list[dict[str, Any]]
     carrier_token_logprobs: list[dict[str, Any]]
     physical_end: int
@@ -399,6 +400,7 @@ def replay_source(
         physical == logical == len(plan.token_ids),
         "source terminal snapshot geometry differs",
     )
+    _require(last_logits is not None, "source terminal next logits are absent")
     messages = complete_source_messages(
         history,
         middle_end_msg=middle,
@@ -416,6 +418,7 @@ def replay_source(
         token_ids=list(plan.token_ids),
         context_messages=messages,
         snapshot=snapshot,
+        terminal_next_logits=mx.array(last_logits),
         calls=calls,
         carrier_token_logprobs=carrier_lps,
         physical_end=physical,
@@ -507,6 +510,7 @@ def replay_fresh(
         and logical == plan.logical_positions[-1] + 1,
         "fresh terminal snapshot geometry differs",
     )
+    _require(last_logits is not None, "fresh terminal next logits are absent")
     full_messages = complete_source_messages(
         history,
         middle_end_msg=middle,
@@ -525,6 +529,7 @@ def replay_fresh(
         token_ids=list(plan.token_ids),
         context_messages=compact_messages,
         snapshot=snapshot,
+        terminal_next_logits=mx.array(last_logits),
         calls=calls,
         carrier_token_logprobs=carrier_lps,
         physical_end=physical,
@@ -552,6 +557,18 @@ def snapshots_bit_exact(left: Snapshot, right: Snapshot) -> bool:
             if not bool(mx.array_equal(left_bits, right_bits).item()):
                 return False
     return True
+
+
+def arrays_bit_exact(left: mx.array, right: mx.array) -> bool:
+    """Return true only for identical MLX array dtypes, shapes, and raw bits."""
+
+    _require(isinstance(left, mx.array), "left value is not an MLX array")
+    _require(isinstance(right, mx.array), "right value is not an MLX array")
+    if left.shape != right.shape or left.dtype != right.dtype:
+        return False
+    left_bits = mx.contiguous(left).view(mx.uint8)
+    right_bits = mx.contiguous(right).view(mx.uint8)
+    return bool(mx.array_equal(left_bits, right_bits).item())
 
 
 def _special_ids(tokenizer) -> set[int]:
@@ -847,6 +864,7 @@ __all__ = [
     "Snapshot",
     "ValueAlignment",
     "build_value_alignment_pairs",
+    "arrays_bit_exact",
     "replay_fresh",
     "replay_source",
     "score_probe",
